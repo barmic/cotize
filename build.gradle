@@ -17,7 +17,7 @@ jar {
 task stage << {
     def procfile = new File("Procfile")
     procfile.delete()
-    procfile << "web:    ${buildDir}/install/${rootProject.name}/bin/${rootProject.name}\n"
+    procfile << "web:    find ${buildDir}; ${buildDir}/install/${rootProject.name}/bin/${rootProject.name}\n"
 
     def systemProperties = new File("system.properties")
     systemProperties.delete()
