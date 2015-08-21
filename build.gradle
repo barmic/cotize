@@ -25,7 +25,7 @@ task stage << {
 //    new File('./build').eachFileRecurse(FILES) {
 //        println it
 //    }
-    procfile << "web:    java -cp ${buildDir}/build/install/cotize/lib/* ${mainClassName}\n"
+    procfile << "web:    java -cp ${buildDir}/install/cotize/lib/* ${mainClassName}\n"
     def systemProperties = new File("system.properties")
     systemProperties << "java.runtime.version=${sourceCompatibility}\n"
 }
