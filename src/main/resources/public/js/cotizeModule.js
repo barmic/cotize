@@ -1,0 +1,1 @@
+var cotizeModule = angular.module('cotizeApp', []);
