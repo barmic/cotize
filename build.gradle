@@ -30,7 +30,7 @@ task stage << {
     systemProperties << "java.runtime.version=${sourceCompatibility}\n"
 }
 
-stage.dependsOn installCotizeDist
+stage.dependsOn installDist
 
 repositories {
     mavenCentral()
