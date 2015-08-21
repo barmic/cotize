@@ -6,11 +6,7 @@ sourceCompatibility = 1.8
 
 mainClassName = "net.bons.commptes.Cotize"
 
-distributions {
-    cotizing {}
-}
-
-applicationDefaultJvmArgs = ["-Dvertx.cacheDirBase=${buildDir}/.vertx"]
+//applicationDefaultJvmArgs = ["-Dvertx.cacheDirBase=${buildDir}/.vertx"]
 
 jar {
     manifest {
@@ -18,17 +14,11 @@ jar {
     }
 }
 
-//import static groovy.io.FileType.FILES
-
 task stage << {
     def procfile = new File("Procfile")
-//    new File('./build').eachFileRecurse(FILES) {
-//        println it
-//    }
-    def name = "${buildDir}".split('/')[-2]
     procfile.delete()
-//    procfile << "web:    java -cp ${buildDir}/install/${name}/lib/* ${mainClassName}\n"
-    procfile << "web:    ${buildDir}/install/${name}/bin/${name}\n"
+    procfile << "web:    ${buildDir}/install/${rootProject.name}/bin/${rootProject.name}\n"
+
     def systemProperties = new File("system.properties")
     systemProperties.delete()
     systemProperties << "java.runtime.version=${sourceCompatibility}\n"
