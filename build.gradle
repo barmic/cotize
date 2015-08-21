@@ -27,7 +27,8 @@ task stage << {
 //    }
     def name = "${buildDir}".split('/')[-2]
     procfile.delete()
-    procfile << "web:    java -cp ${buildDir}/install/${name}/lib/* ${mainClassName}\n"
+//    procfile << "web:    java -cp ${buildDir}/install/${name}/lib/* ${mainClassName}\n"
+    procfile << "web:    ${buildDir}/install/${name}/bin/${name}\n"
     def systemProperties = new File("system.properties")
     systemProperties.delete()
     systemProperties << "java.runtime.version=${sourceCompatibility}\n"
