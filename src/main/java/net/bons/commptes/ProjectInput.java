@@ -8,7 +8,7 @@ package net.bons.commptes;
 import lombok.Data;
 import lombok.NonNull;
 
-@Data
+//@Data
 public class ProjectInput {
     @NonNull
     private String name;
@@ -18,4 +18,20 @@ public class ProjectInput {
     private String description;
     @NonNull
     private String email;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }

@@ -6,17 +6,7 @@ cotizeModule.controller('cotizeController', ['$http', '$scope', 'cotizeService',
         mail : "",
         description : ""
     };
-
-    var clearDisplay = function () {
-        $scope.userSession.error.show = false;
-        $scope.userSession.data.show = false;
-        $scope.userSession.data.content= [];
-    };
-
-    $scope.navigate = function (type) {
-        $scope.form.selectorType = type;
-        $scope.userSession.data.show = false;
-    };
+    $scope.url.base = 'http://' + window.document.URL.split('/')[2];
 
     /*
      * Tag Service Service Call
@@ -24,13 +14,12 @@ cotizeModule.controller('cotizeController', ['$http', '$scope', 'cotizeService',
     $scope.project.create = function () {
         cotizeService.createProject($scope.project)
             .success(function (data) {
-                $scope.userSession.data.show = true;
-                $scope.userSession.data.content = data;
+                $scope.project.state = "created";
+                $scope.project.content = data;
             })
             .error(function (data, status) {
-                $scope.userSession.error.show = true;
-                $scope.userSession.error.status = status;
-                $scope.userSession.error.text = "Status API encountered an error";
+                $scope.project.state = "error";
+                $scope.project.status = status;
             });
     };
 

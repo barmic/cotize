@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@Data
-@EqualsAndHashCode(exclude={"date"})
+//@Data
+//@EqualsAndHashCode(exclude={"date"})
 public class Deal {
     private String creditor;
     private List<String> debtors;
@@ -29,5 +29,29 @@ public class Deal {
         this.email = email;
         this.debtors = Arrays.asList(debtors);
         this.date = new Date();
+    }
+
+    public String getCreditor() {
+        return creditor;
+    }
+
+    public List<String> getDebtors() {
+        return debtors;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getName() {
+        return name;
     }
 }

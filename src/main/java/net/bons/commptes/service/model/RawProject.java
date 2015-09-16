@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-@ToString
-@Getter
-@EqualsAndHashCode
+//@ToString
+//@Getter
+//@EqualsAndHashCode
 public class RawProject implements Project {
     private String name;
     private String author;
@@ -40,6 +40,42 @@ public class RawProject implements Project {
 
     public static Builder builder(RawProject rawProject) {
         return new Builder(rawProject);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getAuthor() {
+        return author;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public int getAmount() {
+        return amount;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public String getPassAdmin() {
+        return passAdmin;
+    }
+
+    public Collection<Deal> getDeals() {
+        return deals;
     }
 
     public static class Builder {

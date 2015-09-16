@@ -25,7 +25,7 @@ public class VertxModule {
   }
 
   @Provides
-  Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject) {
+  Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject) {
     Router router = Router.router(vertx);
 
     router.get("/*").handler(staticHandler);
@@ -33,6 +33,9 @@ public class VertxModule {
     router.route().handler(BodyHandler.create());
 
     router.post("/api/project").handler(createProject);
+
+    router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
+    router.get("/api/project/:projectId").handler(getProject);
 
     router.post("/api/*").handler(event -> {
       HttpServerResponse response = event.response();
@@ -56,8 +59,24 @@ public class VertxModule {
   }
 
   @Provides
+  GetProject provideGetProject() {
+    return new GetProject();
+  }
+
+  @Provides
   MongoClient provideMongoClient(Vertx vertx) {
     JsonObject config = new JsonObject();
-    return MongoClient.createShared(vertx, config);
+    config.put("db_name", "bonscomptes");
+    config.put("useObjectId", true);
+
+    MongoClient mongoClient = MongoClient.createShared(vertx, config);
+    mongoClient.createCollection("CotizeEvents", res -> {
+      if (res.succeeded()) {
+        LOG.info("Created ok!");
+      } else {
+        LOG.warn(res.cause().getLocalizedMessage());
+      }
+    });
+    return mongoClient;
   }
 }

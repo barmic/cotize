@@ -27,6 +27,9 @@ public class Balance {
     public Balance(RawProject project) {
         accounts = computeAccounts(project.getDeals());
     }
+    public Balance(Collection<Deal> deals) {
+        accounts = computeAccounts(deals);
+    }
 
     public List<Deal> compute() {
         List<Map.Entry<String, Integer>> sortingAccounts = Lists.newArrayList(accounts.entrySet());

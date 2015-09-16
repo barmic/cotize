@@ -54,20 +54,16 @@
         <!--<div class="alert alert-danger" role="alert" th:class="">[% error_msg %]</div>-->
         <!--[% END %]-->
 
-        <!--
-          <div class="alert alert-success" role="alert" th:if="${project}">
+          <div class="alert alert-success" role="alert" ng-show="project.state">
             <h3>La création du projet s'est bien déroulée !</h3>
             <p>
                 <ul>
-                <li>Lien à fournir aux participants : <a th:href='@{/project/${project.identifier}}'
-                                                         th:text="@{http://localhost:5000/project/${project.identifier}}">public</a>
+                <li>Lien à fournir aux participants : <a ng-href="http://{{url.base}}/project/{{project.content._id}}">public</a>
                </li>
-               <li>Lien d'administration du projet : <a th:href='@{http://localhost:5000/admin/${project.passAdmin}}'
-                                                        th:text="@{http://localhost:5000/admin/${project.passAdmin}}">admin</a></li>
+               <li>Lien d'administration du projet : <a ng-href='http://{{url.base}}/project/{{project.content._id}}/admin/{{project.content.admin}}'>admin</a></li>
                </ul>
             </p>
           </div>
-          -->
 
         <div class="col-sm-8 col-sm-offset-2">
             <h2>Créer un projet</h2>
