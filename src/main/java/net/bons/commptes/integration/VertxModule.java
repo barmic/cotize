@@ -13,6 +13,8 @@ import net.bons.commptes.Cotize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
+
 @Module(
     injects = Cotize.class,
     library = true
@@ -37,7 +39,7 @@ public class VertxModule {
     router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
     router.get("/api/project/:projectId").handler(getProject);
 
-    router.post("/api/*").handler(event -> {
+    router.route("/api/*").handler(event -> {
       HttpServerResponse response = event.response();
       response.putHeader("content-type", "application/json");
       response.end(event.<String>get("body"));
@@ -59,11 +61,12 @@ public class VertxModule {
   }
 
   @Provides
-  GetProject provideGetProject() {
-    return new GetProject();
+  GetProject provideGetProject(MongoClient mongoClient) {
+    return new GetProject(mongoClient);
   }
 
   @Provides
+  @Singleton
   MongoClient provideMongoClient(Vertx vertx) {
     JsonObject config = new JsonObject();
     config.put("db_name", "bonscomptes");

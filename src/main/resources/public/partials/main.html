@@ -1,0 +1,80 @@
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+        <p class="lead">
+            Ce site a pour objectif de permettre de se cotiser.<br/>
+            Pour cela vous pouvez créer un projet et donner à vos amis un lien pour
+            qu'ils indiquent de combien ils souhaitent participer.
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <!--[% IF error_msg %]-->
+    <!--<div class="alert alert-danger" role="alert" th:class="">[% error_msg %]</div>-->
+    <!--[% END %]-->
+
+    <div class="alert alert-success" role="alert" ng-show="project.state">
+        <h3>La création du projet s'est bien déroulée !</h3>
+
+        <p>
+        <ul>
+            <li>Lien à fournir aux participants : <a ng-href="http://{{prefix.url}}/#/project/{{project.content._id}}">public</a>
+            </li>
+            <li>Lien d'administration du projet : <a
+                    ng-href='http://{{prefix.url}}/#/project/{{project.content._id}}/admin/{{project.content.admin}}'>admin</a>
+            </li>
+        </ul>
+        </p>
+    </div>
+
+    <div class="col-sm-8 col-sm-offset-2">
+        <h2>Créer un projet</h2>
+
+        <div role="form" class="form-horizontal">
+            <fieldset>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3 control-group">
+                            <label for="name" class="control-label">Nom du projet</label>
+
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="name" name="name"
+                                       placeholder="Anniversaire de ..." ng-model="project.name"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 control-group">
+                            <label for="author" class="control-label">Créateur</label>
+
+                            <div class="input-group">
+                                <input id="author" class="form-control" type="text" name="author"
+                                       placeholder="moi" ng-model="project.author"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 control-group">
+                            <label for="email" class="control-label">Addresse e-mail</label>
+
+                            <div class="input-group">
+                                <span class="input-group-addon">@</span>
+                                <input id="email" class="form-control" type="email" name="email"
+                                       placeholder="prenom.nom@exemple.net" ng-model="project.mail"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8 control-group">
+                            <label for="description" class="control-label">Description</label>
+
+                            <div class="input-group">
+                                    <textarea type="text" class="form-control" id="description" name="description"
+                                              placeholder="Description..." ng-model="project.description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-action">
+                    <button ng-click="project.create()" class="btn btn-primary">Créer</button>
+                </div>
+            </fieldset>
+        </div><!-- form -->
+    </div>
+</div>
