@@ -1,9 +1,10 @@
-package net.bons.commptes.integration;
+package net.bons.commptes.cqrs.command;
 
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
+import net.bons.commptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

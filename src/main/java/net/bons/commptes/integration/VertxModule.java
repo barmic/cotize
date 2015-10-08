@@ -10,14 +10,15 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import net.bons.commptes.Cotize;
+import net.bons.commptes.cqrs.command.CreateProject;
+import net.bons.commptes.cqrs.query.GetProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 
 @Module(
-    injects = Cotize.class,
-    library = true
+    injects = Cotize.class
 )
 public class VertxModule {
   private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
@@ -75,6 +76,7 @@ public class VertxModule {
     config.put("useObjectId", true);
 
     MongoClient mongoClient = MongoClient.createShared(vertx, config);
+    // TODO
     mongoClient.createCollection("CotizeEvents", res -> {
       if (res.succeeded()) {
         LOG.info("Created ok!");
@@ -83,5 +85,15 @@ public class VertxModule {
       }
     });
     return mongoClient;
+  }
+
+  @Provides
+  Configuration provideConfiguration() {
+    return new Configuration();
+  }
+
+  @Provides
+  Cotize provideCotize(Configuration configuration, Vertx vertx, Router router) {
+    return new Cotize(vertx, router, configuration);
   }
 }
