@@ -33,7 +33,8 @@ function ($http, $scope, cotizeProjectService) {
 cotizeControllers.controller('cotizeProject', ['$http', '$scope', 'cotizeProjectService', '$routeParams',
 function ($http, $scope, cotizeProjectService, $routeParams) {
     // App session information
-    $scope.project = {};
+    $scope.project = {
+    };
 
     cotizeProjectService.loadProject($routeParams.projectId)
             .success(function (data) {

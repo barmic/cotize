@@ -30,8 +30,6 @@ public class VertxModule {
   Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject) {
     Router router = Router.router(vertx);
 
-    router.get("/*").handler(staticHandler);
-
     router.route().handler(BodyHandler.create());
 
     router.post("/api/project").handler(createProject);
@@ -39,11 +37,15 @@ public class VertxModule {
     router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
     router.get("/api/project/:projectId").handler(getProject);
 
+    router.post("/api/project/:projectId/contrib").handler(createProject);
+
     router.route("/api/*").handler(event -> {
       HttpServerResponse response = event.response();
       response.putHeader("content-type", "application/json");
       response.end(event.<String>get("body"));
     });
+
+    router.get("/*").handler(staticHandler);
 
     return router;
   }

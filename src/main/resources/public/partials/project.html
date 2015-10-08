@@ -3,8 +3,8 @@
   copyright 2014 Michel Barret <michel.barret@gmail.com>
 -->
 <div id="project" class="row col-sm-8 col-sm-offset-2">
-    <h2>{{project.name}}</h2>
-    <p>{{project.description}}</p>
+    <h2>{{project.content.name}}</h2>
+    <p>{{project.content.description}}</p>
 
     <!--[% IF user %]-->
     <!--<div class="alert alert-success" role="alert">-->
@@ -16,7 +16,7 @@
     <!--[% END %]-->
 
     <h3>Contributions</h3>
-    <p>Le projet a déjà réunis {{project.amount}} € !</p>
+    <p>Le projet a déjà réunis {{project.content.amount}} € !</p>
     <!--[% IF project.see_contributors %]-->
     <!--<p>La liste des participants est :</p>-->
     <!--<ul>-->
@@ -26,7 +26,7 @@
     <!--</ul>-->
     <!--[% END %]-->
 
-    <div class="alert alert-success [% success %]" role="alert">
+    <div class="alert alert-success [% success %]" role="alert" ng-show="contribution.state">
         Merci pour votre contribution !</br>
         Vous pouvez éditer celle-ci avec le lien suivant !
     </div>

@@ -2,7 +2,6 @@ package net.bons.commptes.integration;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
@@ -30,7 +29,7 @@ public class GetProject implements Handler<RoutingContext> {
 
     mongoClient.find("CotizeEvents", query, res -> {
       if (res.succeeded()) {
-        routingContext.put("body", computeProject(res));
+        routingContext.put("body", computeProject(res).toString());
       }
       else {
         LOG.error(res.cause().getLocalizedMessage());
@@ -46,10 +45,10 @@ public class GetProject implements Handler<RoutingContext> {
   private JsonObject computeProject(AsyncResult<List<JsonObject>> res) {
     JsonObject project = new JsonObject();
     for (JsonObject event : res.result()) {
-      Event type = (Event) event.getValue("type");
+      Event type = Event.valueOf(event.getString("type"));
       project = type.compute(project, event);
     }
-    LOG.info("Result {}", project);
+    LOG.info("Result {}", project.toString());
     return project;
   }
 }
