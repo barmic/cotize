@@ -45,6 +45,7 @@ public class CreateProject implements Handler<RoutingContext> {
     project.put("mail", bodyAsJson.getString("mail"));
     project.put("date", new Date().getTime());
     project.put("admin", generateRandomString(12));
+    project.put("projectId", generateRandomString(12));
     project.put("type", Event.CREATE);
     return project;
   }

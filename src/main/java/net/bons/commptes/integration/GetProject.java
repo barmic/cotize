@@ -1,5 +1,6 @@
 package net.bons.commptes.integration;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
@@ -7,6 +8,8 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class GetProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
@@ -23,12 +26,11 @@ public class GetProject implements Handler<RoutingContext> {
     String projectId = routingContext.request().getParam("projectId");
     String adminPass = routingContext.request().getParam("adminPass");
 
-    JsonObject query = new JsonObject().put("_id", projectId);
+    JsonObject query = new JsonObject().put("projectId", projectId);
 
-    mongoClient.findOne("CotizeEvents", query, null, res -> {
+    mongoClient.find("CotizeEvents", query, res -> {
       if (res.succeeded()) {
-        LOG.info("Result {}", res.result().toString());
-        routingContext.put("body", res.result().toString());
+        routingContext.put("body", computeProject(res));
       }
       else {
         LOG.error(res.cause().getLocalizedMessage());
@@ -39,5 +41,15 @@ public class GetProject implements Handler<RoutingContext> {
     });
 
     LOG.info("projectId : {}; adminPass : {}", projectId, adminPass);
+  }
+
+  private JsonObject computeProject(AsyncResult<List<JsonObject>> res) {
+    JsonObject project = new JsonObject();
+    for (JsonObject event : res.result()) {
+      Event type = (Event) event.getValue("type");
+      project = type.compute(project, event);
+    }
+    LOG.info("Result {}", project);
+    return project;
   }
 }
