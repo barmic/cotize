@@ -9,15 +9,24 @@ import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GetProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
+
+  @FunctionalInterface
+  private interface Compute {
+    JsonObject apply(JsonObject current, JsonObject event);
+  }
+
+  private EnumMap<Event, Compute> computers = new EnumMap<>(Event.class);
 
   private MongoClient mongoClient;
 
   public GetProject(MongoClient mongoClient) {
     this.mongoClient = mongoClient;
+    computers.put(Event.CREATE, this::computeCreateEvent);
   }
 
   @Override
@@ -47,9 +56,29 @@ public class GetProject implements Handler<RoutingContext> {
     JsonObject project = new JsonObject();
     for (JsonObject event : res.result()) {
       Event type = Event.valueOf(event.getString("type"));
-      project = type.compute(project, event);
+      project = computers.get(type).apply(project, event);
     }
     LOG.info("Result {}", project.toString());
+    return project;
+  }
+
+  /**
+   * For CREATE event we keep the fields : "name", "author", "description", "mail", "date", "admin", "projectId"
+   * and set the amont to 0
+   * @param current not used (can be null)
+   * @param createEvent data of CREATE event
+   * @return the project result of this creation
+   */
+  private JsonObject computeCreateEvent(JsonObject current, JsonObject createEvent) {
+    Collection<String> fields = Arrays.asList("name", "author", "description", "mail", "date", "admin", "projectId");
+    Map<String, Object> datas = createEvent.stream()
+                                     .filter(entry -> fields.contains(entry.getKey()))
+                                     .collect(Collectors.toMap(
+                                         Map.Entry<String, Object>::getKey,
+                                         Map.Entry<String, Object>::getValue
+                                     ));
+    JsonObject project = new JsonObject(datas);
+    project.put("amount", 0);
     return project;
   }
 }

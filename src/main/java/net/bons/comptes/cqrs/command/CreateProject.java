@@ -1,5 +1,6 @@
 package net.bons.comptes.cqrs.command;
 
+import com.google.common.collect.ImmutableSet;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -8,6 +9,7 @@ import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Random;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 public class CreateProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(CreateProject.class);
+  private final Collection<String> fields = ImmutableSet.of("name", "author", "description", "mail", "date", "admin",
+      "projectId");
   private final MongoClient mongoClient;
   private final Random random;
 
@@ -42,6 +46,7 @@ public class CreateProject implements Handler<RoutingContext> {
 
   private JsonObject valideAndNormalize(JsonObject bodyAsJson) {
     Map<String, Object> map = bodyAsJson.stream()
+                                        .filter(entry -> fields.contains(entry.getKey()))
                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     JsonObject project = new JsonObject(map);
     project.put("date", new Date().getTime());

@@ -9,7 +9,6 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import net.bons.comptes.Cotize;
 import net.bons.comptes.cqrs.command.CreateProject;
 import net.bons.comptes.cqrs.query.GetProject;
 import org.slf4j.Logger;
@@ -17,14 +16,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 
-@Module(
-    injects = Cotize.class
-)
+@Module
 public class VertxModule {
   private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
+
+  private final Vertx vertx;
+
+  public VertxModule(Vertx vertx) {
+    this.vertx = vertx;
+  }
+
   @Provides
   Vertx provideVertx() {
-    return Vertx.vertx();
+    return vertx;
   }
 
   @Provides
@@ -90,10 +94,5 @@ public class VertxModule {
   @Provides
   Configuration provideConfiguration() {
     return new Configuration();
-  }
-
-  @Provides
-  Cotize provideCotize(Configuration configuration, Vertx vertx, Router router) {
-    return new Cotize(vertx, router, configuration);
   }
 }
