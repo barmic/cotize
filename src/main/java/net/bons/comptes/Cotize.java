@@ -1,11 +1,11 @@
-package net.bons.commptes;
+package net.bons.comptes;
 
 import dagger.ObjectGraph;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
-import net.bons.commptes.integration.Configuration;
-import net.bons.commptes.integration.VertxModule;
+import net.bons.comptes.integration.Configuration;
+import net.bons.comptes.integration.VertxModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +29,7 @@ public class Cotize extends AbstractVerticle {
     cotize.start();
   }
 
+  @Override
   public void start() {
     vertx.createHttpServer()
          .requestHandler(router::accept)

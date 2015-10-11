@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="net.bons.commptes.integration" level="DEBUG" additivity="false">
+    <logger name="net.bons.comptes.integration" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 

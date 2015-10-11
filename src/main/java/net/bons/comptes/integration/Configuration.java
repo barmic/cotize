@@ -1,4 +1,4 @@
-package net.bons.commptes.integration;
+package net.bons.comptes.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

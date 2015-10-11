@@ -1,15 +1,17 @@
-package net.bons.commptes.cqrs.command;
+package net.bons.comptes.cqrs.command;
 
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
-import net.bons.commptes.cqrs.Event;
+import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class CreateProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(CreateProject.class);
@@ -39,11 +41,9 @@ public class CreateProject implements Handler<RoutingContext> {
   }
 
   private JsonObject valideAndNormalize(JsonObject bodyAsJson) {
-    JsonObject project = new JsonObject();
-    project.put("name", bodyAsJson.getString("name"));
-    project.put("author", bodyAsJson.getString("author"));
-    project.put("description", bodyAsJson.getString("description"));
-    project.put("mail", bodyAsJson.getString("mail"));
+    Map<String, Object> map = bodyAsJson.stream()
+                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    JsonObject project = new JsonObject(map);
     project.put("date", new Date().getTime());
     project.put("admin", generateRandomString(12));
     project.put("projectId", generateRandomString(12));

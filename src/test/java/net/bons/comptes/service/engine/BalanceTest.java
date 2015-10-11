@@ -1,14 +1,11 @@
-package net.bons.commptes.service.engine;
+package net.bons.comptes.service.engine;
 
-import net.bons.commptes.service.model.Deal;
-import net.bons.commptes.service.model.RawProject;
+import net.bons.comptes.service.model.Deal;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static org.testng.Assert.*;
 
 /**
  * Created by michel on 15/09/15.

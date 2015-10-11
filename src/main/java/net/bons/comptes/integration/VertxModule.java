@@ -1,4 +1,4 @@
-package net.bons.commptes.integration;
+package net.bons.comptes.integration;
 
 import dagger.Module;
 import dagger.Provides;
@@ -9,9 +9,9 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import net.bons.commptes.Cotize;
-import net.bons.commptes.cqrs.command.CreateProject;
-import net.bons.commptes.cqrs.query.GetProject;
+import net.bons.comptes.Cotize;
+import net.bons.comptes.cqrs.command.CreateProject;
+import net.bons.comptes.cqrs.query.GetProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

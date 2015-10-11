@@ -1,12 +1,9 @@
-package net.bons.commptes.service.model;
+package net.bons.comptes.service.model;
 
 /*
  * Licence Public Barmic
  * copyright 2014 Michel Barret <michel.barret@gmail.com>
  */
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
 import java.util.Date;

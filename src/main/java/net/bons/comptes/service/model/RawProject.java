@@ -1,9 +1,6 @@
-package net.bons.commptes.service.model;
+package net.bons.comptes.service.model;
 
 import com.google.common.collect.Lists;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 
 import java.util.Collection;
 import java.util.Collections;

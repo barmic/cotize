@@ -1,4 +1,4 @@
-package net.bons.commptes.service.engine;
+package net.bons.comptes.service.engine;
 
 /*
  * Licence Public Barmic
@@ -7,8 +7,8 @@ package net.bons.commptes.service.engine;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
-import net.bons.commptes.service.model.Deal;
-import net.bons.commptes.service.model.RawProject;
+import net.bons.comptes.service.model.Deal;
+import net.bons.comptes.service.model.RawProject;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package net.bons.commptes.service.model;
+package net.bons.comptes.service.model;
 
 public class AnonimizedProject implements Project {
     private int amount;

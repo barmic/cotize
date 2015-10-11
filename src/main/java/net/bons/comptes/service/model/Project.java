@@ -1,4 +1,4 @@
-package net.bons.commptes.service.model;
+package net.bons.comptes.service.model;
 
 /**
  * Created by michel on 03/05/15.

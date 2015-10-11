@@ -1,4 +1,4 @@
-package net.bons.commptes.cqrs;
+package net.bons.comptes.cqrs;
 
 import io.vertx.core.json.JsonObject;
 
