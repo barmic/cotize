@@ -9,6 +9,7 @@ import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ public class GetProject implements Handler<RoutingContext> {
 
   private MongoClient mongoClient;
 
+  @Inject
   public GetProject(MongoClient mongoClient) {
     this.mongoClient = mongoClient;
     computers.put(Event.CREATE, this::computeCreateEvent);

@@ -2,6 +2,7 @@ package net.bons.comptes.cqrs.command;
 
 import com.google.common.collect.ImmutableSet;
 import io.vertx.core.Handler;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
@@ -9,6 +10,7 @@ import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -21,9 +23,12 @@ public class CreateProject implements Handler<RoutingContext> {
       "projectId");
   private final MongoClient mongoClient;
   private final Random random;
+  private final EventBus eventBus;
 
-  public CreateProject(MongoClient mongoClient) {
+  @Inject
+  public CreateProject(MongoClient mongoClient, EventBus eventBus) {
     this.mongoClient = mongoClient;
+    this.eventBus = eventBus;
     this.random = new Random();
   }
 

@@ -3,6 +3,7 @@ package net.bons.comptes.integration;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -63,16 +64,6 @@ public class VertxModule {
   }
 
   @Provides
-  CreateProject provideCreateProject(MongoClient mongoClient) {
-    return new CreateProject(mongoClient);
-  }
-
-  @Provides
-  GetProject provideGetProject(MongoClient mongoClient) {
-    return new GetProject(mongoClient);
-  }
-
-  @Provides
   @Singleton
   MongoClient provideMongoClient(Vertx vertx) {
     JsonObject config = new JsonObject();
@@ -92,7 +83,8 @@ public class VertxModule {
   }
 
   @Provides
-  Configuration provideConfiguration() {
-    return new Configuration();
+  @Singleton
+  EventBus provideEventBus(Vertx vertx) {
+    return vertx.eventBus();
   }
 }
