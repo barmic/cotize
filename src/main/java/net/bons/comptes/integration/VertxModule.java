@@ -1,5 +1,8 @@
 package net.bons.comptes.integration;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
