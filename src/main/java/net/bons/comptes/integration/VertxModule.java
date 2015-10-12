@@ -32,18 +32,20 @@ public class VertxModule {
     return vertx;
   }
 
+  // TODO use named inject ?
   @Provides
   Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject) {
     Router router = Router.router(vertx);
 
     router.route().handler(BodyHandler.create());
 
+    // command
     router.post("/api/project").handler(createProject);
+    router.post("/api/project/:projectId/contrib").handler(createProject);
 
+    // query
     router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
     router.get("/api/project/:projectId").handler(getProject);
-
-    router.post("/api/project/:projectId/contrib").handler(createProject);
 
     router.route("/api/*").handler(event -> {
       HttpServerResponse response = event.response();

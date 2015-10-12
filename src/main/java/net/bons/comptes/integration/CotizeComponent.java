@@ -13,5 +13,4 @@ import javax.inject.Singleton;
 public interface CotizeComponent {
   void inject(Cotize cotize);
   Router router();
-  Configuration configuration();
 }
