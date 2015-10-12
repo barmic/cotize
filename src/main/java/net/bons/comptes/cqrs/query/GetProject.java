@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class GetProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
   private static final Collection<String> publicFields = ImmutableSet.of("amount", "author", "date", "name",
-      "projectId", "description");
+      "projectId", "description", "contributions");
 
   private MongoClient mongoClient;
   private LoadProject loadProject;

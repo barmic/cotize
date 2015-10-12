@@ -1,8 +1,5 @@
 package net.bons.comptes.integration;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
@@ -13,6 +10,7 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import net.bons.comptes.cqrs.command.Contribute;
 import net.bons.comptes.cqrs.command.CreateProject;
 import net.bons.comptes.cqrs.query.GetProject;
 import org.slf4j.Logger;
@@ -37,14 +35,15 @@ public class VertxModule {
 
   // TODO use named inject ?
   @Provides
-  Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject) {
+  Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject,
+                       Contribute contribute) {
     Router router = Router.router(vertx);
 
     router.route().handler(BodyHandler.create());
 
     // command
     router.post("/api/project").handler(createProject);
-    router.post("/api/project/:projectId/contrib").handler(createProject);
+    router.post("/api/project/:projectId/contrib").handler(contribute);
 
     // query
     router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
