@@ -36,7 +36,7 @@ public class GetProject implements Handler<RoutingContext> {
       } else if (!Objects.equals(adminPass, project.getString("admin"))) {
         // TODO error
       }
-      routingContext.put("body", project.toString());
+      routingContext.put("body", project);
     }
 
     LOG.info("projectId : {}; adminPass : {}", adminPass);

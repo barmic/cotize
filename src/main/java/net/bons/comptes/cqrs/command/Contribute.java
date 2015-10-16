@@ -42,7 +42,7 @@ public class Contribute implements Handler<RoutingContext> {
       } else {
         LOG.info("Save success : {}", event1.result());
       }
-      routingContext.put("body", contribution.toString());
+      routingContext.put("body", contribution);
       routingContext.next();
     });
   }

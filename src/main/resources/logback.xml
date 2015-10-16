@@ -6,11 +6,11 @@
         </encoder>
     </appender>
 
-    <logger name="net.bons.comptes.integration" level="DEBUG" additivity="false">
+    <logger name="net.bons.comptes" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="INFO">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
 

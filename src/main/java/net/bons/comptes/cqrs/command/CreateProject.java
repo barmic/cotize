@@ -44,7 +44,7 @@ public class CreateProject implements Handler<RoutingContext> {
       } else {
         LOG.info("Save success : {}", event1.result());
       }
-      event.put("body", project.toString());
+      event.put("body", project);
       event.next();
     });
   }

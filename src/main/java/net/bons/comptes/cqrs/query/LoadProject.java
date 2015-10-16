@@ -1,7 +1,9 @@
 package net.bons.comptes.cqrs.query;
 
 import com.google.common.collect.ImmutableSet;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -23,25 +25,30 @@ public class LoadProject implements Handler<RoutingContext> {
   private static final Collection<String> fieldsContributeEvent = ImmutableSet.of("author", "mail", "date", "amount");
 
   private MongoClient mongoClient;
+  private Vertx vertx;
 
   @Override
-  public void handle(RoutingContext event) {
-    final String projectId = event.request().getParam("projectId");
+  public void handle(RoutingContext routingContext) {
+    final String projectId = routingContext.request().getParam("projectId");
 
     JsonObject query = new JsonObject().put("projectId", projectId);
 
     mongoClient.find("CotizeEvents", query, res -> {
       if (res.succeeded()) {
         List<JsonObject> results = res.result();
-        if (!results.isEmpty()) {
-          JsonObject project = load(results);
-          event.put("project", project);
+        if (results.isEmpty()) {
+          LOG.error(res.cause().getLocalizedMessage());
+          routingContext.fail(res.cause());
+          routingContext.next();
         }
-      } else {
-        LOG.error(res.cause().getLocalizedMessage());
-        event.fail(res.cause());
+        vertx.executeBlocking(
+            (Future<JsonObject> future) -> future.complete(load(results)),
+            result -> {
+              routingContext.put("project", result.result());
+              routingContext.next();
+            }
+        );
       }
-      event.next();
     });
   }
 
@@ -52,8 +59,9 @@ public class LoadProject implements Handler<RoutingContext> {
   private Map<Event, Compute> computers = new EnumMap<>(Event.class);
 
   @Inject
-  public LoadProject(MongoClient mongoClient) {
+  public LoadProject(MongoClient mongoClient, Vertx vertx) {
     this.mongoClient = mongoClient;
+    this.vertx = vertx;
     computers.put(Event.CREATE, this::computeCreateEvent);
     computers.put(Event.CONTRIBUTE, this::computeContributeEvent);
   }

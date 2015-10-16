@@ -54,7 +54,7 @@ public class VertxModule {
     router.route("/api/*").handler(event -> {
       HttpServerResponse response = event.response();
       response.putHeader("content-type", "application/json");
-      response.end(event.<String>get("body"));
+      response.end(event.<JsonObject>get("body").toString());
     });
 
     router.get("/*").handler(staticHandler);
