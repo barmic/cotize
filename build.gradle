@@ -6,7 +6,7 @@ sourceCompatibility = 1.8
 
 mainClassName = "net.bons.comptes.Cotize"
 
-//applicationDefaultJvmArgs = ["-Dvertx.cacheDirBase=${buildDir}/.vertx"]
+applicationDefaultJvmArgs = ["-Dvertx.cacheDirBase=${buildDir}/vertx-cache"]
 
 jar {
     manifest {
@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     def daggerVersion = '2.0.1'
-    def vertxVersion = '3.0.0'
+    def vertxVersion = '3.1.0'
     compile(
         [group: 'com.google.dagger', name: 'dagger', version: daggerVersion],
 //        [group: 'com.google.dagger', name: 'dagger-producers', version: daggerVersion],
@@ -41,7 +41,9 @@ dependencies {
         [group: 'org.projectlombok', name: 'lombok', version: '1.16.2'],
         [group: 'io.vertx', name: 'vertx-core', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-codegen', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-mongo-client', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-mail-client', version: vertxVersion],
         [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'],
         [group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.3'],
 

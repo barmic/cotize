@@ -3,7 +3,6 @@ package net.bons.comptes.cqrs.query;
 import com.google.common.collect.ImmutableSet;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,43 +18,33 @@ public class GetProject implements Handler<RoutingContext> {
   private static final Collection<String> publicFields = ImmutableSet.of("amount", "author", "date", "name",
       "projectId", "description", "contributions");
 
-  private MongoClient mongoClient;
-  private LoadProject loadProject;
-
   @Inject
-  public GetProject(MongoClient mongoClient, LoadProject loadProject) {
-    this.loadProject = loadProject;
-    this.mongoClient = mongoClient;
+  public GetProject() {
   }
 
   @Override
   public void handle(RoutingContext routingContext) {
     LOG.info("Get Project");
-    final String projectId = routingContext.request().getParam("projectId");
     final String adminPass = routingContext.request().getParam("adminPass");
 
-    JsonObject query = new JsonObject().put("projectId", projectId);
+    JsonObject project = routingContext.get("project");
+    if (project == null) {
+      routingContext.fail(404);
+    } else {
+      if (adminPass == null) {
+        project = filter(project);
+      } else if (!Objects.equals(adminPass, project.getString("admin"))) {
+        // TODO error
+      }
+      routingContext.put("body", project.toString());
+    }
 
-    mongoClient.find("CotizeEvents", query, res -> {
-          if (res.succeeded()) {
-            JsonObject project = loadProject.load(res.result());
-            if (adminPass == null) {
-              project = filter(project);
-            } else if (!Objects.equals(adminPass, project.getString("admin"))) {
-              // TODO error
-            }
-            routingContext.put("body", project.toString());
-          } else {
-            LOG.error(res.cause().getLocalizedMessage());
-            routingContext.put("body", "");
-          }
-          routingContext.next();
-        });
-
-    LOG.info("projectId : {}; adminPass : {}", projectId, adminPass);
+    LOG.info("projectId : {}; adminPass : {}", adminPass);
+    routingContext.next();
   }
 
   private JsonObject filter(JsonObject project) {
+    // TODO filter the contribution
     Map<String, Object> collect = project.stream()
                                          .filter(entry -> publicFields.contains(entry.getKey()))
                                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

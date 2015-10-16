@@ -29,9 +29,11 @@ public class Contribute implements Handler<RoutingContext> {
 
   @Override
   public void handle(RoutingContext routingContext) {
-    final String projectId = routingContext.request().getParam("projectId");
-    JsonObject contribution = valideAndNormalize(routingContext.getBodyAsJson(), projectId);
-
+    final JsonObject project = routingContext.get("project");
+    if (project == null) {
+      routingContext.fail(400);
+    }
+    JsonObject contribution = valideAndNormalize(routingContext.getBodyAsJson(), project.getString("projectId"));
 
     mongoClient.save("CotizeEvents", contribution, event1 -> {
       if (event1.failed()) {

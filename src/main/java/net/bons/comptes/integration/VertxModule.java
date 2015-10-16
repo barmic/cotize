@@ -13,6 +13,7 @@ import io.vertx.ext.web.handler.StaticHandler;
 import net.bons.comptes.cqrs.command.Contribute;
 import net.bons.comptes.cqrs.command.CreateProject;
 import net.bons.comptes.cqrs.query.GetProject;
+import net.bons.comptes.cqrs.query.LoadProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +37,14 @@ public class VertxModule {
   // TODO use named inject ?
   @Provides
   Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject,
-                       Contribute contribute) {
+                       Contribute contribute, LoadProject loadProject) {
     Router router = Router.router(vertx);
 
     router.route().handler(BodyHandler.create());
 
     // command
     router.post("/api/project").handler(createProject);
+    router.route("/api/project/:projectId.*").handler(loadProject);
     router.post("/api/project/:projectId/contrib").handler(contribute);
 
     // query

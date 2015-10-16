@@ -1,8 +1,11 @@
 package net.bons.comptes.cqrs.query;
 
 import com.google.common.collect.ImmutableSet;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +16,34 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class LoadProject {
+public class LoadProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(LoadProject.class);
-  private static final Collection<String> fieldsCreateEvent = ImmutableSet.of("name", "author", "description", "mail", "date",
-      "admin", "projectId", "contributions");
+  private static final Collection<String> fieldsCreateEvent = ImmutableSet.of("name", "author", "description", "mail",
+      "date", "admin", "projectId", "contributions");
   private static final Collection<String> fieldsContributeEvent = ImmutableSet.of("author", "mail", "date", "amount");
+
+  private MongoClient mongoClient;
+
+  @Override
+  public void handle(RoutingContext event) {
+    final String projectId = event.request().getParam("projectId");
+
+    JsonObject query = new JsonObject().put("projectId", projectId);
+
+    mongoClient.find("CotizeEvents", query, res -> {
+      if (res.succeeded()) {
+        List<JsonObject> results = res.result();
+        if (!results.isEmpty()) {
+          JsonObject project = load(results);
+          event.put("project", project);
+        }
+      } else {
+        LOG.error(res.cause().getLocalizedMessage());
+        event.fail(res.cause());
+      }
+      event.next();
+    });
+  }
 
   @FunctionalInterface
   private interface Compute {
@@ -26,7 +52,8 @@ public class LoadProject {
   private Map<Event, Compute> computers = new EnumMap<>(Event.class);
 
   @Inject
-  public LoadProject() {
+  public LoadProject(MongoClient mongoClient) {
+    this.mongoClient = mongoClient;
     computers.put(Event.CREATE, this::computeCreateEvent);
     computers.put(Event.CONTRIBUTE, this::computeContributeEvent);
   }
