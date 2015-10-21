@@ -1,0 +1,10 @@
+{
+  "http-port": 5000,
+  "mail" : {
+    "hostname": "mail.example.com",
+    "port": 587,
+    "tls": "REQUIRED",
+    "username": "user",
+    "password": "password"
+  }
+}

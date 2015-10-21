@@ -24,11 +24,13 @@ public class CreateProject implements Handler<RoutingContext> {
   private final MongoClient mongoClient;
   private final Random random;
   private final EventBus eventBus;
+//  private final MailClient mailClient;
 
   @Inject
   public CreateProject(MongoClient mongoClient, EventBus eventBus) {
     this.mongoClient = mongoClient;
     this.eventBus = eventBus;
+//    this.mailClient = mailClient;
     this.random = new Random();
   }
 
@@ -41,11 +43,24 @@ public class CreateProject implements Handler<RoutingContext> {
       if (event1.failed()) {
         Throwable cause = event1.cause();
         LOG.error("Failed to store project : {} ({})", cause.getLocalizedMessage(), cause.getClass().toString());
+        event.fail(cause);
       } else {
         LOG.info("Save success : {}", event1.result());
+        event.put("body", project);
+//        eventBus.send("create-project", project);
+//        MailMessage message = new MailMessage();
+//        message.setFrom("michel.barret@gmail.com");
+//        message.setTo("yoko.java@gmail.com");
+//        message.setText("this is the plain message text");
+//        mailClient.sendMail(message, event2 -> {
+//          if (event2.succeeded()) {
+//            LOG.info(event2.result().toString());
+//          } else {
+//            LOG.error("", event2.cause());
+//          }
+//        });
+        event.next();
       }
-      event.put("body", project);
-      event.next();
     });
   }
 

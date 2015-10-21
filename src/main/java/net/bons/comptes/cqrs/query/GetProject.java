@@ -2,6 +2,7 @@ package net.bons.comptes.cqrs.query;
 
 import com.google.common.collect.ImmutableSet;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
@@ -48,6 +49,10 @@ public class GetProject implements Handler<RoutingContext> {
     Map<String, Object> collect = project.stream()
                                          .filter(entry -> publicFields.contains(entry.getKey()))
                                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    JsonArray contributions = (JsonArray) collect.get("contributions");
+    if (contributions != null) {
+      contributions.stream().forEach(obj -> ((JsonObject) obj).remove("mail"));
+    }
     return new JsonObject(collect);
   }
 }

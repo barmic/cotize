@@ -6,7 +6,7 @@ sourceCompatibility = 1.8
 
 mainClassName = "net.bons.comptes.Cotize"
 
-applicationDefaultJvmArgs = ["-Dvertx.cacheDirBase=${buildDir}/vertx-cache -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory"]
+applicationDefaultJvmArgs = ["-Dvertx.cacheDirBase=${buildDir}/vertx-cache -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory -config /home/michel/cotize.json"]
 
 jar {
     manifest {

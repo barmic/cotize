@@ -1,6 +1,7 @@
 package net.bons.comptes.integration;
 
 import dagger.Component;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
 import net.bons.comptes.Cotize;
 

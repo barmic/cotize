@@ -6,6 +6,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mail.MailClient;
+import io.vertx.ext.mail.MailConfig;
+import io.vertx.ext.mail.StartTLSOptions;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -24,9 +27,11 @@ public class VertxModule {
   private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
 
   private final Vertx vertx;
+  private final JsonObject config;
 
-  public VertxModule(Vertx vertx) {
+  public VertxModule(Vertx vertx, JsonObject config) {
     this.vertx = vertx;
+    this.config = config;
   }
 
   @Provides
@@ -54,7 +59,12 @@ public class VertxModule {
     router.route("/api/*").handler(event -> {
       HttpServerResponse response = event.response();
       response.putHeader("content-type", "application/json");
-      response.end(event.<JsonObject>get("body").toString());
+      JsonObject body = event.<JsonObject>get("body");
+      if (body != null) {
+        response.end(body.toString());
+      } else {
+        response.end();
+      }
     });
 
     router.get("/*").handler(staticHandler);
@@ -86,6 +96,20 @@ public class VertxModule {
       }
     });
     return mongoClient;
+  }
+
+  @Provides
+  @Singleton
+  MailClient provideMailClient() {
+    MailConfig config = new MailConfig();
+    JsonObject userConfig = this.config.getJsonObject("user").getJsonObject("mail");
+    JsonObject mailConfig = this.config.getJsonObject("internal").getJsonObject("mail");
+    config.setHostname(userConfig.getString("hostname", mailConfig.getString("hostname")));
+    config.setPort(userConfig.getInteger("port", mailConfig.getInteger("port")));
+    config.setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))));
+    config.setUsername(userConfig.getString("username", mailConfig.getString("username")));
+    config.setPassword(userConfig.getString("password", mailConfig.getString("password")));
+    return MailClient.createNonShared(vertx, config);
   }
 
   @Provides
