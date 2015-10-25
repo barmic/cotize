@@ -5,6 +5,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
+import net.bons.comptes.cqrs.command.StoreEvent;
 import net.bons.comptes.integration.DaggerCotizeComponent;
 import io.vertx.ext.web.Router;
 import net.bons.comptes.integration.CotizeComponent;
@@ -31,32 +32,6 @@ public class Cotize extends AbstractVerticle {
     vertx.deployVerticle(Cotize.class.getName());
   }
 
-  private static JsonObject loadUserConfig(String config) {
-    JsonObject result = null;
-    try {
-      Scanner in = new Scanner(Paths.get(config));
-      StringBuilder sb = new StringBuilder();
-      while (in.hasNextLine()) {
-        sb.append(in.nextLine());
-      }
-      result = new JsonObject(sb.toString());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return result;
-  }
-
-  private static JsonObject loadInternalConfig(String internalConfig) {
-    InputStream in = Cotize.class.getClassLoader()
-                                 .getResourceAsStream(internalConfig);
-    Scanner sc = new Scanner(in);
-    StringBuilder sb = new StringBuilder();
-    while (sc.hasNextLine()) {
-      sb.append(sc.nextLine());
-    }
-    return new JsonObject(sb.toString());
-  }
-
   @Override
   public void start() {
     CotizeComponent cotizeComponent = DaggerCotizeComponent.builder()
@@ -64,10 +39,13 @@ public class Cotize extends AbstractVerticle {
                                                            .build();
 
     Router router = cotizeComponent.router();
+    StoreEvent storeEvent = cotizeComponent.storeEvent();
+
+    vertx.eventBus().consumer("command.project", storeEvent::insertProject);
 
     vertx.createHttpServer()
          .requestHandler(router::accept)
-         .listen(config().getInteger("http-port", Integer.valueOf(System.getProperty("PORT", "5000"))));
+         .listen(getPort());
   }
 
   /**
@@ -75,13 +53,17 @@ public class Cotize extends AbstractVerticle {
    * Retrun the port configured by "PORT" variable environment or "PORT" java property or 5000.
    * @return the port
    */
-  public static int getPort() {
-    String port = System.getenv("PORT");
+  public int getPort() {
+    Integer port = config().getInteger("http-port");
     if (port == null) {
-      port = System.getProperty("PORT", "5000");
+      String portStr = System.getenv("PORT");
+      if (portStr == null) {
+        portStr = System.getProperty("PORT", "5000");
+      }
+      port = Integer.valueOf(portStr);
     }
 
     LOG.info("Listen on {}", port);
-    return Integer.valueOf(port);
+    return port;
   }
 }

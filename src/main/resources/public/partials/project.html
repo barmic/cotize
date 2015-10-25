@@ -32,20 +32,20 @@
     </div>
 
     <h3>Participez</h3>
-    <form action="[% project.public_hash %]" method="post" class="form-horizontal">
+    <div role="form" class="form-horizontal">
         <fieldset>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3 control-group">
                         <label for="username" class="control-label">Votre nom</label>
                         <div class="input-group">
-                            <input type="text" name="username" class="form-control" placeholder="nom" required />
+                            <input type="text" name="username" class="form-control" placeholder="nom" ng-model="contribution.author" required />
                         </div>
                     </div>
                     <div class="col-sm-3 control-group">
                         <label for="amount" class="control-label">Votre participation</label>
                         <div class="input-group">
-                            <input type="number" min="1" name="amount" class="form-control" placeholder="100" required />
+                            <input type="number" min="1" name="amount" class="form-control" placeholder="100" ng-model="contribution.amount" required />
                             <span class="input-group-addon">€</span>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                         <label for="email" class="control-label">Votre e-mail</label>
                         <div class="input-group">
                             <span class="input-group-addon">@</span>
-                            <input type="email" name="email" class="form-control" placeholder="nom.prenom@exemple.net" required />
+                            <input type="email" name="email" class="form-control" placeholder="nom.prenom@exemple.net" ng-model="contribution.mail" required />
                         </div>
                         <p>
                             Permet d'éditer votre contribution
@@ -62,10 +62,10 @@
                 </div>
                 <div class="row">
                     <div class="form-action">
-                        <button type="submit" class="btn btn-primary">Participer</button>
+                        <button ng-click="contribution.create()" type="submit" class="btn btn-primary">Participer</button>
                     </div>
                 </div>
             </div>
         </fieldset>
-    </form>
+    </div>
 </div>

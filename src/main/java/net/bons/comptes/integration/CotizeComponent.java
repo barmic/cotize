@@ -4,6 +4,7 @@ import dagger.Component;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
 import net.bons.comptes.Cotize;
+import net.bons.comptes.cqrs.command.StoreEvent;
 
 import javax.inject.Singleton;
 
@@ -14,4 +15,5 @@ import javax.inject.Singleton;
 public interface CotizeComponent {
   void inject(Cotize cotize);
   Router router();
+  StoreEvent storeEvent();
 }

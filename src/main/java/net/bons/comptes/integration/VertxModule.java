@@ -15,6 +15,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import net.bons.comptes.cqrs.command.Contribute;
 import net.bons.comptes.cqrs.command.CreateProject;
+import net.bons.comptes.cqrs.command.StoreEvent;
 import net.bons.comptes.cqrs.query.GetProject;
 import net.bons.comptes.cqrs.query.LoadProject;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import javax.inject.Singleton;
 @Module
 public class VertxModule {
   private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
+  private static final String EVENT_COLLECTION_NAME = "CotizeEvents";
 
   private final Vertx vertx;
   private final JsonObject config;
@@ -88,7 +90,7 @@ public class VertxModule {
 
     MongoClient mongoClient = MongoClient.createShared(vertx, config);
     // TODO
-    mongoClient.createCollection("CotizeEvents", res -> {
+    mongoClient.createCollection(EVENT_COLLECTION_NAME, res -> {
       if (res.succeeded()) {
         LOG.info("Created ok!");
       } else {
@@ -116,5 +118,11 @@ public class VertxModule {
   @Singleton
   EventBus provideEventBus(Vertx vertx) {
     return vertx.eventBus();
+  }
+
+  @Provides
+  @Singleton
+  StoreEvent provideStoreEvent(MongoClient mongoClient) {
+    return new StoreEvent(mongoClient, EVENT_COLLECTION_NAME);
   }
 }

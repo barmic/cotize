@@ -12,6 +12,10 @@ cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
         var query = serverBaseUrl + 'project/' + projectID;
         return $http.get(query);
     };
+    service.contribute = function (projectID, contribution) {
+        var query = serverBaseUrl + 'project/' + projectID + '/contribute';
+        return $http.post(query, contribution);
+    };
     return service;
     }
 ]);

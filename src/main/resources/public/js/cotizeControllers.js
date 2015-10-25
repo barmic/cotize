@@ -13,9 +13,6 @@ function ($http, $scope, cotizeProjectService) {
         url : window.document.URL.split('/')[2]
     };
 
-    /*
-     * Tag Service Service Call
-     */
     $scope.project.create = function () {
         cotizeProjectService.createProject($scope.project)
             .success(function (data) {
@@ -33,8 +30,13 @@ function ($http, $scope, cotizeProjectService) {
 cotizeControllers.controller('cotizeProject', ['$http', '$scope', 'cotizeProjectService', '$routeParams',
 function ($http, $scope, cotizeProjectService, $routeParams) {
     // App session information
-    $scope.project = {
+    $scope.contribution = {
+        "author": "",
+        "mail": "",
+        "amount": "",
+        "projectId": $routeParams.projectId
     };
+    $scope.project = {}
 
     cotizeProjectService.loadProject($routeParams.projectId)
             .success(function (data) {
@@ -47,4 +49,15 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         url : 'http://' + window.document.URL.split('/')[2]
     };
 
+    $scope.contribution.create = function () {
+        cotizeProjectService.contribute($routeParams.projectId, $scope.contribution)
+            .success(function (data) {
+                $scope.project.state = "created";
+                $scope.project.content = data;
+            })
+            .error(function (data, status) {
+                $scope.project.state = "error";
+                $scope.project.status = status;
+            });
+    };
 }]);

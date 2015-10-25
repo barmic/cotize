@@ -39,14 +39,22 @@ public class CreateProject implements Handler<RoutingContext> {
     JsonObject project = valideAndNormalize(event.getBodyAsJson());
     LOG.debug("New project {}", project);
 
-    mongoClient.save("CotizeEvents", project, event1 -> {
-      if (event1.failed()) {
-        Throwable cause = event1.cause();
-        LOG.error("Failed to store project : {} ({})", cause.getLocalizedMessage(), cause.getClass().toString());
-        event.fail(cause);
-      } else {
-        LOG.info("Save success : {}", event1.result());
-        event.put("body", project);
+
+    eventBus.<JsonObject>send("command.project", project, event1 -> {
+      if (event1.succeeded()) {
+        event.put("body", event1.result().body());
+      }
+      event.next();
+    });
+//    mongoClient.save("CotizeEvents", project, event1 -> {
+//      if (event1.failed()) {
+//        Throwable cause = event1.cause();
+//        LOG.error("Failed to store project : {} ({})", cause.getLocalizedMessage(), cause.getClass().toString());
+//        event.fail(cause);
+//      } else {
+//        LOG.info("Save success : {}", event1.result());
+//        event.put("body", project);
+
 //        eventBus.send("create-project", project);
 //        MailMessage message = new MailMessage();
 //        message.setFrom("michel.barret@gmail.com");
@@ -59,9 +67,8 @@ public class CreateProject implements Handler<RoutingContext> {
 //            LOG.error("", event2.cause());
 //          }
 //        });
-        event.next();
-      }
-    });
+//      }
+//    });
   }
 
   private JsonObject valideAndNormalize(JsonObject bodyAsJson) {
