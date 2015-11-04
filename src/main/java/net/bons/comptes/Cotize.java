@@ -42,6 +42,7 @@ public class Cotize extends AbstractVerticle {
     StoreEvent storeEvent = cotizeComponent.storeEvent();
 
     vertx.eventBus().consumer("command.project", storeEvent::insertProject);
+    vertx.eventBus().consumer("command.contribute", storeEvent::contributeProject);
 
     vertx.createHttpServer()
          .requestHandler(router::accept)

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
@@ -21,14 +20,12 @@ public class CreateProject implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(CreateProject.class);
   private final Collection<String> fields = ImmutableSet.of("name", "author", "description", "mail", "date", "admin",
       "projectId");
-  private final MongoClient mongoClient;
   private final Random random;
   private final EventBus eventBus;
 //  private final MailClient mailClient;
 
   @Inject
-  public CreateProject(MongoClient mongoClient, EventBus eventBus) {
-    this.mongoClient = mongoClient;
+  public CreateProject(EventBus eventBus) {
     this.eventBus = eventBus;
 //    this.mailClient = mailClient;
     this.random = new Random();
