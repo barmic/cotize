@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by michel on 15/09/15.
- */
 public class BalanceTest {
 
   @Test

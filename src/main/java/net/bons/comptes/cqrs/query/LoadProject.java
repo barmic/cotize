@@ -114,8 +114,8 @@ public class LoadProject implements Handler<RoutingContext> {
     return createEvent.stream()
                       .filter(entry -> fields.contains(entry.getKey()))
                       .collect(Collectors.toMap(
-                          Map.Entry<String, Object>::getKey,
-                          Map.Entry<String, Object>::getValue
+                          Map.Entry::getKey,
+                          Map.Entry::getValue
                       ));
   }
 }

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.Event;
 import org.slf4j.Logger;
@@ -20,22 +19,24 @@ import java.util.stream.Collectors;
  */
 public class Contribute implements Handler<RoutingContext> {
   private static final Logger LOG = LoggerFactory.getLogger(CreateProject.class);
-  private final Collection<String> fields = ImmutableSet.of("author", "mail", "amount", "projectId");
   private final EventBus eventBus;
+  private final ValidateEvent validateEvent;
 
   @Inject
   public Contribute(EventBus eventBus) {
     this.eventBus = eventBus;
+    validateEvent = new ValidateEvent(ImmutableSet.of("author", "mail", "amount", "projectId"));
   }
 
   @Override
   public void handle(RoutingContext routingContext) {
     final JsonObject project = routingContext.get("project");
     if (project == null) {
-      routingContext.fail(400);
+      routingContext.fail(404);
       return;
     }
-    JsonObject contribution = valideAndNormalize(routingContext.getBodyAsJson(), project.getString("projectId"));
+    JsonObject cleaned = validateEvent.validAndClean(routingContext.getBodyAsJson());
+    JsonObject contribution = normalize(cleaned, project.getString("projectId"));
 
     eventBus.<JsonObject>send("command.contribute", contribution, event1 -> {
       if (event1.succeeded()) {
@@ -45,14 +46,10 @@ public class Contribute implements Handler<RoutingContext> {
     });
   }
 
-  private JsonObject valideAndNormalize(JsonObject bodyAsJson, String projectId) {
-    Map<String, Object> map = bodyAsJson.stream()
-                                        .filter(entry -> fields.contains(entry.getKey()))
-                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    JsonObject project = new JsonObject(map);
-    project.put("projectId", projectId);
-    project.put("date", new Date().getTime());
-    project.put("type", Event.CONTRIBUTE);
-    return project;
+  private JsonObject normalize(JsonObject event, String projectId) {
+    event.put("projectId", projectId);
+    event.put("date", new Date().getTime());
+    event.put("type", Event.CONTRIBUTE);
+    return event;
   }
 }
