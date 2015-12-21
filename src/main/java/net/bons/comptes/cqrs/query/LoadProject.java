@@ -1,14 +1,13 @@
 package net.bons.comptes.cqrs.query;
 
 import com.google.common.collect.ImmutableSet;
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
-import net.bons.comptes.cqrs.Event;
+import net.bons.comptes.cqrs.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,36 +17,33 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class LoadProject implements Handler<RoutingContext> {
+public class LoadProject {
   private static final Logger LOG = LoggerFactory.getLogger(LoadProject.class);
   private static final Collection<String> fieldsCreateEvent = ImmutableSet.of("name", "author", "description", "mail",
       "date", "admin", "projectId", "contributions");
   private static final Collection<String> fieldsContributeEvent = ImmutableSet.of("author", "mail", "date", "amount");
 
   private MongoClient mongoClient;
-  private Vertx vertx;
 
-  @Override
-  public void handle(RoutingContext routingContext) {
-    final String projectId = routingContext.request().getParam("projectId");
+  @Inject
+  public LoadProject(MongoClient mongoClient) {
+    this.mongoClient = mongoClient;
+//    computers.put(Command.CREATE, this::computeCreateEvent);
+//    computers.put(Command.CONTRIBUTE, this::computeContributeEvent);
+  }
 
-    JsonObject query = new JsonObject().put("projectId", projectId);
+  public void loadProject(Message<String> messageProjectId) {
+    JsonObject query = new JsonObject().put("projectId", messageProjectId.body());
 
     mongoClient.find("CotizeEvents", query, res -> {
       if (res.succeeded()) {
         List<JsonObject> results = res.result();
         if (results.isEmpty()) {
           LOG.error(res.cause().getLocalizedMessage());
-          routingContext.fail(res.cause());
-          routingContext.next();
+          messageProjectId.fail(1, res.cause().getLocalizedMessage());
         }
-        vertx.executeBlocking(
-            (Future<JsonObject> future) -> future.complete(load(results)),
-            result -> {
-              routingContext.put("project", result.result());
-              routingContext.next();
-            }
-        );
+        JsonObject project = load(results);
+        messageProjectId.reply(project);
       }
     });
   }
@@ -56,21 +52,13 @@ public class LoadProject implements Handler<RoutingContext> {
   private interface Compute {
     JsonObject apply(JsonObject current, JsonObject event);
   }
-  private Map<Event, Compute> computers = new EnumMap<>(Event.class);
-
-  @Inject
-  public LoadProject(MongoClient mongoClient, Vertx vertx) {
-    this.mongoClient = mongoClient;
-    this.vertx = vertx;
-    computers.put(Event.CREATE, this::computeCreateEvent);
-    computers.put(Event.CONTRIBUTE, this::computeContributeEvent);
-  }
+  private Map<Command, Compute> computers;// = new EnumMap<>(Command.class);
 
   public JsonObject load(List<JsonObject> res) {
     JsonObject project = new JsonObject();
     for (JsonObject event : res) {
-      Event type = Event.valueOf(event.getString("type"));
-      project = computers.get(type).apply(project, event);
+//      Command type = Command.valueOf(event.getString("type"));
+//      project = computers.get(type).apply(project, event);
     }
     LOG.info("Result {}", project.toString());
     return project;

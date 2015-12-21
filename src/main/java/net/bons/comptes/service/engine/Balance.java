@@ -6,7 +6,6 @@ package net.bons.comptes.service.engine;
  */
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import net.bons.comptes.service.model.Deal;
 import net.bons.comptes.service.model.RawProject;
 
@@ -21,8 +20,11 @@ public class Balance {
      * key is name of account owner.
      * value is account (debt if negative).
      */
-    @Getter
     private Map<String, Integer> accounts;
+
+    public Map<String, Integer> getAccounts() {
+        return accounts;
+    }
 
     public Balance(RawProject project) {
         accounts = computeAccounts(project.getDeals());

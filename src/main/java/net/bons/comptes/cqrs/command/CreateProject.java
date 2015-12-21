@@ -1,60 +1,77 @@
 package net.bons.comptes.cqrs.command;
 
-import com.google.common.collect.ImmutableSet;
-import io.vertx.core.Handler;
-import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.RoutingContext;
-import net.bons.comptes.cqrs.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
-import javax.inject.Inject;
-import java.util.Date;
-import java.util.Random;
+public class CreateProject implements Command {
+  @NotNull
+  private String name;
+  @NotNull
+  private String author;
+  @NotNull
+  private String description;
+  @NotNull
+  private String mail;
 
-public class CreateProject implements Handler<RoutingContext> {
-  private static final Logger LOG = LoggerFactory.getLogger(CreateProject.class);
-  private final Random random;
-  private final EventBus eventBus;
-  private ValidateEvent validateEvent;
+  public CreateProject() {
+  }
 
-  @Inject
-  public CreateProject(EventBus eventBus) {
-    this.eventBus = eventBus;
-    this.validateEvent = new ValidateEvent(ImmutableSet.of("name", "author", "description", "mail", "date", "admin",
-          "projectId"));
-    this.random = new Random();
+  public CreateProject(String name, String author, String description, String mail) {
+    this.name = name;
+    this.author = author;
+    this.description = description;
+    this.mail = mail;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public CreateProject setName(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public String getAuthor() {
+    return author;
+  }
+
+  public CreateProject setAuthor(String author) {
+    this.author = author;
+    return this;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public CreateProject setDescription(String description) {
+    this.description = description;
+    return this;
+  }
+
+  public String getMail() {
+    return mail;
+  }
+
+  public CreateProject setMail(String mail) {
+    this.mail = mail;
+    return this;
   }
 
   @Override
-  public void handle(RoutingContext routingContext) {
-    JsonObject cleaned = validateEvent.validAndClean(routingContext.getBodyAsJson());
-    JsonObject project = normalize(cleaned);
-    LOG.debug("New project {}", project);
-
-    eventBus.<JsonObject>send("command.project", project, event1 -> {
-      if (event1.succeeded()) {
-        routingContext.put("body", event1.result().body());
-      }
-      routingContext.next();
-    });
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    CreateProject that = (CreateProject) o;
+    return Objects.equals(name, that.name) &&
+        Objects.equals(author, that.author) &&
+        Objects.equals(description, that.description) &&
+        Objects.equals(mail, that.mail);
   }
 
-  private JsonObject normalize(JsonObject event) {
-    event.put("date", new Date().getTime());
-    event.put("admin", generateRandomString(12));
-    event.put("projectId", generateRandomString(12));
-    event.put("type", Event.CREATE);
-    return event;
-  }
-
-  private String generateRandomString(int length) {
-    return random.ints(48,122)
-                 .filter(i-> (i<57 || i>65) && (i <90 || i>97))
-                 .map(i -> i)
-                 .limit(length)
-                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                 .toString();
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, author, description, mail);
   }
 }

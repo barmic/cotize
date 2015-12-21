@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+@Deprecated
 public class ValidateEvent {
   private final Collection<String> requieredFields;
 
@@ -21,11 +22,10 @@ public class ValidateEvent {
     this.requieredFields = requieredFields;
   }
 
-  public JsonObject validAndClean(JsonObject event) {
+  public void validCommand(JsonObject event) {
     Map<String, Object> cleanedEvent = event.stream()
                                             .filter(entry -> requieredFields.contains(entry.getKey()))
                                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     checkArgument(cleanedEvent.size() == requieredFields.size());
-    return new JsonObject(cleanedEvent);
   }
 }

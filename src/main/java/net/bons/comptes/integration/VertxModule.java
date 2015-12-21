@@ -13,15 +13,16 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import net.bons.comptes.cqrs.command.Contribute;
-import net.bons.comptes.cqrs.command.CreateProject;
-import net.bons.comptes.cqrs.command.StoreEvent;
+import net.bons.comptes.cqrs.Domain;
+import net.bons.comptes.cqrs.command.CommandGateway;
 import net.bons.comptes.cqrs.query.GetProject;
-import net.bons.comptes.cqrs.query.LoadProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 @Module
 public class VertxModule {
@@ -43,16 +44,16 @@ public class VertxModule {
 
   // TODO use named inject ?
   @Provides
-  Router provideRouter(Vertx vertx, StaticHandler staticHandler, CreateProject createProject, GetProject getProject,
-                       Contribute contribute, LoadProject loadProject) {
+  Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject, CommandGateway commandHanlder) {
     Router router = Router.router(vertx);
 
     router.route().handler(BodyHandler.create());
 
     // command
-    router.post("/api/project").handler(createProject);
-    router.route("/api/project/:projectId.*").handler(loadProject);
-    router.post("/api/project/:projectId/contrib").handler(contribute);
+    router.post("/api/command").handler(commandHanlder);
+//    router.post("/api/project").handler(createProject);
+//    router.route("/api/project/:projectId.*").handler(loadProject);
+//    router.post("/api/project/:projectId/contrib").handler(contribute);
 
     // query
     router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
@@ -122,7 +123,20 @@ public class VertxModule {
 
   @Provides
   @Singleton
-  StoreEvent provideStoreEvent(MongoClient mongoClient) {
-    return new StoreEvent(mongoClient, EVENT_COLLECTION_NAME);
+  CommandGateway provideCommandGateway(EventBus eventBus, Validator validator) {
+    return new CommandGateway(eventBus, validator);
+  }
+
+  @Provides
+  @Singleton
+  Domain provideDomain(MongoClient mongoClient) {
+    return new Domain(mongoClient, EVENT_COLLECTION_NAME, vertx.eventBus());
+  }
+
+  @Provides
+  @Singleton
+  Validator provideValidator() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    return factory.getValidator();
   }
 }

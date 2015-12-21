@@ -1,22 +1,15 @@
 package net.bons.comptes;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.JsonObject;
-import net.bons.comptes.cqrs.command.StoreEvent;
-import net.bons.comptes.integration.DaggerCotizeComponent;
 import io.vertx.ext.web.Router;
+import net.bons.comptes.cqrs.Domain;
+import net.bons.comptes.cqrs.query.LoadProject;
 import net.bons.comptes.integration.CotizeComponent;
 import net.bons.comptes.integration.VertxModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.Scanner;
+import net.bons.comptes.integration.DaggerCotizeComponent;
 
 public class Cotize extends AbstractVerticle {
   private static final Logger LOG = LoggerFactory.getLogger(Cotize.class);
@@ -39,10 +32,11 @@ public class Cotize extends AbstractVerticle {
                                                            .build();
 
     Router router = cotizeComponent.router();
-    StoreEvent storeEvent = cotizeComponent.storeEvent();
+    Domain domain = cotizeComponent.domain();
+    LoadProject loader = cotizeComponent.loadProject();
 
-    vertx.eventBus().consumer("command.project", storeEvent::insertProject);
-    vertx.eventBus().consumer("command.contribute", storeEvent::contributeProject);
+    vertx.eventBus().consumer("command", domain::recieveCommand);
+    vertx.eventBus().consumer("load.project", loader::loadProject);
 
     vertx.createHttpServer()
          .requestHandler(router::accept)
