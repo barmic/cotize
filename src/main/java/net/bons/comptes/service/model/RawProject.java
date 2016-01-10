@@ -1,14 +1,12 @@
 package net.bons.comptes.service.model;
 
 import com.google.common.collect.Lists;
+import io.vertx.codegen.annotations.VertxGen;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-//@ToString
-//@Getter
-//@EqualsAndHashCode
 public class RawProject implements Project {
     private String name;
     private String author;

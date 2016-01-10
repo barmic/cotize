@@ -1,8 +1,8 @@
 package net.bons.comptes.service.model;
 
-/**
- * Created by michel on 03/05/15.
- */
+import io.vertx.codegen.annotations.VertxGen;
+
+@VertxGen
 public interface Project {
   String getName();
 

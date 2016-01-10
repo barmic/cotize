@@ -12,6 +12,17 @@ compileJava {
     targetCompatibility = 1.8
 }
 
+def generateSrcPath="$buildDir/generated-src"
+def generatedSrcDir = file("$buildDir/generated-src")
+
+
+sourceSets {
+    main {
+        java.srcDirs += generatedSrcDir
+        output.dir(builtBy: 'generateServiceProxy', generateSrcPath)
+    }
+}
+
 jar {
     manifest {
         attributes "Main-Class": mainClassName
@@ -27,6 +38,21 @@ task stage << {
     systemProperties.delete()
     systemProperties << "java.runtime.version=${sourceCompatibility}\n"
 }
+
+task generateServiceProxy(type: JavaCompile, description: 'Generates EBServiceProxies') {
+    source = sourceSets.main.java
+    classpath = configurations.compile
+    destinationDir = generatedSrcDir
+    options.compilerArgs = [
+
+            "-proc:only",
+            "-processor", "io.vertx.codegen.CodeGenProcessor",
+
+            "-AoutputDirectory=$generateSrcPath"
+    ]
+}
+
+compileJava.dependsOn generateServiceProxy
 
 stage.dependsOn installDist
 
@@ -49,24 +75,25 @@ test {
 }
 
 dependencies {
-    def daggerVersion = '2.0.1'
     def vertxVersion = '3.2.0'
     compile(
-            [group: 'com.google.dagger', name: 'dagger', version: daggerVersion],
             [group: 'io.reactivex', name: 'rxjava', version: '1.1.0'],
-            [group: 'com.google.dagger', name: 'dagger-compiler', version: daggerVersion],
-            [group: 'com.google.guava', name: 'guava', version: '18.0'],
+            //[group: 'com.google.guava', name: 'guava', version: '18.0'],
             [group: 'io.vertx', name: 'vertx-core', version: vertxVersion],
             [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
             [group: 'io.vertx', name: 'vertx-codegen', version: vertxVersion],
             [group: 'io.vertx', name: 'vertx-mongo-client', version: vertxVersion],
             [group: 'io.vertx', name: 'vertx-mail-client', version: vertxVersion],
+            [group: 'io.vertx', name: 'vertx-service-proxy', version: vertxVersion],
+            [group: 'io.vertx', name: 'vertx-rx-java', version: vertxVersion],
             [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'],
             [group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.3'],
             [group: 'com.google.code.gson', name: 'gson', version: '2.5'],
             [group: 'org.hibernate', name: 'hibernate-validator', version: '5.2.2.Final'],
             [group: 'javax.el', name: 'javax.el-api', version: '2.2.4'],
-            [group: 'org.glassfish.web', name: 'javax.el', version: '2.2.4']
+            [group: 'org.glassfish.web', name: 'javax.el', version: '2.2.4'],
+            [group: 'com.google.inject', name: 'guice', version: '4.0'],
+            [group: 'com.javaslang', name: 'javaslang', version: '2.0.0-RC2']
     )
 
     testCompile(

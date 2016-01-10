@@ -1,31 +1,30 @@
 package net.bons.comptes.integration;
 
-import dagger.Module;
-import dagger.Provides;
-import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.http.HttpServerResponse;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mail.MailClient;
 import io.vertx.ext.mail.MailConfig;
 import io.vertx.ext.mail.StartTLSOptions;
-import io.vertx.ext.mongo.MongoClient;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.StaticHandler;
-import net.bons.comptes.cqrs.Domain;
-import net.bons.comptes.cqrs.command.CommandGateway;
+import io.vertx.rxjava.core.Vertx;
+import io.vertx.rxjava.core.eventbus.EventBus;
+import io.vertx.rxjava.core.http.HttpServerResponse;
+import io.vertx.rxjava.ext.mail.MailClient;
+import io.vertx.rxjava.ext.mongo.MongoClient;
+import io.vertx.rxjava.ext.web.Router;
+import io.vertx.rxjava.ext.web.handler.BodyHandler;
+import io.vertx.rxjava.ext.web.handler.StaticHandler;
+import io.vertx.serviceproxy.ProxyHelper;
+import net.bons.comptes.cqrs.CommandGateway;
 import net.bons.comptes.cqrs.query.GetProject;
+import net.bons.comptes.service.DataStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
-@Module
-public class VertxModule {
+public class VertxModule extends AbstractModule {
   private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
   private static final String EVENT_COLLECTION_NAME = "CotizeEvents";
 
@@ -37,12 +36,18 @@ public class VertxModule {
     this.config = config;
   }
 
-  @Provides
-  Vertx provideVertx() {
-    return vertx;
+  @Override
+  protected void configure() {
+    bind(EventBus.class).toInstance(vertx.eventBus());
+
+    io.vertx.core.Vertx delegate = (io.vertx.core.Vertx) vertx.getDelegate();
+    bind(io.vertx.core.Vertx.class).toInstance(delegate);
+    bind(Vertx.class).toInstance(vertx);
+
+    DataStoreService service = ProxyHelper.createProxy(DataStoreService.class, delegate, "database-service-address");
+    bind(DataStoreService.class).toInstance(service);
   }
 
-  // TODO use named inject ?
   @Provides
   Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject, CommandGateway commandHanlder) {
     Router router = Router.router(vertx);
@@ -51,24 +56,22 @@ public class VertxModule {
 
     // command
     router.post("/api/command").handler(commandHanlder);
-//    router.post("/api/project").handler(createProject);
-//    router.route("/api/project/:projectId.*").handler(loadProject);
-//    router.post("/api/project/:projectId/contrib").handler(contribute);
 
     // query
     router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
     router.get("/api/project/:projectId").handler(getProject);
 
-    router.route("/api/*").handler(event -> {
-      HttpServerResponse response = event.response();
-      response.putHeader("content-type", "application/json");
-      JsonObject body = event.<JsonObject>get("body");
-      if (body != null) {
-        response.end(body.toString());
-      } else {
-        response.end();
-      }
-    });
+    router.route("/api/*")
+          .handler(event -> {
+            HttpServerResponse response = event.response();
+            response.putHeader("content-type", "application/json");
+            JsonObject body = event.<JsonObject>get("body");
+            if (body != null) {
+              response.end(body.toString());
+            } else {
+              response.end();
+            }
+          });
 
     router.get("/*").handler(staticHandler);
 
@@ -85,19 +88,17 @@ public class VertxModule {
   @Provides
   @Singleton
   MongoClient provideMongoClient(Vertx vertx) {
-    JsonObject config = new JsonObject();
-    config.put("db_name", "bonscomptes");
-    config.put("useObjectId", true);
+    JsonObject config = new JsonObject().put("db_name", "bonscomptes")
+                                        .put("useObjectId", true);
 
     MongoClient mongoClient = MongoClient.createShared(vertx, config);
-    // TODO
-    mongoClient.createCollection(EVENT_COLLECTION_NAME, res -> {
-      if (res.succeeded()) {
-        LOG.info("Created ok!");
-      } else {
-        LOG.warn(res.cause().getLocalizedMessage());
-      }
-    });
+    mongoClient.createCollectionObservable(EVENT_COLLECTION_NAME)
+               .subscribe(aVoid -> {
+                 LOG.info("Created ok!");
+               }, throwable -> {
+                 LOG.error("Can't create the collection {}", throwable.getMessage());
+                 LOG.debug("Can't create the collection", throwable);
+               });
     return mongoClient;
   }
 
@@ -107,36 +108,19 @@ public class VertxModule {
     MailConfig config = new MailConfig();
     JsonObject userConfig = this.config.getJsonObject("user").getJsonObject("mail");
     JsonObject mailConfig = this.config.getJsonObject("internal").getJsonObject("mail");
-    config.setHostname(userConfig.getString("hostname", mailConfig.getString("hostname")));
-    config.setPort(userConfig.getInteger("port", mailConfig.getInteger("port")));
-    config.setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))));
-    config.setUsername(userConfig.getString("username", mailConfig.getString("username")));
-    config.setPassword(userConfig.getString("password", mailConfig.getString("password")));
+
+    config.setHostname(userConfig.getString("hostname", mailConfig.getString("hostname")))
+          .setPort(userConfig.getInteger("port", mailConfig.getInteger("port")))
+          .setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))))
+          .setUsername(userConfig.getString("username", mailConfig.getString("username")))
+          .setPassword(userConfig.getString("password", mailConfig.getString("password")));
+
     return MailClient.createNonShared(vertx, config);
   }
 
   @Provides
   @Singleton
-  EventBus provideEventBus(Vertx vertx) {
-    return vertx.eventBus();
-  }
-
-  @Provides
-  @Singleton
-  CommandGateway provideCommandGateway(EventBus eventBus, Validator validator) {
-    return new CommandGateway(eventBus, validator);
-  }
-
-  @Provides
-  @Singleton
-  Domain provideDomain(MongoClient mongoClient) {
-    return new Domain(mongoClient, EVENT_COLLECTION_NAME, vertx.eventBus());
-  }
-
-  @Provides
-  @Singleton
   Validator provideValidator() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    return factory.getValidator();
+    return Validation.buildDefaultValidatorFactory().getValidator();
   }
 }

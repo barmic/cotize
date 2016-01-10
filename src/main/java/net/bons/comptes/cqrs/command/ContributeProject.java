@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs.command;
 
-import com.google.gson.annotations.SerializedName;
+import net.bons.comptes.cqrs.event.Event;
+import net.bons.comptes.service.model.RawProject;
 
 import java.util.Objects;
 
@@ -45,6 +46,11 @@ public class ContributeProject implements Command {
   public ContributeProject setAmount(String amount) {
     this.amount = amount;
     return this;
+  }
+
+  @Override
+  public Event apply(RawProject project) {
+    return null;
   }
 
   public String getProjectId() {

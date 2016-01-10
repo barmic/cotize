@@ -1,5 +1,9 @@
 package net.bons.comptes.cqrs.command;
 
+import net.bons.comptes.cqrs.event.ProjectCreated;
+import net.bons.comptes.cqrs.event.Event;
+import net.bons.comptes.service.model.RawProject;
+
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
@@ -73,5 +77,10 @@ public class CreateProject implements Command {
   @Override
   public int hashCode() {
     return Objects.hash(name, author, description, mail);
+  }
+
+  @Override
+  public Event apply(RawProject project) {
+    return new ProjectCreated("idProject", name, author, description, mail);
   }
 }
