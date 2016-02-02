@@ -9,9 +9,6 @@ function ($http, $scope, cotizeProjectService) {
         mail : '',
         description : ''
     };
-    $scope.prefix = {
-        url : window.document.URL.split('/')[2]
-    };
 
     $scope.project.create = function () {
         cotizeProjectService.createProject($scope.project)
@@ -37,6 +34,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         "projectId": $routeParams.projectId
     };
     $scope.project = {}
+    $scope.create = {}
 
     cotizeProjectService.loadProject($routeParams.projectId)
             .success(function (data) {
@@ -45,11 +43,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             .error(function (data, status) {
             });
 
-    $scope.prefix = {
-        url : 'http://' + window.document.URL.split('/')[2]
-    };
-
-    $scope.contribution.create = function () {
+    $scope.create.contribution = function () {
         cotizeProjectService.contribute($routeParams.projectId, $scope.contribution)
             .success(function (data) {
                 $scope.project.state = "created";
