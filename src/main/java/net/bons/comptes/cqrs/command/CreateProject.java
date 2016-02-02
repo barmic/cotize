@@ -1,11 +1,12 @@
 package net.bons.comptes.cqrs.command;
 
-import net.bons.comptes.cqrs.event.ProjectCreated;
 import net.bons.comptes.cqrs.event.Event;
-import net.bons.comptes.service.model.RawProject;
+import net.bons.comptes.cqrs.event.ProjectCreated;
+import net.bons.comptes.service.model.DecisionProjectionProject;
 
-import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.UUID;
 
 public class CreateProject implements Command {
   @NotNull
@@ -80,7 +81,8 @@ public class CreateProject implements Command {
   }
 
   @Override
-  public Event apply(RawProject project) {
-    return new ProjectCreated("idProject", name, author, description, mail);
+  public Event apply(DecisionProjectionProject project) {
+    return new ProjectCreated(UUID.randomUUID().toString(), name, author, description, mail,
+                              System.currentTimeMillis());
   }
 }

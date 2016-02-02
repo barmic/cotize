@@ -7,7 +7,7 @@ package net.bons.comptes.service.engine;
 
 import com.google.common.collect.Lists;
 import net.bons.comptes.service.model.Deal;
-import net.bons.comptes.service.model.RawProject;
+import net.bons.comptes.service.model.Project;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,8 +26,8 @@ public class Balance {
         return accounts;
     }
 
-    public Balance(RawProject project) {
-        accounts = computeAccounts(project.getDeals());
+    public Balance(Project project) {
+//        accounts = computeAccounts(project.getDeals());
     }
     public Balance(Collection<Deal> deals) {
         accounts = computeAccounts(deals);

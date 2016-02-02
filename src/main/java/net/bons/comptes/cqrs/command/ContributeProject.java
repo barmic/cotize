@@ -1,11 +1,11 @@
 package net.bons.comptes.cqrs.command;
 
 import net.bons.comptes.cqrs.event.Event;
-import net.bons.comptes.service.model.RawProject;
+import net.bons.comptes.service.model.Project;
 
 import java.util.Objects;
 
-public class ContributeProject implements Command {
+public class ContributeProject {//implements Command {
   private String author;
   private String mail;
   private String amount;
@@ -48,8 +48,8 @@ public class ContributeProject implements Command {
     return this;
   }
 
-  @Override
-  public Event apply(RawProject project) {
+//  @Override
+  public Event apply(Project project) {
     return null;
   }
 

@@ -1,6 +1,6 @@
 package net.bons.comptes.service.model;
 
-public class AnonimizedProject implements Project {
+public class AnonimizedProject {
     private int amount;
     private String name;
     private String author;
@@ -13,22 +13,18 @@ public class AnonimizedProject implements Project {
         this.description = description;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public String getAuthor() {
         return author;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
     public int getAmount() {
         return amount;
     }

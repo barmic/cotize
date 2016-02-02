@@ -93,7 +93,7 @@ dependencies {
             [group: 'javax.el', name: 'javax.el-api', version: '2.2.4'],
             [group: 'org.glassfish.web', name: 'javax.el', version: '2.2.4'],
             [group: 'com.google.inject', name: 'guice', version: '4.0'],
-            [group: 'com.javaslang', name: 'javaslang', version: '2.0.0-RC2']
+            [group: 'com.javaslang', name: 'javaslang', version: '2.0.0-RC3']
     )
 
     testCompile(

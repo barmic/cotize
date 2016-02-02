@@ -18,7 +18,7 @@ public class CommandGatewayTest {
     when(routingContext.getBodyAsJson()).thenReturn(command);
 
     EventBus eventBus = mock(EventBus.class);
-//    CommandGateway gateway = new CommandGateway(eventBus, validator);
+//    ProjectAgreggate gateway = new ProjectAgreggate(eventBus, validator);
 //    when(eventBus)
 
     // when

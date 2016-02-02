@@ -46,7 +46,7 @@ public class Builder {
         return this;
     }
 
-    public RawProject createRawProject() {
-        return new RawProject(name, author, description, email, identifier, passAdmin, deals);
+    public Project createRawProject() {
+        return new Project(name, author, description, email, identifier, passAdmin, deals);
     }
 }

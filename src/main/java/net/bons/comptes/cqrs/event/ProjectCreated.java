@@ -1,6 +1,6 @@
 package net.bons.comptes.cqrs.event;
 
-import net.bons.comptes.service.model.Project;
+import io.vertx.core.json.JsonObject;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +22,37 @@ public class ProjectCreated implements Event {
 
   public ProjectCreated(String projectId, String name, String author, String description, String mail) {
     this(projectId ,name, author, description, mail, System.currentTimeMillis());
+  }
+
+  public ProjectCreated(ProjectCreated project) {
+    this.projectId = project.getProjectId();
+    this.name = project.getName();
+    this.author = project.getAuthor();
+    this.description = project.getDescription();
+    this.mail = project.getMail();
+    this.creation = project.getCreation();
+  }
+
+  public ProjectCreated() {
+  }
+
+  public ProjectCreated(JsonObject json) {
+    this.projectId = json.getString("projectId");
+    this.name = json.getString("name");
+    this.author = json.getString("author");
+    this.description = json.getString("description");
+    this.mail = json.getString("mail");
+    this.creation = json.getLong("creation");
+  }
+
+  public JsonObject toJson() {
+    return new JsonObject()
+            .put("projectId", projectId)
+            .put("name", name)
+            .put("author", author)
+            .put("description", description)
+            .put("mail", mail)
+            .put("creation", creation);
   }
 
   public ProjectCreated(String projectId,
@@ -66,10 +97,5 @@ public class ProjectCreated implements Event {
 
   public String getEventType() {
     return eventType;
-  }
-
-  @Override
-  public Project apply(Project project) {
-    return null;
   }
 }

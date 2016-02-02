@@ -7,8 +7,8 @@ import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.serviceproxy.ProxyHelper;
 import net.bons.comptes.integration.VertxModule;
-import net.bons.comptes.service.DataStoreService;
-import net.bons.comptes.service.MongoStoreService;
+import net.bons.comptes.service.EventStore;
+import net.bons.comptes.service.MongoEventStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,13 +26,13 @@ public class Cotize extends AbstractVerticle {
     Injector injector = Guice.createInjector(new VertxModule(vertx, config()));
 
     Router router = injector.getInstance(Router.class);
-    MongoStoreService dataStoreService = injector.getInstance(MongoStoreService.class);
+    MongoEventStore dataStoreService = injector.getInstance(MongoEventStore.class);
 
-    ProxyHelper.registerService(DataStoreService.class, (io.vertx.core.Vertx) vertx.getDelegate(), dataStoreService,
+    ProxyHelper.registerService(EventStore.class, (io.vertx.core.Vertx) vertx.getDelegate(), dataStoreService,
         "database-service-address");
-    // TODO register MongoStoreService
-//    MongoStoreService loader = injector.getInstance(MongoStoreService.class);
-//    vertx.eventBus().consumer("load.project", loader::loadProject);
+    // TODO register MongoEventStore
+//    MongoEventStore loader = injector.getInstance(MongoEventStore.class);
+//    vertx.eventBus().consumer("load.project", loader::loadEvents);
 
     vertx.createHttpServer()
          .requestHandler(router::accept)
