@@ -3,8 +3,6 @@ package net.bons.comptes.service.model;
 import com.google.common.collect.Lists;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import javaslang.collection.Stream;
-import javaslang.collection.Traversable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +17,7 @@ public class Project {
     private String identifier;
     private String passAdmin;
     private int amount;
-    private Traversable<Deal> deals;
+    private Collection<Deal> deals;
 
     public Project(JsonObject json) {
         this.name = json.getString("name");
@@ -28,8 +26,13 @@ public class Project {
         this.email = json.getString("email");
         this.identifier = json.getString("identifier");
         this.passAdmin = json.getString("passAdmin");
-        this.amount = json.getInteger("amount");
-//        this.deals = json.getJsonArray("deals").stream().map(o -> Stream.ofAll((JsonObject) o).map(Deal::new).collect(Collectors.toList()));
+        this.amount = json.getInteger("amount", 0);
+        if (json.containsKey("deals")) {
+            this.deals = json.getJsonArray("deals").stream().map(o -> new Deal((JsonObject) o)).collect(Collectors.toList());
+        }
+        else {
+            this.deals = Collections.emptyList();
+        }
     }
 
     public Project() {
@@ -43,7 +46,7 @@ public class Project {
         this.identifier = project.getIdentifier();
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
-        this.deals = Stream.ofAll(project.getDeals());
+        this.deals = Collections.emptyList();
     }
 
     Project(String name, String author, String description, String email, String identifier,
@@ -54,11 +57,13 @@ public class Project {
         this.email = email;
         this.identifier = identifier;
         this.passAdmin = passAdmin;
-        this.deals = Stream.ofAll(deals);
+        this.deals = deals;
         this.amount = deals.stream().collect(Collectors.summingInt(Deal::getAmount));
     }
 
     public JsonObject toJson() {
+        JsonArray jsonDeals = new JsonArray();
+        deals.stream().map(d -> d.toJson()).forEach(jsonDeals::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)
@@ -67,7 +72,7 @@ public class Project {
                 .put("identifier", this.identifier)
                 .put("passAdmin", this.passAdmin)
                 .put("amount", this.amount)
-                .put("deals", new JsonArray(deals.map(Deal::toJson).toJavaList()));
+                .put("deals", jsonDeals);
     }
 
     public static Builder builder() {
@@ -106,7 +111,7 @@ public class Project {
         return passAdmin;
     }
 
-    public Traversable<Deal> getDeals() {
+    public Collection<Deal> getDeals() {
         return deals;
     }
 

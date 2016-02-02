@@ -14,9 +14,11 @@ import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.handler.BodyHandler;
 import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import io.vertx.serviceproxy.ProxyHelper;
-import net.bons.comptes.cqrs.ProjectAgreggate;
+import net.bons.comptes.cqrs.ContributionHandler;
+import net.bons.comptes.cqrs.CreateProjectHandler;
 import net.bons.comptes.cqrs.LoadProjectDecisionProjection;
-import net.bons.comptes.cqrs.query.GetProject;
+import net.bons.comptes.cqrs.ProjectAgreggate;
+import net.bons.comptes.cqrs.GetProject;
 import net.bons.comptes.service.EventStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,29 +53,29 @@ public class VertxModule extends AbstractModule {
 
     @Provides
     Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject,
-                         LoadProjectDecisionProjection loadProjectDecisionProjection, ProjectAgreggate projectAgreggate) {
+                         LoadProjectDecisionProjection loadProjectDecisionProjection, ProjectAgreggate projectAgreggate,
+                         CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler) {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
 
         // command
-        router.post("/api/project/*")
-                .handler(loadProjectDecisionProjection);
-
-//    router.post("/api/project/:projectId/contribution").handler(commandHanlder);
-//    router.post("/api/project/:projectId/contribution/:contributionId").handler(commandHanlder);
+        router.post("/api/project").handler(createProjectHandler);
+        router.post("/api/project/:projectId/contribution").handler(contributionHandler);
+        router.post("/api/project/:projectId/contribution/:contributionId").handler(loadProjectDecisionProjection); // update contribution
 
         // query
-        router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
         router.get("/api/project/:projectId").handler(getProject);
+        router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
+        router.get("/api/project/:projectId/contribution/:contributionId").handler(getProject);
 
         router.route("/api/*")
                 .handler(event -> {
                     HttpServerResponse response = event.response();
-                    response.putHeader("content-type", "application/json");
                     JsonObject body = event.<JsonObject>get("body");
                     if (body != null) {
-                        response.end(body.toString());
+                        response.putHeader("content-type", "application/json")
+                                .end(body.toString());
                     } else {
                         response.end();
                     }

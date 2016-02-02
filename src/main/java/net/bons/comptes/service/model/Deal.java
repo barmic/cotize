@@ -6,6 +6,7 @@ package net.bons.comptes.service.model;
  */
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
@@ -51,11 +52,13 @@ public class Deal {
     }
 
     public JsonObject toJson() {
+        JsonArray jsonDebtors = new JsonArray();
+        debtors.forEach(jsonDebtors::add);
         return new JsonObject()
                 .put("creditor", creditor)
                 .put("amount", amount)
                 .put("email", email)
-                .put("debtors", debtors)
+                .put("debtors", jsonDebtors)
                 .put("date", date);
     }
 

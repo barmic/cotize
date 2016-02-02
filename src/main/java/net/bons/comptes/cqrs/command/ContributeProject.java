@@ -1,20 +1,21 @@
 package net.bons.comptes.cqrs.command;
 
 import net.bons.comptes.cqrs.event.Event;
+import net.bons.comptes.service.model.DecisionProjectionProject;
 import net.bons.comptes.service.model.Project;
 
 import java.util.Objects;
 
-public class ContributeProject {//implements Command {
+public class ContributeProject implements Command {
   private String author;
   private String mail;
-  private String amount;
+  private int amount;
   private String projectId;
 
   public ContributeProject() {
   }
 
-  public ContributeProject(String author, String mail, String amount, String projectId) {
+  public ContributeProject(String author, String mail, int amount, String projectId) {
     this.author = author;
     this.mail = mail;
     this.amount = amount;
@@ -39,17 +40,22 @@ public class ContributeProject {//implements Command {
     return this;
   }
 
-  public String getAmount() {
+  public int getAmount() {
     return amount;
   }
 
-  public ContributeProject setAmount(String amount) {
+  public ContributeProject setAmount(int amount) {
     this.amount = amount;
     return this;
   }
 
 //  @Override
   public Event apply(Project project) {
+    return null;
+  }
+
+  @Override
+  public Event apply(DecisionProjectionProject decisionProjectionProject) {
     return null;
   }
 
