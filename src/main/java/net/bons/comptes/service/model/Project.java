@@ -16,7 +16,7 @@ public class Project {
     private String identifier;
     private String passAdmin;
     private int amount;
-    private Collection<Deal> deals;
+    private Collection<Contribution> contributions;
 
     public Project(JsonObject json) {
         this.name = json.getString("name");
@@ -26,11 +26,11 @@ public class Project {
         this.identifier = json.getString("identifier");
         this.passAdmin = json.getString("passAdmin");
         this.amount = json.getInteger("amount", 0);
-        if (json.containsKey("deals")) {
-            this.deals = json.getJsonArray("deals").stream().map(o -> new Deal((JsonObject) o)).collect(Collectors.toList());
+        if (json.containsKey("contributions")) {
+            this.contributions = json.getJsonArray("contributions").stream().map(o -> new Contribution((JsonObject) o)).collect(Collectors.toList());
         }
         else {
-            this.deals = Collections.emptyList();
+            this.contributions = Collections.emptyList();
         }
     }
 
@@ -45,24 +45,24 @@ public class Project {
         this.identifier = project.getIdentifier();
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
-        this.deals = Collections.emptyList();
+        this.contributions = Collections.emptyList();
     }
 
     Project(String name, String author, String description, String email, String identifier,
-               String passAdmin, Collection<Deal> deals) {
+               String passAdmin, Collection<Contribution> contributions) {
         this.name = name;
         this.author = author;
         this.description = description;
         this.email = email;
         this.identifier = identifier;
         this.passAdmin = passAdmin;
-        this.deals = deals;
-        this.amount = deals.stream().collect(Collectors.summingInt(Deal::getAmount));
+        this.contributions = contributions;
+        this.amount = contributions.stream().collect(Collectors.summingInt(Contribution::getAmount));
     }
 
     public JsonObject toJson() {
         JsonArray jsonDeals = new JsonArray();
-        deals.stream().map(d -> d.toJson()).forEach(jsonDeals::add);
+        contributions.stream().map(d -> d.toJson()).forEach(jsonDeals::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)
@@ -71,7 +71,7 @@ public class Project {
                 .put("identifier", this.identifier)
                 .put("passAdmin", this.passAdmin)
                 .put("amount", this.amount)
-                .put("deals", jsonDeals);
+                .put("contributions", jsonDeals);
     }
 
     public static Builder builder() {
@@ -110,8 +110,8 @@ public class Project {
         return passAdmin;
     }
 
-    public Collection<Deal> getDeals() {
-        return deals;
+    public Collection<Contribution> getContributions() {
+        return contributions;
     }
 
     public static class Builder {
@@ -121,10 +121,10 @@ public class Project {
         private String email;
         private String identifier;
         private String passAdmin;
-        private Collection<Deal> deals;
+        private Collection<Contribution> contributions;
 
         public Builder() {
-            deals = Collections.emptyList();
+            contributions = Collections.emptyList();
         }
 
         public Builder(Project project) {
@@ -134,7 +134,7 @@ public class Project {
             email = project.getEmail();
             identifier = project.getIdentifier();
             passAdmin = project.getPassAdmin();
-            deals = Lists.newArrayList(project.getDeals());
+            contributions = Lists.newArrayList(project.getContributions());
         }
 
         public Builder name(String name) {
@@ -167,13 +167,13 @@ public class Project {
             return this;
         }
 
-        public Builder deals(Collection<Deal> deals) {
-            this.deals = deals;
+        public Builder deals(Collection<Contribution> contributions) {
+            this.contributions = contributions;
             return this;
         }
 
         public Project createRawProject() {
-            return new Project(name, author, description, email, identifier, passAdmin, deals);
+            return new Project(name, author, description, email, identifier, passAdmin, contributions);
         }
     }
 }

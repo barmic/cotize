@@ -10,25 +10,24 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.ContributeProject;
-import net.bons.comptes.service.model.Deal;
+import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Validator;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
 public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
+    private final Type type = new TypeToken<ContributeProject>() {}.getType();
+    private Gson gson = new Gson();
     private EventBus eventBus;
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
-    private final Type type = new TypeToken<ContributeProject>() {}.getType();
-    private Gson gson = new Gson();
 
     @Inject
-    public ContrubutionUpdateHandler(MongoClient mongoClient, Validator validator, CommandExtractor commandExtractor) {
+    public ContrubutionUpdateHandler(MongoClient mongoClient, CommandExtractor commandExtractor) {
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
     }
@@ -60,13 +59,13 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
     }
 
     private Project updateContrib(Project project, ContributeProject contribution) {
-        Optional<Deal> deal1 = project.getDeals().stream().filter(
-                d -> d.getCreditor().equals(contribution.getAuthor())).findFirst();
+        Optional<Contribution> deal1 = project.getContributions().stream().filter(
+                d -> d.getAuthor().equals(contribution.getAuthor())).findFirst();
             LOG.debug("Author {}", contribution.getAuthor());
         if (deal1.isPresent()) {
             deal1.get().setAmount(contribution.getAmount());
-//            Deal deal = new Deal(createId(), contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
-//            ImmutableList<Deal> deals = ImmutableList.<Deal>builder().addAll(project.getDeals()).add(deal).build();
+//            Contribution deal = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
+//            ImmutableList<Contribution> deals = ImmutableList.<Contribution>builder().addAll(project.getContributions()).add(deal).build();
 //            int amount = deals.stream().mapToInt(d -> d.getAmount()).sum();
 //            JsonObject jsonObject = project.toJson()
 //                    .put("amount", amount)

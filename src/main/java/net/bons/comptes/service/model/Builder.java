@@ -9,7 +9,7 @@ public class Builder {
     private String email;
     private String identifier;
     private String passAdmin;
-    private ImmutableList<Deal> deals;
+    private ImmutableList<Contribution> contributions;
 
     public Builder name(String name) {
         this.name = name;
@@ -41,12 +41,12 @@ public class Builder {
         return this;
     }
 
-    public Builder deals(ImmutableList<Deal> deals) {
-        this.deals = deals;
+    public Builder deals(ImmutableList<Contribution> contributions) {
+        this.contributions = contributions;
         return this;
     }
 
     public Project createRawProject() {
-        return new Project(name, author, description, email, identifier, passAdmin, deals);
+        return new Project(name, author, description, email, identifier, passAdmin, contributions);
     }
 }

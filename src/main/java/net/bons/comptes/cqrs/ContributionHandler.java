@@ -12,7 +12,7 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.ContributeProject;
-import net.bons.comptes.service.model.Deal;
+import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,19 +60,20 @@ public class ContributionHandler implements Handler<RoutingContext> {
 
     Project compute(Project project, ContributeProject contribute) {
         LOG.debug("Project to contribute : {}", project.toJson());
-        boolean present = project.getDeals()
+        boolean present = project.getContributions()
                 .stream()
-                .filter(deal -> Objects.equals(deal.getCreditor(), contribute.getAuthor()))
+                .filter(deal -> Objects.equals(deal.getAuthor(), contribute.getAuthor()))
                 .findFirst()
                 .isPresent();
         Project projectResult = project;
         if (!present) {
-            Deal deal = new Deal(createId(), contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
-            ImmutableList<Deal> deals = ImmutableList.<Deal>builder().addAll(project.getDeals()).add(deal).build();
-            int amount = deals.stream().mapToInt(d -> d.getAmount()).sum();
+            Contribution contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
+            ImmutableList<Contribution> contributions = ImmutableList.<Contribution>builder().addAll(project.getContributions()).add(
+                    contribution).build();
+            int amount = contributions.stream().mapToInt(d -> d.getAmount()).sum();
             JsonObject jsonObject = project.toJson()
                     .put("amount", amount)
-                    .put("deals", new JsonArray(deals.stream().map(d -> d.toJson()).collect(Collectors.toList())));
+                    .put("contributions", new JsonArray(contributions.stream().map(d -> d.toJson()).collect(Collectors.toList())));
             projectResult = new Project(jsonObject);
             LOG.debug("Projet result {}", projectResult.toJson());
         }

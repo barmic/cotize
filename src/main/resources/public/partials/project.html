@@ -10,12 +10,12 @@
     <p>Le projet a déjà réunis {{project.content.amount}} € !</p>
     <p>La liste des participants est :</p>
     <ul>
-        <li ng-repeat="contributor in project.content.deals">{{contributor.creditor}}</li>
+        <li ng-repeat="contributor in project.content.contributions">{{contributor.author}}</li>
     </ul>
 
     <div class="alert alert-success" role="alert" ng-show="newcontrib.state">
         Merci pour votre contribution !</br>
-        <a href="http://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{newcontrib.content.dealId}}">Modifier votre contribution.</a>
+        <a href="http://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{newcontrib.content.contributionId}}">Modifier votre contribution.</a>
     </div>
 
     <h3>Participez</h3>

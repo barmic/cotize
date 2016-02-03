@@ -37,7 +37,6 @@ public class GetProjectTest {
         JsonObject filteredProject = getProject.filter(project);
 
         // then
-        System.out.println("toto " + filteredProject.toString());
         Collection<String> forbidenFields = Arrays.asList("email", "passAdmin");
         boolean present = filteredProject.fieldNames().stream()
                 .filter(forbidenFields::contains).findFirst().isPresent();
