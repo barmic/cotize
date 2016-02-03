@@ -98,7 +98,7 @@ dependencies {
 
     testCompile(
             [group: 'org.assertj', name: 'assertj-core', version: '3.3.0'],
-            [group: 'org.testng', name: 'testng', version: '6.8.21'],
+            [group: 'junit', name: 'junit', version: '4.12'],
             [group: 'org.mockito', name: 'mockito-core', version: '1.+'],
             [group: 'io.vertx', name: 'vertx-unit', version: vertxVersion],
     )

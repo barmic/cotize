@@ -5,7 +5,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.service.model.Project;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
