@@ -6,29 +6,16 @@
     <h2>{{project.content.name}}</h2>
     <p>{{project.content.description}}</p>
 
-    <!--[% IF user %]-->
-    <!--<div class="alert alert-success" role="alert">-->
-        <!--<p>-->
-            <!--Merci d'avoir participé [% user %].</br>-->
-            <!--<a href="">Modifier votre contribution.</a>-->
-        <!--</p>-->
-    <!--</div>-->
-    <!--[% END %]-->
-
     <h3>Contributions</h3>
     <p>Le projet a déjà réunis {{project.content.amount}} € !</p>
-    <!--[% IF project.see_contributors %]-->
-    <!--<p>La liste des participants est :</p>-->
-    <!--<ul>-->
-        <!--[% FOREACH contributor IN contributors %]-->
-        <!--<li>[% contributor.name %]</li>-->
-        <!--[% END %]-->
-    <!--</ul>-->
-    <!--[% END %]-->
+    <p>La liste des participants est :</p>
+    <ul>
+        <li ng-repeat="contributor in project.content.deals">{{contributor.creditor}}</li>
+    </ul>
 
-    <div class="alert alert-success [% success %]" role="alert" ng-show="contribution.state">
+    <div class="alert alert-success" role="alert" ng-show="newcontrib.state">
         Merci pour votre contribution !</br>
-        Vous pouvez éditer celle-ci avec le lien suivant !
+        <a href="http://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{newcontrib.content.dealId}}">Modifier votre contribution.</a>
     </div>
 
     <h3>Participez</h3>

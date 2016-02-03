@@ -18,7 +18,14 @@ cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
     };
     service.contribute = function (projectID, contribution) {
         var query = serverBaseUrl + 'project/' + projectID + '/contribution';
-        console.log(contribution)
+        return $http.post(query, contribution);
+    };
+    service.loadContribution = function (projectID, contributionId) {
+        var query = serverBaseUrl + 'project/' + projectID + '/contribution/' + contributionId;
+        return $http.get(query);
+    };
+    service.updateContribution = function (projectID, contributionId, contribution) {
+        var query = serverBaseUrl + 'project/' + projectID + '/contribution/' + contributionId;
         return $http.post(query, contribution);
     };
     return service;

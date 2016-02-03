@@ -1,0 +1,29 @@
+<!--
+  Licence Public Barmic
+  copyright 2014 Michel Barret <michel.barret@gmail.com>
+-->
+<div id="project">
+    <h2>{{ project.content.name }}</h2>
+    <p>{{ project.content.description }}</p>
+
+    <h3>Contribution de {{ contribution.creditor }}</h3>
+    <p>Le projet a déjà réunis {{ project.content.amount }} € !</p>
+
+    <form method="post" class="form-horizontal">
+        <fieldset>
+            <div class="control-group">
+                <label for="amount" class="control-label">Changez votre participation ?</label>
+                <div class="input-controls">
+                    <!--<input type="number" min="1" class="form-control" name="amount" placeholder="[% contrib.amount %] €" disabled />-->
+                    <input type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" required />
+                    <span class="input-group-addon">€</span>
+                </div>
+            </div>
+            <br/>
+            <div class="form-action">
+                <!--<button type="submit" class="btn btn-primary" disabled>Participer</button>-->
+                <button type="contribution.update()" class="btn btn-primary">Participer</button>
+            </div>
+        </fieldset>
+    </form>
+</div>

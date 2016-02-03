@@ -4,22 +4,24 @@ import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.service.model.DecisionProjectionProject;
 import net.bons.comptes.service.model.Project;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class ContributeProject implements Command {
+  @NotNull
   private String author;
+  @NotNull
   private String mail;
+  @NotNull
   private int amount;
-  private String projectId;
 
   public ContributeProject() {
   }
 
-  public ContributeProject(String author, String mail, int amount, String projectId) {
+  public ContributeProject(String author, String mail, int amount) {
     this.author = author;
     this.mail = mail;
     this.amount = amount;
-    this.projectId = projectId;
   }
 
   public String getAuthor() {
@@ -59,15 +61,6 @@ public class ContributeProject implements Command {
     return null;
   }
 
-  public String getProjectId() {
-    return projectId;
-  }
-
-  public ContributeProject setProjectId(String projectId) {
-    this.projectId = projectId;
-    return this;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -75,12 +68,11 @@ public class ContributeProject implements Command {
     ContributeProject that = (ContributeProject) o;
     return Objects.equals(author, that.author) &&
         Objects.equals(mail, that.mail) &&
-        Objects.equals(amount, that.amount) &&
-        Objects.equals(projectId, that.projectId);
+        Objects.equals(amount, that.amount);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(author, mail, amount, projectId);
+    return Objects.hash(author, mail, amount);
   }
 }

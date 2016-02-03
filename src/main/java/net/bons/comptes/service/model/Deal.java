@@ -5,7 +5,6 @@ package net.bons.comptes.service.model;
  * copyright 2014 Michel Barret <michel.barret@gmail.com>
  */
 
-import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -14,7 +13,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@DataObject
 public class Deal {
     private String dealId;
     private String creditor;
@@ -98,5 +96,35 @@ public class Deal {
 
     public String getName() {
         return name;
+    }
+
+    public Deal setCreditor(String creditor) {
+        this.creditor = creditor;
+        return this;
+    }
+
+    public Deal setDebtors(Collection<String> debtors) {
+        this.debtors = debtors;
+        return this;
+    }
+
+    public Deal setAmount(int amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public Deal setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public Deal setDate(Long date) {
+        this.date = date;
+        return this;
+    }
+
+    public Deal setName(String name) {
+        this.name = name;
+        return this;
     }
 }

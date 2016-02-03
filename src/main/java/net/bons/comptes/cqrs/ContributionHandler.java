@@ -11,16 +11,12 @@ import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
-import javaslang.collection.Seq;
-import net.bons.comptes.cqrs.command.Command;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.service.model.Deal;
 import net.bons.comptes.service.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,12 +28,11 @@ public class ContributionHandler implements Handler<RoutingContext> {
     private Gson gson = new Gson();
     private EventBus eventBus;
     private MongoClient mongoClient;
-    private Validator validator;
+    public CommandExtractor commandExtractor;
 
     @Inject
-    public ContributionHandler(MongoClient mongoClient, Validator validator) {
+    public ContributionHandler(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
-        this.validator = validator;
     }
 
     @Override
@@ -49,7 +44,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
         rx.Observable.just(event)
                 .map(RoutingContext::getBodyAsJson)
                 .map(jsonCommand -> gson.<ContributeProject>fromJson(jsonCommand.toString(), type))
-                .filter(this::validCmd)
+                .filter(commandExtractor::validCmd)
                 .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
                         .map(projectJson -> Tuple.of(projectJson, cmd)))
                 .map(tuple -> Tuple.of(new Project(tuple._1), tuple._2))
@@ -61,7 +56,6 @@ public class ContributionHandler implements Handler<RoutingContext> {
                             .putHeader("Content-Type", "application/json")
                             .end(project.toJson().toString());
                 });
-
     }
 
     Project compute(Project project, ContributeProject contribute) {
@@ -83,15 +77,6 @@ public class ContributionHandler implements Handler<RoutingContext> {
             LOG.debug("Projet result {}", projectResult.toJson());
         }
         return projectResult;
-    }
-
-    private boolean validCmd(Command command) {
-        Seq<ConstraintViolation<Command>> constraintViolations = Seq.ofAll(validator.validate(command));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Nb errors {}", constraintViolations.length());
-            constraintViolations.map(ConstraintViolation::getMessage).forEach(violation -> LOG.debug("Violation : {}", violation));
-        }
-        return constraintViolations.isEmpty();
     }
 
     private String createId() {

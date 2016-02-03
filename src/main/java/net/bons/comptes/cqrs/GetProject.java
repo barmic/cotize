@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class GetProject implements Handler<RoutingContext> {
@@ -40,7 +41,7 @@ public class GetProject implements Handler<RoutingContext> {
         }
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
-                .map(obj -> !obj.getString("passAdmin").equals(adminPass) ? filter(obj) : filterAdmin(obj))
+                .map(obj -> !Objects.equals(obj.getString("passAdmin"), adminPass) ? filter(obj) : filterAdmin(obj))
                 .subscribe(obj -> {
                     routingContext.response().putHeader("Content-Type", "application/json").end(obj.toString());
                 });

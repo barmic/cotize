@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-//@DataObject(generateConverter = true)
 public class Project {
     private String name;
     private String author;

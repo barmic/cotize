@@ -14,6 +14,10 @@ cotizeModule.config(['$routeProvider',
         templateUrl: 'partials/project.html',
         controller: 'cotizeProject'
       }).
+      when('/project/:projectId/contribution/:contributionId', {
+        templateUrl: 'partials/contribution.html',
+        controller: 'cotizeContribution'
+      }).
       otherwise({
         redirectTo: '/index'
       });
