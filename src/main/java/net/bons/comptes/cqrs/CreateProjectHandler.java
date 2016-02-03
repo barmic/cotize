@@ -40,7 +40,8 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
                      .filter(commandExtractor::validCmd)
                      .map(gson::toJson)
                      .map(JsonObject::new)
-                     .map(project -> project.put("identifier", createId()).put("passAdmin", createId()))
+                     .map(project -> project.put("identifier", createId())
+                                            .put("passAdmin", createId()))
                      .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project)
                                                     .map(id -> Tuple.of(id, project)))
                      .subscribe(tuple2 -> {

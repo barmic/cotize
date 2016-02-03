@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
@@ -27,13 +26,13 @@ public class ContributionHandler implements Handler<RoutingContext> {
     private final Type type = new TypeToken<ContributeProject>() {
     }.getType();
     private Gson gson = new Gson();
-    private EventBus eventBus;
     private MongoClient mongoClient;
-    public CommandExtractor commandExtractor;
+    private CommandExtractor commandExtractor;
 
     @Inject
-    public ContributionHandler(MongoClient mongoClient) {
+    public ContributionHandler(MongoClient mongoClient, CommandExtractor commandExtractor) {
         this.mongoClient = mongoClient;
+        this.commandExtractor = commandExtractor;
     }
 
     @Override
@@ -59,6 +58,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
                      });
     }
 
+    // TODO too complex !!!!! just add a contrib to project
     Project compute(Project project, ContributeProject contribute) {
         LOG.debug("Project to contribute : {}", project.toJson());
         boolean present = project.getContributions()

@@ -65,14 +65,6 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
         LOG.debug("Author {}", contribution.getAuthor());
         if (deal1.isPresent()) {
             deal1.get().setAmount(contribution.getAmount());
-//            Contribution deal = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
-//            ImmutableList<Contribution> deals = ImmutableList.<Contribution>builder().addAll(project.getContributions()).add(deal).build();
-//            int amount = deals.stream().mapToInt(d -> d.getAmount()).sum();
-//            JsonObject jsonObject = project.toJson()
-//                    .put("amount", amount)
-//                    .put("deals", new JsonArray(deals.stream().map(d -> d.toJson()).collect(Collectors.toList())));
-//            Project.builder(project).deals()
-//            projectResult = new Project(jsonObject);
             LOG.debug("Projet result {}", project.toJson());
         }
         return project;
