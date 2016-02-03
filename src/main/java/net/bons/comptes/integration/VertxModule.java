@@ -7,18 +7,13 @@ import io.vertx.ext.mail.MailConfig;
 import io.vertx.ext.mail.StartTLSOptions;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.core.eventbus.EventBus;
-import io.vertx.rxjava.core.http.HttpServerResponse;
 import io.vertx.rxjava.ext.mail.MailClient;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.handler.BodyHandler;
 import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import io.vertx.serviceproxy.ProxyHelper;
-import net.bons.comptes.cqrs.ContributionHandler;
-import net.bons.comptes.cqrs.CreateProjectHandler;
-import net.bons.comptes.cqrs.LoadProjectDecisionProjection;
-import net.bons.comptes.cqrs.ProjectAgreggate;
-import net.bons.comptes.cqrs.GetProject;
+import net.bons.comptes.cqrs.*;
 import net.bons.comptes.service.EventStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +49,7 @@ public class VertxModule extends AbstractModule {
     @Provides
     Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject,
                          LoadProjectDecisionProjection loadProjectDecisionProjection, ProjectAgreggate projectAgreggate,
-                         CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler) {
+                         CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler, GetContribution getContribution) {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
@@ -67,19 +62,7 @@ public class VertxModule extends AbstractModule {
         // query
         router.get("/api/project/:projectId").handler(getProject);
         router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
-        router.get("/api/project/:projectId/contribution/:contributionId").handler(getProject);
-
-        router.route("/api/*")
-                .handler(event -> {
-                    HttpServerResponse response = event.response();
-                    JsonObject body = event.<JsonObject>get("body");
-                    if (body != null) {
-                        response.putHeader("content-type", "application/json")
-                                .end(body.toString());
-                    } else {
-                        response.end();
-                    }
-                });
+        router.get("/api/project/:projectId/contribution/:contributionId").handler(getContribution);
 
         router.get("/*").handler(staticHandler);
 

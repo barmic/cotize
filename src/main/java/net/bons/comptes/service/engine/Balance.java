@@ -45,17 +45,17 @@ public class Balance {
         final List<Deal> balance = new ArrayList<>();
         Iterator<Map.Entry<String, Integer>> creditorIter = creditors.iterator();
         Map.Entry<String, Integer> creditor = creditorIter.next();
-        for (Map.Entry<String, Integer> debtor : debtors) {
-            while (debtor.getValue() < 0) {
-                final Deal deal = new Deal(creditor.getKey(), Math.min(debtor.getValue(), creditor.getValue()), "", debtor.getKey());
-                balance.add(deal);
-                debtor.setValue(debtor.getValue() - deal.getAmount()); // reduce the debt
-                creditor.setValue(creditor.getValue() + deal.getAmount());
-                if (creditor.getValue() >= 0 && creditorIter.hasNext()) {
-                    creditor = creditorIter.next();
-                }
-            }
-        }
+//        for (Map.Entry<String, Integer> debtor : debtors) {
+//            while (debtor.getValue() < 0) {
+//                final Deal deal = new Deal(creditor.getKey(), Math.min(debtor.getValue(), creditor.getValue()), "", debtor.getKey());
+//                balance.add(deal);
+//                debtor.setValue(debtor.getValue() - deal.getAmount()); // reduce the debt
+//                creditor.setValue(creditor.getValue() + deal.getAmount());
+//                if (creditor.getValue() >= 0 && creditorIter.hasNext()) {
+//                    creditor = creditorIter.next();
+//                }
+//            }
+//        }
 
         return balance;
     }

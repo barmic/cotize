@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 @DataObject
 public class Deal {
+    private String dealId;
     private String creditor;
     private Collection<String> debtors;
     private int amount;
@@ -28,6 +29,7 @@ public class Deal {
     }
 
     public Deal(Deal deal) {
+        this.dealId = deal.getDealId();
         this.creditor = deal.getCreditor();
         this.amount = deal.getAmount();
         this.email = deal.getEmail();
@@ -35,7 +37,8 @@ public class Deal {
         this.date = deal.getDate();
     }
 
-    public Deal(String creditor, int amount, String email, String...debtors) {
+    public Deal(String delaId, String creditor, int amount, String email, String...debtors) {
+        this.dealId = delaId;
         this.creditor = creditor;
         this.amount = amount;
         this.email = email;
@@ -44,6 +47,7 @@ public class Deal {
     }
 
     public Deal(JsonObject json) {
+        this.dealId = json.getString("dealId");
         this.creditor = json.getString("creditor");
         this.amount = json.getInteger("amount");
         this.email = json.getString("email");
@@ -55,11 +59,21 @@ public class Deal {
         JsonArray jsonDebtors = new JsonArray();
         debtors.forEach(jsonDebtors::add);
         return new JsonObject()
+                .put("dealId", dealId)
                 .put("creditor", creditor)
                 .put("amount", amount)
                 .put("email", email)
                 .put("debtors", jsonDebtors)
                 .put("date", date);
+    }
+
+    public String getDealId() {
+        return dealId;
+    }
+
+    public Deal setDealId(String dealId) {
+        this.dealId = dealId;
+        return this;
     }
 
     public String getCreditor() {

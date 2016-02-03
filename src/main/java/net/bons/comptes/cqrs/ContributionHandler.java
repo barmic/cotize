@@ -23,6 +23,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ContributionHandler implements Handler<RoutingContext> {
@@ -72,7 +73,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
                 .isPresent();
         Project projectResult = project;
         if (!present) {
-            Deal deal = new Deal(contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
+            Deal deal = new Deal(createId(), contribute.getAuthor(), contribute.getAmount(), contribute.getMail());
             ImmutableList<Deal> deals = ImmutableList.<Deal>builder().addAll(project.getDeals()).add(deal).build();
             int amount = deals.stream().mapToInt(d -> d.getAmount()).sum();
             JsonObject jsonObject = project.toJson()
@@ -91,5 +92,9 @@ public class ContributionHandler implements Handler<RoutingContext> {
             constraintViolations.map(ConstraintViolation::getMessage).forEach(violation -> LOG.debug("Violation : {}", violation));
         }
         return constraintViolations.isEmpty();
+    }
+
+    private String createId() {
+        return UUID.randomUUID().toString().substring(0, 10);
     }
 }
