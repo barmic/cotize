@@ -40,8 +40,10 @@ public class LoadProjectDecisionProjection implements Handler<RoutingContext> {
         this.validator = validator;
         this.eventStore = eventStore;
         this.types = HashMap.ofEntries(
-                Tuple.of("CREATE", new TypeToken<CreateProject>() {}.getType()),
-                Tuple.of("CONTRIBUTE", new TypeToken<ContributeProject>() {}.getType())
+                Tuple.of("CREATE", new TypeToken<CreateProject>() {
+                }.getType()),
+                Tuple.of("CONTRIBUTE", new TypeToken<ContributeProject>() {
+                }.getType())
         );
     }
 
@@ -49,29 +51,29 @@ public class LoadProjectDecisionProjection implements Handler<RoutingContext> {
     public void handle(RoutingContext event) {
         Optional<String> projectId = Optional.empty();
         rx.Observable.just(event)
-                .map(RoutingContext::getBodyAsJson)
-                .map(this::createCommand)
-                .filter(this::validCmd)
-                .map(cmd -> {
-                    ObservableFuture<DecisionProjectionProject> future = RxHelper.observableFuture();
-                    eventStore.loadEvents(projectId.orElse(null), future.toHandler());
-                    return Tuple.of(cmd, future.toBlocking().first());
-                })
-                .subscribe(tuple -> {
-                    LOG.debug("hello");
-                    Event event1 = tuple._1.apply(tuple._2);
-                    LOG.debug("salut");
-                    eventBus.publish("event", event1);
-                    LOG.debug("hehe");
-                    event.response().end();
-                });
+                     .map(RoutingContext::getBodyAsJson)
+                     .map(this::createCommand)
+                     .filter(this::validCmd)
+                     .map(cmd -> {
+                         ObservableFuture<DecisionProjectionProject> future = RxHelper.observableFuture();
+                         eventStore.loadEvents(projectId.orElse(null), future.toHandler());
+                         return Tuple.of(cmd, future.toBlocking().first());
+                     })
+                     .subscribe(tuple -> {
+                         LOG.debug("hello");
+                         Event event1 = tuple._1.apply(tuple._2);
+                         LOG.debug("salut");
+                         eventBus.publish("event", event1);
+                         LOG.debug("hehe");
+                         event.response().end();
+                     });
     }
 
     private Command createCommand(JsonObject jsonCommand) {
         String commandType = (String) jsonCommand.remove("commandType");
         return types.get(commandType)
-                .map(type1 -> gson.<Command>fromJson(jsonCommand.toString(), type1))
-                .getOrElse((Command) null);
+                    .map(type1 -> gson.<Command>fromJson(jsonCommand.toString(), type1))
+                    .getOrElse((Command) null);
     }
 
     // TODO must make an error (error 400) if invalid
@@ -79,7 +81,8 @@ public class LoadProjectDecisionProjection implements Handler<RoutingContext> {
         Seq<ConstraintViolation<Command>> constraintViolations = Seq.ofAll(validator.validate(command));
         if (LOG.isDebugEnabled()) {
             LOG.debug("Nb errors {}", constraintViolations.length());
-            constraintViolations.map(ConstraintViolation::getMessage).forEach(violation -> LOG.debug("Violation : {}", violation));
+            constraintViolations.map(ConstraintViolation::getMessage).forEach(
+                    violation -> LOG.debug("Violation : {}", violation));
         }
         return constraintViolations.isEmpty();
     }

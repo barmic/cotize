@@ -37,28 +37,28 @@ public class GetContribution implements Handler<RoutingContext> {
         JsonObject query = new JsonObject().put("identifier", projectId);
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
-                .doOnError(throwable -> {
-                    LOG.error("erreur !!!!!!!!", throwable);
-                    routingContext.fail(throwable);
-                })
-                .map(obj -> filter(obj, contributionId))
-                .subscribe(obj -> {
-                    routingContext.response().putHeader("Content-Type", "application/json").end(obj.toString());
-                }, throwable -> routingContext.fail(throwable));
+                   .doOnError(throwable -> {
+                       LOG.error("erreur !!!!!!!!", throwable);
+                       routingContext.fail(throwable);
+                   })
+                   .map(obj -> filter(obj, contributionId))
+                   .subscribe(obj -> {
+                       routingContext.response().putHeader("Content-Type", "application/json").end(obj.toString());
+                   }, throwable -> routingContext.fail(throwable));
     }
 
     JsonObject filter(JsonObject project, String contributionId) {
-                    LOG.error("coucou !!!!!!!!", project);
+        LOG.error("coucou !!!!!!!!", project);
         Map<String, Object> collect = project.stream()
-                .filter(entry -> publicFields.contains(entry.getKey()))
-                .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
-                .collect(HashMap.collector());
+                                             .filter(entry -> publicFields.contains(entry.getKey()))
+                                             .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
+                                             .collect(HashMap.collector());
         JsonArray deals = (JsonArray) collect.get("deals").getOrElse(new JsonArray());
         JsonArray filteredDeals = new JsonArray();
         deals.stream()
-                .map(o -> (JsonObject) o)
-                .filter(deal -> deal.getString("dealId").equals(contributionId))
-                .forEach(filteredDeals::add);
+             .map(o -> (JsonObject) o)
+             .filter(deal -> deal.getString("dealId").equals(contributionId))
+             .forEach(filteredDeals::add);
         collect = collect.put("deals", filteredDeals);
         return new JsonObject(collect.toJavaMap(Function.identity()));
     }

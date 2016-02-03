@@ -10,7 +10,6 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.ContributeProject;
-import net.bons.comptes.service.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +40,12 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
                 .map(gson::toJson)
                 .map(JsonObject::new)
                 .map(project -> project.put("identifier", createId()).put("passAdmin", createId()))
-                .map(Project::new)
-                .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project.toJson())
+                .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project)
                         .map(id -> Tuple.of(id, project)))
                 .subscribe(tuple2 -> {
                     event.response()
                             .putHeader("Content-Type", "application/json")
-                            .end(tuple2._2.toJson().toString());
+                            .end(tuple2._2.toString());
                 });
 
     }

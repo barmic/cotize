@@ -50,7 +50,8 @@ public class VertxModule extends AbstractModule {
     @Provides
     Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject,
                          ContrubutionUpdateHandler contrubutionUpdateHandler, ProjectAgreggate projectAgreggate,
-                         CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler, GetContribution getContribution) {
+                         CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler,
+                         GetContribution getContribution) {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
@@ -58,7 +59,8 @@ public class VertxModule extends AbstractModule {
         // command
         router.post("/api/project").handler(createProjectHandler);
         router.post("/api/project/:projectId/contribution").handler(contributionHandler);
-        router.post("/api/project/:projectId/contribution/:contributionId").handler(contrubutionUpdateHandler); // update contribution
+        router.post("/api/project/:projectId/contribution/:contributionId").handler(
+                contrubutionUpdateHandler); // update contribution
 
         // query
         router.get("/api/project/:projectId").handler(getProject);
@@ -89,7 +91,8 @@ public class VertxModule extends AbstractModule {
         JsonObject host = new JsonObject()
                 .put("host", System.getenv("MONGO_HOST"))
                 .put("port", mongo_port);
-        JsonObject config = new JsonObject().put("db_name", System.getenv("MONGO_DBNAME"))
+        JsonObject config = new JsonObject()
+                .put("db_name", System.getenv("MONGO_DBNAME"))
                 .put("useObjectId", true)
                 .put("hosts", new JsonArray().add(host))
                 .put("username", System.getenv("MONGO_USER"))
@@ -97,12 +100,12 @@ public class VertxModule extends AbstractModule {
 
         MongoClient mongoClient = MongoClient.createShared(vertx, config);
         mongoClient.createCollectionObservable(EVENT_COLLECTION_NAME)
-                .subscribe(aVoid -> {
-                    LOG.info("Created ok!");
-                }, throwable -> {
-                    LOG.warn("Can't create the collection {}", throwable.getMessage());
+                   .subscribe(aVoid -> {
+                       LOG.info("Created ok!");
+                   }, throwable -> {
+                       LOG.warn("Can't create the collection {}", throwable.getMessage());
 //                 LOG.debug("Can't create the collection", throwable);
-                });
+                   });
         return mongoClient;
     }
 
@@ -114,10 +117,10 @@ public class VertxModule extends AbstractModule {
         JsonObject mailConfig = this.config.getJsonObject("internal").getJsonObject("mail");
 
         config.setHostname(userConfig.getString("hostname", mailConfig.getString("hostname")))
-                .setPort(userConfig.getInteger("port", mailConfig.getInteger("port")))
-                .setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))))
-                .setUsername(userConfig.getString("username", mailConfig.getString("username")))
-                .setPassword(userConfig.getString("password", mailConfig.getString("password")));
+              .setPort(userConfig.getInteger("port", mailConfig.getInteger("port")))
+              .setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))))
+              .setUsername(userConfig.getString("username", mailConfig.getString("username")))
+              .setPassword(userConfig.getString("password", mailConfig.getString("password")));
 
         return MailClient.createNonShared(vertx, config);
     }

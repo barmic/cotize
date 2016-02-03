@@ -41,23 +41,26 @@ public class GetProject implements Handler<RoutingContext> {
         }
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
-                .map(obj -> !Objects.equals(obj.getString("passAdmin"), adminPass) ? filter(obj) : filterAdmin(obj))
-                .subscribe(obj -> {
-                    routingContext.response().putHeader("Content-Type", "application/json").end(obj.toString());
-                });
+                   .map(obj -> !Objects.equals(obj.getString("passAdmin"), adminPass) ? filter(obj)
+                                                                                      : filterAdmin(obj))
+                   .subscribe(obj -> {
+                       routingContext.response()
+                                     .putHeader("Content-Type", "application/json")
+                                     .end(obj.toString());
+                   });
     }
 
     JsonObject filter(JsonObject project) {
         Map<String, Object> collect = project.stream()
-                .filter(entry -> publicFields.contains(entry.getKey()))
-                .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
-                .collect(HashMap.collector());
+                                             .filter(entry -> publicFields.contains(entry.getKey()))
+                                             .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
+                                             .collect(HashMap.collector());
         JsonArray deals = (JsonArray) collect.get("deals").getOrElse(new JsonArray());
         JsonArray filteredDeals = new JsonArray();
         deals.stream()
-                .map(o -> (JsonObject) o)
-                .map(o -> new JsonObject().put("creditor", o.getString("creditor")))
-                .forEach(filteredDeals::add);
+             .map(o -> (JsonObject) o)
+             .map(o -> new JsonObject().put("creditor", o.getString("creditor")))
+             .forEach(filteredDeals::add);
         collect = collect.put("deals", filteredDeals);
         return new JsonObject(collect.toJavaMap(Function.identity()));
     }

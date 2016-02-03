@@ -25,13 +25,13 @@ public class ProjectAgreggate implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext event) {
         rx.Observable.just(event.<Command>get("cmd"))
-                .subscribe(cmd -> {
-                    DecisionProjectionProject projectionProject = event.get("decisionProjection");
-                    Event event1 = cmd.apply(projectionProject);
-                    eventBus.publish("cmd", event1);
-                    event.response()
-                            .putHeader("Content-Type", "application/json")
-                            .end(gson.toJson(event1));
-                });
+                     .subscribe(cmd -> {
+                         DecisionProjectionProject projectionProject = event.get("decisionProjection");
+                         Event event1 = cmd.apply(projectionProject);
+                         eventBus.publish("cmd", event1);
+                         event.response()
+                              .putHeader("Content-Type", "application/json")
+                              .end(gson.toJson(event1));
+                     });
     }
 }
