@@ -15,7 +15,7 @@ public class ContributionHandlerTest {
     @Test
     public void computeTest() {
         // given
-        ContributionHandler contributionHandler = new ContributionHandler(mock(MongoClient.class), commandExtractor);
+        ContributionHandler contributionHandler = new ContributionHandler(mock(MongoClient.class), mock(CommandExtractor.class));
         JsonObject entries = new JsonObject()
                 .put("name", "Anniversaire de Vanessa")
                 .put("author", "Michel Barret")
@@ -38,7 +38,7 @@ public class ContributionHandlerTest {
     @Test
     public void computeTest2() {
         // given
-        ContributionHandler contributionHandler = new ContributionHandler(mock(MongoClient.class), commandExtractor);
+        ContributionHandler contributionHandler = new ContributionHandler(mock(MongoClient.class), mock(CommandExtractor.class));
         String authorDeal = "Michel";
         JsonObject entriesDeals = new JsonObject()
                 .put("author", authorDeal)
