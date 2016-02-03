@@ -9,7 +9,6 @@ import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
-import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.cqrs.command.CreateProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 public class CreateProjectHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
-    private final Type type = new TypeToken<ContributeProject>() {}.getType();
+    private final Type type = new TypeToken<CreateProject>() {}.getType();
     private Gson gson = new Gson();
     private EventBus eventBus;
     private MongoClient mongoClient;
