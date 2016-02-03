@@ -2,6 +2,7 @@ package net.bons.comptes.integration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mail.MailConfig;
 import io.vertx.ext.mail.StartTLSOptions;
@@ -79,15 +80,21 @@ public class VertxModule extends AbstractModule {
     @Provides
     @Singleton
     MongoClient provideMongoClient(Vertx vertx) {
-        JsonObject config = new JsonObject().put("db_name", "bonscomptes")
-                .put("useObjectId", true);
+        JsonObject host = new JsonObject()
+                .put("host", System.getenv("MONGO_HOST"))
+                .put("port", System.getenv("MONGO_PORT"));
+        JsonObject config = new JsonObject().put("db_name", System.getenv("MONGO_DBNAME"))
+                .put("useObjectId", true)
+                .put("hosts", new JsonArray().add(host))
+                .put("username", System.getenv("MONGO_USER"))
+                .put("password", System.getenv("MONGO_PASSWD"));
 
         MongoClient mongoClient = MongoClient.createShared(vertx, config);
         mongoClient.createCollectionObservable(EVENT_COLLECTION_NAME)
                 .subscribe(aVoid -> {
                     LOG.info("Created ok!");
                 }, throwable -> {
-                    LOG.error("Can't create the collection {}", throwable.getMessage());
+                    LOG.warn("Can't create the collection {}", throwable.getMessage());
 //                 LOG.debug("Can't create the collection", throwable);
                 });
         return mongoClient;
