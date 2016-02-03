@@ -89,7 +89,6 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             .success(function (data) {
                 $scope.newcontrib.state = "created";
                 $scope.newcontrib.content = data.deals.filter(d => d.creditor === $scope.contribution.author)[0];
-                console.log($scope.newcontrib.content)
                 $scope.project.content = data;
             })
             .error(function (data, status) {
