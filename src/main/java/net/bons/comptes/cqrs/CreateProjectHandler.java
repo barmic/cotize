@@ -10,6 +10,7 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.ContributeProject;
+import net.bons.comptes.cqrs.command.CreateProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,19 +35,19 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext event) {
         rx.Observable.just(event)
-                .map(RoutingContext::getBodyAsJson)
-                .map(jsonCommand -> gson.<ContributeProject>fromJson(jsonCommand.toString(), type))
-                .filter(commandExtractor::validCmd)
-                .map(gson::toJson)
-                .map(JsonObject::new)
-                .map(project -> project.put("identifier", createId()).put("passAdmin", createId()))
-                .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project)
-                        .map(id -> Tuple.of(id, project)))
-                .subscribe(tuple2 -> {
-                    event.response()
-                            .putHeader("Content-Type", "application/json")
-                            .end(tuple2._2.toString());
-                });
+                     .map(RoutingContext::getBodyAsJson)
+                     .map(jsonCommand -> gson.<CreateProject>fromJson(jsonCommand.toString(), type))
+                     .filter(commandExtractor::validCmd)
+                     .map(gson::toJson)
+                     .map(JsonObject::new)
+                     .map(project -> project.put("identifier", createId()).put("passAdmin", createId()))
+                     .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project)
+                                                    .map(id -> Tuple.of(id, project)))
+                     .subscribe(tuple2 -> {
+                         event.response()
+                              .putHeader("Content-Type", "application/json")
+                              .end(tuple2._2.toString());
+                     });
 
     }
 
