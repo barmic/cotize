@@ -80,9 +80,15 @@ public class VertxModule extends AbstractModule {
     @Provides
     @Singleton
     MongoClient provideMongoClient(Vertx vertx) {
+        int mongo_port = 27017; // default mongo port
+        try {
+            mongo_port = Integer.parseInt(System.getenv("MONGO_PORT"));
+        } catch (NumberFormatException e) {
+            LOG.warn("Impossible to use MONGO_PORT env var (value is not a number)");
+        }
         JsonObject host = new JsonObject()
                 .put("host", System.getenv("MONGO_HOST"))
-                .put("port", System.getenv("MONGO_PORT"));
+                .put("port", mongo_port);
         JsonObject config = new JsonObject().put("db_name", System.getenv("MONGO_DBNAME"))
                 .put("useObjectId", true)
                 .put("hosts", new JsonArray().add(host))
