@@ -1,0 +1,1 @@
+web:    java -jar target/BonsComptes-jar-with-dependencies.jar

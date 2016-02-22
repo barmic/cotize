@@ -11,7 +11,6 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import javaslang.collection.HashMap;
 import javaslang.collection.Map;
-import javaslang.collection.Seq;
 import net.bons.comptes.cqrs.command.Command;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.cqrs.command.CreateProject;
@@ -25,6 +24,7 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Optional;
 
 public class LoadProjectDecisionProjection implements Handler<RoutingContext> {
@@ -78,11 +78,10 @@ public class LoadProjectDecisionProjection implements Handler<RoutingContext> {
 
     // TODO must make an error (error 400) if invalid
     private boolean validCmd(Command command) {
-        Seq<ConstraintViolation<Command>> constraintViolations = Seq.ofAll(validator.validate(command));
+        Collection<ConstraintViolation<Command>> constraintViolations = validator.validate(command);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Nb errors {}", constraintViolations.length());
-            constraintViolations.map(ConstraintViolation::getMessage).forEach(
-                    violation -> LOG.debug("Violation : {}", violation));
+            LOG.debug("Nb errors {}", constraintViolations.size());
+            constraintViolations.forEach(violation -> LOG.debug("Violation : {}", violation.getMessage()));
         }
         return constraintViolations.isEmpty();
     }
