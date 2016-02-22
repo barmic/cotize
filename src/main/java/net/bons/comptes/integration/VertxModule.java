@@ -82,17 +82,19 @@ public class VertxModule extends AbstractModule {
     @Provides
     @Singleton
     MongoClient provideMongoClient(Vertx vertx) {
-        int mongo_port = 27017; // default mongo port
+        int mongoPort = 27017; // default mongo port
         try {
-            mongo_port = Integer.parseInt(System.getenv("MONGO_PORT"));
+            mongoPort = Integer.parseInt(System.getenv("MONGO_PORT"));
         } catch (NumberFormatException e) {
             LOG.warn("Impossible to use MONGO_PORT env var (value is not a number)");
         }
+        String mongoHost = getStrEnvOrDefault("MONGO_HOST", "127.0.0.1");
         JsonObject host = new JsonObject()
-                .put("host", System.getenv("MONGO_HOST"))
-                .put("port", mongo_port);
+                .put("host", mongoHost)
+                .put("port", mongoPort);
+        String mongoDbname = getStrEnvOrDefault("MONGO_DBNAME", "bonscomptes");
         JsonObject config = new JsonObject()
-                .put("db_name", System.getenv("MONGO_DBNAME"))
+                .put("db_name", mongoDbname)
                 .put("useObjectId", true)
                 .put("hosts", new JsonArray().add(host))
                 .put("username", System.getenv("MONGO_USER"))
@@ -107,6 +109,14 @@ public class VertxModule extends AbstractModule {
 //                 LOG.debug("Can't create the collection", throwable);
                    });
         return mongoClient;
+    }
+
+    private String getStrEnvOrDefault(String envVar, String defaultValue) {
+        String mongoHost = System.getenv(envVar);
+        if (mongoHost == null) {
+            mongoHost = defaultValue;
+        }
+        return mongoHost;
     }
 
     @Provides
