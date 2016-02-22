@@ -7,7 +7,7 @@ public class CreateProjectHandlerTest {
     @Test
     public void testHandle() throws Exception {
         // GIVEN
-//        CreateProjectHandler createProjectHandler = new CreateProjectHandler(mock(EventBus.class));
+//        CreateProjectHandler createProjectHandler = new CreateProjectHandler(Mockito.mock(EventBus.class));
 
         // WHEN
 
