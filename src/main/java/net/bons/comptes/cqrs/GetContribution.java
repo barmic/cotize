@@ -1,25 +1,18 @@
 package net.bons.comptes.cqrs;
 
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javaslang.Tuple;
-import javaslang.collection.HashMap;
-import javaslang.collection.HashSet;
-import javaslang.collection.Map;
-import javaslang.collection.Set;
+import net.bons.comptes.service.model.Contribution;
+import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.function.Function;
 
 public class GetContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
-    private static final Set<String> publicFields = HashSet.of("amount", "author", "date", "name", "identifier",
-                                                               "description", "deals");
     private MongoClient mongoClient;
 
     @Inject
@@ -37,29 +30,17 @@ public class GetContribution implements Handler<RoutingContext> {
         JsonObject query = new JsonObject().put("identifier", projectId);
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
-                   .doOnError(throwable -> {
-                       LOG.error("erreur !!!!!!!!", throwable);
-                       routingContext.fail(throwable);
-                   })
+                   .map(RawProject::new)
                    .map(obj -> filter(obj, contributionId))
                    .subscribe(obj -> {
-                       routingContext.response().putHeader("Content-Type", "application/json").end(obj.toString());
+                       routingContext.response().putHeader("Content-Type", "application/json").end(obj.toJson().toString());
                    }, throwable -> routingContext.fail(throwable));
     }
 
-    JsonObject filter(JsonObject project, String contributionId) {
-        LOG.error("coucou !!!!!!!!", project);
-        Map<String, Object> collect = project.stream()
-                                             .filter(entry -> publicFields.contains(entry.getKey()))
-                                             .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
-                                             .collect(HashMap.collector());
-        JsonArray deals = (JsonArray) collect.get("deals").getOrElse(new JsonArray());
-        JsonArray filteredDeals = new JsonArray();
-        deals.stream()
-             .map(o -> (JsonObject) o)
-             .filter(deal -> deal.getString("dealId").equals(contributionId))
-             .forEach(filteredDeals::add);
-        collect = collect.put("deals", filteredDeals);
-        return new JsonObject(collect.toJavaMap(Function.identity()));
+    Contribution filter(RawProject project, String contributionId) {
+        return project.getContributions().stream()
+                      .filter(contribution -> contribution.getAuthorId().equals(contributionId))
+                      .findFirst()
+                      .get();
     }
 }
