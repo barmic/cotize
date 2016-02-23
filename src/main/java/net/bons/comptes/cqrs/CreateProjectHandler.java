@@ -1,7 +1,5 @@
 package net.bons.comptes.cqrs;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.core.eventbus.EventBus;
@@ -12,13 +10,10 @@ import net.bons.comptes.cqrs.command.CreateProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.UUID;
 
 public class CreateProjectHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
-    private final Type type = new TypeToken<CreateProject>() {}.getType();
-    private Gson gson = new Gson();
     private EventBus eventBus;
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
@@ -41,6 +36,7 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
                      .map(project -> project.put("identifier", createId())
                                             .put("passAdmin", createId()))
                      .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project)
+                                                    .doOnError(throwable -> LOG.error("Error during query on mongodb", throwable))
                                                     .map(id -> Tuple.of(id, project)))
                      .subscribe(tuple2 -> {
                          event.response()

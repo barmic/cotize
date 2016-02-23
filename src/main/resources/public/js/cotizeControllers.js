@@ -56,11 +56,8 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 $scope.newcontrib.state = "created";
                 $scope.newcontrib.content = data;
                 cotizeProjectService.loadProject($routeParams.projectId)
-                                                             .success(function (data) {
-                                                                 $scope.project.content = data;
-                                                             })
-                                                             .error(function (data, status) {
-                                                             });
+                                    .success(function (data) { $scope.project.content = data; })
+                                    .error(function (data, status) {});
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
@@ -81,20 +78,25 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     $scope.create = {}
     $scope.newcontrib = {}
 
+    cotizeProjectService.loadProject($routeParams.projectId)
+            .success(function (data) { $scope.project.content = data; })
+            .error(function (data, status) { });
+
     cotizeProjectService.loadContribution($routeParams.projectId, $routeParams.contributionId)
-            .success(function (data) {
-                $scope.project.content = data;
-                $scope.contribution = data.deals[0];
-            })
-            .error(function (data, status) {
-            });
+            .success(function (data) { $scope.contribution = data; })
+            .error(function (data, status) { });
 
     $scope.contribution.update = function () {
         cotizeProjectService.updateContribution($routeParams.projectId, $routeParams.contributionId, $scope.contribution)
             .success(function (data) {
-                $scope.newcontrib.state = "created";
-                $scope.newcontrib.content = data.deals.filter(d => d.creditor === $scope.contribution.author)[0];
-                $scope.project.content = data;
+                $scope.newcontrib.state = "updated";
+                $scope.newcontrib.content = data;
+                cotizeProjectService.loadProject($routeParams.projectId)
+                                    .success(function (data) {
+                                        $scope.project.content = data;
+                                    })
+                                    .error(function (data, status) {
+                                    });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";

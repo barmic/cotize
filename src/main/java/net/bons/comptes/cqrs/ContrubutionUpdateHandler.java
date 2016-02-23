@@ -1,29 +1,22 @@
 package net.bons.comptes.cqrs;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
+import javaslang.Tuple2;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
-    private final Type type = new TypeToken<ContributeProject>() {
-    }.getType();
-    private Gson gson = new Gson();
-    private EventBus eventBus;
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
 
@@ -43,30 +36,31 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
 
         rx.Observable.just(event)
                      .map(RoutingContext::getBodyAsJson)
-                     .map(jsonCommand -> gson.<ContributeProject>fromJson(jsonCommand.toString(), type))
+                     .map(ContributeProject::new)
                      .filter(commandExtractor::validCmd)
                      .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
-                                                .map(projectJson -> Tuple.of(projectJson, cmd)))
-                     .map(tuple -> Tuple.of(new RawProject(tuple._1), tuple._2))
+                                                .map(projectJson -> Tuple.of(new RawProject(projectJson), cmd)))
                      .map(tuple -> updateContrib(tuple._1, tuple._2))
-                     .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
+                     .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project._1.toJson())
                                                     .map(Void -> project))
                      .subscribe(project -> {
                          event.response()
                               .putHeader("Content-Type", "application/json")
-                              .end(project.toJson().toString());
+                              .end(project._2.toJson().toString());
                      });
 
     }
 
-    private RawProject updateContrib(RawProject project, ContributeProject contribution) {
-        Optional<Contribution> deal1 = project.getContributions().stream().filter(
-                d -> d.getAuthor().equals(contribution.getAuthor())).findFirst();
+    private Tuple2<RawProject, Contribution> updateContrib(RawProject project, ContributeProject contribution) {
+        Optional<Contribution> deal1 = project.getContributions()
+                                              .stream()
+                                              .filter(d -> d.getAuthor().equals(contribution.getAuthor()))
+                                              .findFirst();
         LOG.debug("Author {}", contribution.getAuthor());
         if (deal1.isPresent()) {
             deal1.get().setAmount(contribution.getAmount());
             LOG.debug("Projet result {}", project.toJson());
         }
-        return project;
+        return Tuple.of(project, deal1.get());
     }
 }
