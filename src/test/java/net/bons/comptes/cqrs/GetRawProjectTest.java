@@ -2,7 +2,7 @@ package net.bons.comptes.cqrs;
 
 import org.junit.Test;
 
-public class GetProjectTest {
+public class GetRawProjectTest {
     @Test
     public void test() {
         // given

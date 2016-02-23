@@ -12,7 +12,7 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.service.model.Contribution;
-import net.bons.comptes.service.model.Project;
+import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
                      .filter(commandExtractor::validCmd)
                      .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
                                                 .map(projectJson -> Tuple.of(projectJson, cmd)))
-                     .map(tuple -> Tuple.of(new Project(tuple._1), tuple._2))
+                     .map(tuple -> Tuple.of(new RawProject(tuple._1), tuple._2))
                      .map(tuple -> compute(tuple._1, tuple._2))
                      .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
                                                     .map(Void -> project))
@@ -59,14 +59,14 @@ public class ContributionHandler implements Handler<RoutingContext> {
     }
 
     // TODO too complex !!!!! just add a contrib to project
-    Project compute(Project project, ContributeProject contribute) {
-        LOG.debug("Project to contribute : {}", project.toJson());
+    RawProject compute(RawProject project, ContributeProject contribute) {
+        LOG.debug("RawProject to contribute : {}", project.toJson());
         boolean present = project.getContributions()
                                  .stream()
                                  .filter(deal -> Objects.equals(deal.getAuthor(), contribute.getAuthor()))
                                  .findFirst()
                                  .isPresent();
-        Project projectResult = project;
+        RawProject projectResult = project;
         if (!present) {
             Contribution contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(),
                                                          contribute.getMail());
@@ -79,7 +79,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
                                            .put("contributions", new JsonArray(
                                                    contributions.stream().map(d -> d.toJson())
                                                                 .collect(Collectors.toList())));
-            projectResult = new Project(jsonObject);
+            projectResult = new RawProject(jsonObject);
             LOG.debug("Projet result {}", projectResult.toJson());
         }
         return projectResult;

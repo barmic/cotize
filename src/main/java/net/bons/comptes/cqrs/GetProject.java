@@ -1,26 +1,20 @@
 package net.bons.comptes.cqrs;
 
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javaslang.Tuple;
-import javaslang.collection.HashMap;
-import javaslang.collection.HashSet;
-import javaslang.collection.Map;
-import javaslang.collection.Set;
+import net.bons.comptes.service.model.AdminProject;
+import net.bons.comptes.service.model.RawProject;
+import net.bons.comptes.service.model.SimpleProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class GetProject implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
-    private static final Set<String> publicFields = HashSet.of("amount", "author", "date", "name", "identifier",
-                                                               "description", "contributions");
     private MongoClient mongoClient;
 
     @Inject
@@ -41,34 +35,13 @@ public class GetProject implements Handler<RoutingContext> {
         }
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
-                   .map(obj -> !Objects.equals(obj.getString("passAdmin"), adminPass) ? filter(obj)
-                                                                                      : filterAdmin(obj))
+                   .map(RawProject::new)
+                   .map(project -> !Objects.equals(project.getPassAdmin(), adminPass) ? new SimpleProject(project)
+                                                                                      : new AdminProject(project))
                    .subscribe(obj -> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
-                                     .end(obj.toString());
+                                     .end(obj.toJson().toString());
                    });
-    }
-
-    JsonObject filter(JsonObject project) {
-        String contributions = "contributions";
-        Map<String, Object> collect = project.stream()
-                                             .filter(entry -> publicFields.contains(entry.getKey()))
-                                             .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
-                                             .collect(HashMap.collector());
-        JsonArray deals = (JsonArray) collect.get(contributions).getOrElse(new JsonArray());
-        JsonArray filteredDeals = new JsonArray();
-        deals.stream()
-             .map(o -> (JsonObject) o)
-             .map(o -> new JsonObject().put("author", o.getString("author")))
-             .forEach(filteredDeals::add);
-        collect = collect.put(contributions, filteredDeals);
-        return new JsonObject(collect.toJavaMap(Function.identity()));
-    }
-
-    private JsonObject filterAdmin(JsonObject project) {
-        JsonObject entries = new JsonObject(project.getMap());
-        entries.remove("_id");
-        return entries;
     }
 }

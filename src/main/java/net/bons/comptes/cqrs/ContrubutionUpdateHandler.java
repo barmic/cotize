@@ -11,7 +11,7 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.service.model.Contribution;
-import net.bons.comptes.service.model.Project;
+import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
                      .filter(commandExtractor::validCmd)
                      .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
                                                 .map(projectJson -> Tuple.of(projectJson, cmd)))
-                     .map(tuple -> Tuple.of(new Project(tuple._1), tuple._2))
+                     .map(tuple -> Tuple.of(new RawProject(tuple._1), tuple._2))
                      .map(tuple -> updateContrib(tuple._1, tuple._2))
                      .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
                                                     .map(Void -> project))
@@ -59,7 +59,7 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
 
     }
 
-    private Project updateContrib(Project project, ContributeProject contribution) {
+    private RawProject updateContrib(RawProject project, ContributeProject contribution) {
         Optional<Contribution> deal1 = project.getContributions().stream().filter(
                 d -> d.getAuthor().equals(contribution.getAuthor())).findFirst();
         LOG.debug("Author {}", contribution.getAuthor());

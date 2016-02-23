@@ -15,11 +15,11 @@ public class ContributionHandlerTest {
 //                .put("identifier", "e679d4ed-d")
 //                .put("passAdmin", "e2f901eb-0")
 //                .put("amount", 0);
-//        Project project = new Project(entries);
+//        RawProject project = new RawProject(entries);
 //        ContributeProject contribute = new ContributeProject("Michel", "exemple@exemple.com", 100);
 //
 //        // when
-//        Project projectResult = contributionHandler.compute(project, contribute);
+//        RawProject projectResult = contributionHandler.compute(project, contribute);
 //
 //        // then
 //        assertThat(projectResult).isNotNull();
@@ -45,11 +45,11 @@ public class ContributionHandlerTest {
 //                .put("passAdmin", "e2f901eb-0")
 //                .put("amount", 42)
 //                .put("contributions", new JsonArray().add(entriesDeals));
-//        Project project = new Project(entriesProject);
+//        RawProject project = new RawProject(entriesProject);
 //        ContributeProject contribute = new ContributeProject(authorDeal, "exemple@exemple.com", 100);
 //
 //        // when
-//        Project projectResult = contributionHandler.compute(project, contribute);
+//        RawProject projectResult = contributionHandler.compute(project, contribute);
 //
 //        // then
 //        assertThat(projectResult).isNotNull();

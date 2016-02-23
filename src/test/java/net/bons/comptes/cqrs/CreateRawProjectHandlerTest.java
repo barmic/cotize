@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateProjectHandlerTest {
+public class CreateRawProjectHandlerTest {
 
     @Test
     public void testHandle() throws Exception {

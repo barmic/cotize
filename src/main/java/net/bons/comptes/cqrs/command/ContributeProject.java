@@ -2,7 +2,7 @@ package net.bons.comptes.cqrs.command;
 
 import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.service.model.DecisionProjectionProject;
-import net.bons.comptes.service.model.Project;
+import net.bons.comptes.service.model.RawProject;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -52,7 +52,7 @@ public class ContributeProject implements Command {
   }
 
 //  @Override
-  public Event apply(Project project) {
+  public Event apply(RawProject project) {
     return null;
   }
 
