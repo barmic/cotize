@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class GetProject implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
     private static final Set<String> publicFields = HashSet.of("amount", "author", "date", "name", "identifier",
-                                                               "description", "deals");
+                                                               "description", "contributions");
     private MongoClient mongoClient;
 
     @Inject
@@ -51,17 +51,18 @@ public class GetProject implements Handler<RoutingContext> {
     }
 
     JsonObject filter(JsonObject project) {
+        String contributions = "contributions";
         Map<String, Object> collect = project.stream()
                                              .filter(entry -> publicFields.contains(entry.getKey()))
                                              .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
                                              .collect(HashMap.collector());
-        JsonArray deals = (JsonArray) collect.get("deals").getOrElse(new JsonArray());
+        JsonArray deals = (JsonArray) collect.get(contributions).getOrElse(new JsonArray());
         JsonArray filteredDeals = new JsonArray();
         deals.stream()
              .map(o -> (JsonObject) o)
-             .map(o -> new JsonObject().put("creditor", o.getString("creditor")))
+             .map(o -> new JsonObject().put("author", o.getString("author")))
              .forEach(filteredDeals::add);
-        collect = collect.put("deals", filteredDeals);
+        collect = collect.put(contributions, filteredDeals);
         return new JsonObject(collect.toJavaMap(Function.identity()));
     }
 

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -35,10 +34,10 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
     public void handle(RoutingContext event) {
         rx.Observable.just(event)
                      .map(RoutingContext::getBodyAsJson)
-                     .map(jsonCommand -> gson.<CreateProject>fromJson(jsonCommand.toString(), type))
-                     .filter(commandExtractor::validCmd)
-                     .map(gson::toJson)
-                     .map(JsonObject::new)
+                     .filter(jsonCommand -> {
+                         CreateProject createProject = new CreateProject(jsonCommand);
+                         return commandExtractor.validCmd(createProject);
+                     })
                      .map(project -> project.put("identifier", createId())
                                             .put("passAdmin", createId()))
                      .flatMap(project -> mongoClient.saveObservable("CotizeEvents", project)
