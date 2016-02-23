@@ -54,8 +54,13 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         cotizeProjectService.contribute($routeParams.projectId, $scope.contribution)
             .success(function (data) {
                 $scope.newcontrib.state = "created";
-                $scope.newcontrib.content = data.deals.filter(d => d.creditor === $scope.contribution.author)[0];
-                $scope.project.content = data;
+                $scope.newcontrib.content = data;
+                cotizeProjectService.loadProject($routeParams.projectId)
+                                                             .success(function (data) {
+                                                                 $scope.project.content = data;
+                                                             })
+                                                             .error(function (data, status) {
+                                                             });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";

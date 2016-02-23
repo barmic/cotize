@@ -167,8 +167,18 @@ public class RawProject implements Project {
             return this;
         }
 
-        public Builder deals(Collection<Contribution> contributions) {
-            this.contributions = contributions;
+        public Builder contributions(Collection<Contribution> contributions) {
+            this.contributions = Lists.newArrayList(contributions);
+            return this;
+        }
+
+        public Builder addContributions(Collection<Contribution> contributions) {
+            this.contributions.addAll(contributions);
+            return this;
+        }
+
+        public Builder addContribution(Contribution contribution) {
+            this.contributions.add(contribution);
             return this;
         }
 

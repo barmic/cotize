@@ -1,31 +1,23 @@
 package net.bons.comptes.cqrs;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
+import javaslang.Tuple2;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ContributionHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
-    private final Type type = new TypeToken<ContributeProject>() {
-    }.getType();
-    private Gson gson = new Gson();
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
 
@@ -43,14 +35,14 @@ public class ContributionHandler implements Handler<RoutingContext> {
 
         rx.Observable.just(event)
                      .map(RoutingContext::getBodyAsJson)
-                     .map(jsonCommand -> gson.<ContributeProject>fromJson(jsonCommand.toString(), type))
+                     .map(ContributeProject::new)
                      .filter(commandExtractor::validCmd)
                      .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
-                                                .map(projectJson -> Tuple.of(projectJson, cmd)))
-                     .map(tuple -> Tuple.of(new RawProject(tuple._1), tuple._2))
+                                                .map(projectJson -> Tuple.of(new RawProject(projectJson), cmd)))
                      .map(tuple -> compute(tuple._1, tuple._2))
-                     .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
+                     .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project._1.toJson())
                                                     .map(Void -> project))
+                     .map(project -> project._2)
                      .subscribe(project -> {
                          event.response()
                               .putHeader("Content-Type", "application/json")
@@ -58,31 +50,21 @@ public class ContributionHandler implements Handler<RoutingContext> {
                      });
     }
 
-    // TODO too complex !!!!! just add a contrib to project
-    RawProject compute(RawProject project, ContributeProject contribute) {
+    private Tuple2<RawProject, Contribution> compute(RawProject project, ContributeProject contribute) {
         LOG.debug("RawProject to contribute : {}", project.toJson());
         boolean present = project.getContributions()
                                  .stream()
                                  .filter(deal -> Objects.equals(deal.getAuthor(), contribute.getAuthor()))
                                  .findFirst()
                                  .isPresent();
-        RawProject projectResult = project;
+        RawProject.Builder rawProjectBuilder = RawProject.builder(project);
+        Contribution contribution = null;
         if (!present) {
-            Contribution contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(),
+            contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(),
                                                          contribute.getMail());
-            ImmutableList<Contribution> contributions = ImmutableList.<Contribution>builder().addAll(
-                    project.getContributions()).add(
-                    contribution).build();
-            int amount = contributions.stream().mapToInt(d -> d.getAmount()).sum();
-            JsonObject jsonObject = project.toJson()
-                                           .put("amount", amount)
-                                           .put("contributions", new JsonArray(
-                                                   contributions.stream().map(d -> d.toJson())
-                                                                .collect(Collectors.toList())));
-            projectResult = new RawProject(jsonObject);
-            LOG.debug("Projet result {}", projectResult.toJson());
-        }
-        return projectResult;
+            rawProjectBuilder.addContribution(contribution);
+        } // TODO throw error if a contribution already exists
+        return Tuple.of(rawProjectBuilder.createRawProject(), contribution);
     }
 
     private String createId() {

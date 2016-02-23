@@ -1,78 +1,84 @@
 package net.bons.comptes.cqrs.command;
 
+import io.vertx.core.json.JsonObject;
 import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.service.model.DecisionProjectionProject;
-import net.bons.comptes.service.model.RawProject;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class ContributeProject implements Command {
-  @NotNull
-  private String author;
-  @NotNull
-  private String mail;
-  @NotNull
-  private int amount;
+    @NotNull
+    private String author;
+    @NotNull
+    private String mail;
+    @NotNull
+    private int amount;
 
-  public ContributeProject() {
-  }
+    public ContributeProject() {
+    }
 
-  public ContributeProject(String author, String mail, int amount) {
-    this.author = author;
-    this.mail = mail;
-    this.amount = amount;
-  }
+    public ContributeProject(JsonObject json) {
+        this.author = json.getString("author");
+        this.mail = json.getString("mail");
+        this.amount = json.getInteger("amount");
 
-  public String getAuthor() {
-    return author;
-  }
+    }
 
-  public ContributeProject setAuthor(String author) {
-    this.author = author;
-    return this;
-  }
+    public ContributeProject(String author, String mail, int amount) {
+        this.author = author;
+        this.mail = mail;
+        this.amount = amount;
+    }
 
-  public String getMail() {
-    return mail;
-  }
+    public String getAuthor() {
+        return author;
+    }
 
-  public ContributeProject setMail(String mail) {
-    this.mail = mail;
-    return this;
-  }
+    public ContributeProject setAuthor(String author) {
+        this.author = author;
+        return this;
+    }
 
-  public int getAmount() {
-    return amount;
-  }
+    public String getMail() {
+        return mail;
+    }
 
-  public ContributeProject setAmount(int amount) {
-    this.amount = amount;
-    return this;
-  }
+    public ContributeProject setMail(String mail) {
+        this.mail = mail;
+        return this;
+    }
 
-//  @Override
-  public Event apply(RawProject project) {
-    return null;
-  }
+    public int getAmount() {
+        return amount;
+    }
 
-  @Override
-  public Event apply(DecisionProjectionProject decisionProjectionProject) {
-    return null;
-  }
+    public ContributeProject setAmount(int amount) {
+        this.amount = amount;
+        return this;
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ContributeProject that = (ContributeProject) o;
-    return Objects.equals(author, that.author) &&
-        Objects.equals(mail, that.mail) &&
-        Objects.equals(amount, that.amount);
-  }
+    @Override
+    public Event apply(DecisionProjectionProject decisionProjectionProject) {
+        return null;
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(author, mail, amount);
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ContributeProject that = (ContributeProject) o;
+        return Objects.equals(author, that.author) &&
+                Objects.equals(mail, that.mail) &&
+                Objects.equals(amount, that.amount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(author, mail, amount);
+    }
 }
