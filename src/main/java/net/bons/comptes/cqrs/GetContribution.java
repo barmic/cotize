@@ -39,7 +39,7 @@ public class GetContribution implements Handler<RoutingContext> {
 
     Contribution filter(RawProject project, String contributionId) {
         return project.getContributions().stream()
-                      .filter(contribution -> contribution.getAuthorId().equals(contributionId))
+                      .filter(contribution -> contribution.getContributionId().equals(contributionId))
                       .findFirst()
                       .get();
     }

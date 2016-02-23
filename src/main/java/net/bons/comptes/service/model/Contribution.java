@@ -8,7 +8,7 @@ package net.bons.comptes.service.model;
 import io.vertx.core.json.JsonObject;
 
 public class Contribution {
-    private String authorId;
+    private String contributionId;
     private String author;
     private int amount;
     private String email;
@@ -20,15 +20,15 @@ public class Contribution {
     }
 
     public Contribution(Contribution contribution) {
-        this.authorId = contribution.getAuthorId();
+        this.contributionId = contribution.getContributionId();
         this.author = contribution.getAuthor();
         this.amount = contribution.getAmount();
         this.email = contribution.getEmail();
         this.date = contribution.getDate();
     }
 
-    public Contribution(String delaId, String author, int amount, String email, String...debtors) {
-        this.authorId = delaId;
+    public Contribution(String contributionId, String author, int amount, String email, String...debtors) {
+        this.contributionId = contributionId;
         this.author = author;
         this.amount = amount;
         this.email = email;
@@ -36,7 +36,7 @@ public class Contribution {
     }
 
     public Contribution(JsonObject json) {
-        this.authorId = json.getString("authorId");
+        this.contributionId = json.getString("contributionId");
         this.author = json.getString("author");
         this.amount = json.getInteger("amount");
         this.email = json.getString("email");
@@ -45,19 +45,19 @@ public class Contribution {
 
     public JsonObject toJson() {
         return new JsonObject()
-                .put("authorId", authorId)
+                .put("contributionId", contributionId)
                 .put("author", author)
                 .put("amount", amount)
                 .put("email", email)
                 .put("date", date);
     }
 
-    public String getAuthorId() {
-        return authorId;
+    public String getContributionId() {
+        return contributionId;
     }
 
-    public Contribution setAuthorId(String authorId) {
-        this.authorId = authorId;
+    public Contribution setContributionId(String contributionId) {
+        this.contributionId = contributionId;
         return this;
     }
 
