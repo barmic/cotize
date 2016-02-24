@@ -13,7 +13,7 @@ public interface Project {
 
     int getAmount();
 
-    String getEmail();
+    String getMail();
 
     String getIdentifier();
 }

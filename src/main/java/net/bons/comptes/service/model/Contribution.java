@@ -11,7 +11,7 @@ public class Contribution {
     private String contributionId;
     private String author;
     private int amount;
-    private String email;
+    private String mail;
 
     private Long date;
     private String name;
@@ -23,15 +23,15 @@ public class Contribution {
         this.contributionId = contribution.getContributionId();
         this.author = contribution.getAuthor();
         this.amount = contribution.getAmount();
-        this.email = contribution.getEmail();
+        this.mail = contribution.getMail();
         this.date = contribution.getDate();
     }
 
-    public Contribution(String contributionId, String author, int amount, String email, String...debtors) {
+    public Contribution(String contributionId, String author, int amount, String mail, String...debtors) {
         this.contributionId = contributionId;
         this.author = author;
         this.amount = amount;
-        this.email = email;
+        this.mail = mail;
         this.date = System.currentTimeMillis();
     }
 
@@ -39,7 +39,7 @@ public class Contribution {
         this.contributionId = json.getString("contributionId");
         this.author = json.getString("author");
         this.amount = json.getInteger("amount");
-        this.email = json.getString("email");
+        this.mail = json.getString("mail");
         this.date = json.getLong("date");
     }
 
@@ -48,7 +48,7 @@ public class Contribution {
                 .put("contributionId", contributionId)
                 .put("author", author)
                 .put("amount", amount)
-                .put("email", email)
+                .put("mail", mail)
                 .put("date", date);
     }
 
@@ -69,8 +69,8 @@ public class Contribution {
         return amount;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
     public long getDate() {
@@ -91,8 +91,8 @@ public class Contribution {
         return this;
     }
 
-    public Contribution setEmail(String email) {
-        this.email = email;
+    public Contribution setMail(String mail) {
+        this.mail = mail;
         return this;
     }
 

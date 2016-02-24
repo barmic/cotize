@@ -12,7 +12,7 @@ public class SimpleProject implements Project {
     private String name;
     private String author;
     private String description;
-    private String email;
+    private String mail;
     private String identifier;
     private int amount;
     private Collection<Contribution> contributions;
@@ -21,7 +21,7 @@ public class SimpleProject implements Project {
         this.name = json.getString("name");
         this.author = json.getString("author");
         this.description = json.getString("description");
-        this.email = json.getString("email");
+        this.mail = json.getString("mail");
         this.identifier = json.getString("identifier");
         this.amount = json.getInteger("amount", 0);
         if (json.containsKey("contributions")) {
@@ -40,7 +40,7 @@ public class SimpleProject implements Project {
         this.name = project.getName();
         this.author = project.getAuthor();
         this.description = project.getDescription();
-        this.email = project.getEmail();
+        this.mail = project.getMail();
         this.identifier = project.getIdentifier();
         this.amount = project.getAmount();
         this.contributions = project.getContributions();
@@ -50,7 +50,7 @@ public class SimpleProject implements Project {
         this.name = project.getName();
         this.author = project.getAuthor();
         this.description = project.getDescription();
-        this.email = project.getEmail();
+        this.mail = project.getMail();
         this.identifier = project.getIdentifier();
         this.amount = project.getAmount();
         this.contributions = project.getContributions().stream()
@@ -58,11 +58,11 @@ public class SimpleProject implements Project {
                                     .collect(Collectors.toList());
     }
 
-    SimpleProject(String name, String author, String description, String email, String identifier, Collection<Contribution> contributions) {
+    SimpleProject(String name, String author, String description, String mail, String identifier, Collection<Contribution> contributions) {
         this.name = name;
         this.author = author;
         this.description = description;
-        this.email = email;
+        this.mail = mail;
         this.identifier = identifier;
         this.contributions = contributions;
         this.amount = contributions.stream().collect(Collectors.summingInt(Contribution::getAmount));
@@ -76,7 +76,7 @@ public class SimpleProject implements Project {
                 .put("name", this.name)
                 .put("author", this.author)
                 .put("description", this.description)
-                .put("email", this.email)
+                .put("mail", this.mail)
                 .put("identifier", this.identifier)
                 .put("amount", this.amount)
                 .put("contributions", jsonDeals);
@@ -110,9 +110,8 @@ public class SimpleProject implements Project {
         return amount;
     }
 
-    @Override
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
     @Override
@@ -128,7 +127,7 @@ public class SimpleProject implements Project {
         private String name;
         private String author;
         private String description;
-        private String email;
+        private String mail;
         private String identifier;
         private Collection<Contribution> contributions;
 
@@ -140,7 +139,7 @@ public class SimpleProject implements Project {
             name = project.getName();
             author = project.getAuthor();
             description = project.getDescription();
-            email = project.getEmail();
+            mail = project.getMail();
             identifier = project.getIdentifier();
             contributions = Lists.newArrayList(project.getContributions());
         }
@@ -160,8 +159,8 @@ public class SimpleProject implements Project {
             return this;
         }
 
-        public Builder email(String email) {
-            this.email = email;
+        public Builder mail(String mail) {
+            this.mail = mail;
             return this;
         }
 
@@ -176,7 +175,7 @@ public class SimpleProject implements Project {
         }
 
         public Project createRawProject() {
-            return new SimpleProject(name, author, description, email, identifier, contributions);
+            return new SimpleProject(name, author, description, mail, identifier, contributions);
         }
     }
 }

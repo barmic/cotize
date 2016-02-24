@@ -56,11 +56,12 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
                                               .stream()
                                               .filter(d -> d.getAuthor().equals(contribution.getAuthor()))
                                               .findFirst();
+        RawProject.Builder builder = RawProject.builder(project);
         LOG.debug("Author {}", contribution.getAuthor());
         if (deal1.isPresent()) {
             deal1.get().setAmount(contribution.getAmount());
             LOG.debug("Projet result {}", project.toJson());
         }
-        return Tuple.of(project, deal1.get());
+        return Tuple.of(builder.createRawProject(), deal1.get());
     }
 }

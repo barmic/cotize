@@ -12,7 +12,7 @@ public class AdminProject implements Project {
     private String name;
     private String author;
     private String description;
-    private String email;
+    private String mail;
     private String identifier;
     private String passAdmin;
     private int amount;
@@ -22,7 +22,7 @@ public class AdminProject implements Project {
         this.name = json.getString("name");
         this.author = json.getString("author");
         this.description = json.getString("description");
-        this.email = json.getString("email");
+        this.mail = json.getString("mail");
         this.identifier = json.getString("identifier");
         this.passAdmin = json.getString("passAdmin");
         this.amount = json.getInteger("amount", 0);
@@ -43,7 +43,7 @@ public class AdminProject implements Project {
         this.name = project.getName();
         this.author = project.getAuthor();
         this.description = project.getDescription();
-        this.email = project.getEmail();
+        this.mail = project.getMail();
         this.identifier = project.getIdentifier();
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
@@ -54,7 +54,7 @@ public class AdminProject implements Project {
         this.name = project.getName();
         this.author = project.getAuthor();
         this.description = project.getDescription();
-        this.email = project.getEmail();
+        this.mail = project.getMail();
         this.identifier = project.getIdentifier();
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
@@ -63,12 +63,12 @@ public class AdminProject implements Project {
                                     .collect(Collectors.toList());
     }
 
-    AdminProject(String name, String author, String description, String email, String identifier,
-               String passAdmin, Collection<Contribution> contributions) {
+    AdminProject(String name, String author, String description, String mail, String identifier,
+                 String passAdmin, Collection<Contribution> contributions) {
         this.name = name;
         this.author = author;
         this.description = description;
-        this.email = email;
+        this.mail = mail;
         this.identifier = identifier;
         this.passAdmin = passAdmin;
         this.contributions = contributions;
@@ -82,7 +82,7 @@ public class AdminProject implements Project {
                 .put("name", this.name)
                 .put("author", this.author)
                 .put("description", this.description)
-                .put("email", this.email)
+                .put("mail", this.mail)
                 .put("identifier", this.identifier)
                 .put("passAdmin", this.passAdmin)
                 .put("amount", this.amount)
@@ -113,8 +113,8 @@ public class AdminProject implements Project {
         return amount;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
     public String getIdentifier() {
@@ -133,7 +133,7 @@ public class AdminProject implements Project {
         private String name;
         private String author;
         private String description;
-        private String email;
+        private String mail;
         private String identifier;
         private String passAdmin;
         private Collection<Contribution> contributions;
@@ -146,7 +146,7 @@ public class AdminProject implements Project {
             name = project.getName();
             author = project.getAuthor();
             description = project.getDescription();
-            email = project.getEmail();
+            mail = project.getMail();
             identifier = project.getIdentifier();
             passAdmin = project.getPassAdmin();
             contributions = Lists.newArrayList(project.getContributions());
@@ -167,8 +167,8 @@ public class AdminProject implements Project {
             return this;
         }
 
-        public Builder email(String email) {
-            this.email = email;
+        public Builder mail(String mail) {
+            this.mail = mail;
             return this;
         }
 
@@ -188,7 +188,7 @@ public class AdminProject implements Project {
         }
 
         public RawProject createRawProject() {
-            return new RawProject(name, author, description, email, identifier, passAdmin, contributions);
+            return new RawProject(name, author, description, mail, identifier, passAdmin, contributions);
         }
     }
 }
