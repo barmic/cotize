@@ -10,7 +10,8 @@ function ($http, $scope, cotizeProjectService) {
         description : ''
     };
     $scope.prefix = {
-        url : window.document.URL.split('/')[2]
+        url : window.document.URL.split('/')[2],
+        scheme : window.document.URL.split(':')[0]
     };
 
     $scope.project.create = function () {
@@ -37,7 +38,8 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         "projectId": $routeParams.projectId
     };
     $scope.prefix = {
-        url : window.document.URL.split('/')[2]
+        url : window.document.URL.split('/')[2],
+        scheme : window.document.URL.split(':')[0]
     };
     $scope.project = {}
     $scope.create = {}
@@ -71,8 +73,11 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     // App session information
     $scope.contribution = {
     };
+    $scope.contrib = {
+    };
     $scope.prefix = {
-        url : window.document.URL.split('/')[2]
+        url : window.document.URL.split('/')[2],
+        scheme : window.document.URL.split(':')[0]
     };
     $scope.project = {}
     $scope.create = {}
@@ -86,17 +91,14 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             .success(function (data) { $scope.contribution = data; })
             .error(function (data, status) { });
 
-    $scope.contribution.update = function () {
+    $scope.contrib.update = function () {
         cotizeProjectService.updateContribution($routeParams.projectId, $routeParams.contributionId, $scope.contribution)
             .success(function (data) {
                 $scope.newcontrib.state = "updated";
                 $scope.newcontrib.content = data;
                 cotizeProjectService.loadProject($routeParams.projectId)
-                                    .success(function (data) {
-                                        $scope.project.content = data;
-                                    })
-                                    .error(function (data, status) {
-                                    });
+                                    .success(function (data) { $scope.project.content = data; })
+                                    .error(function (data, status) { });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
