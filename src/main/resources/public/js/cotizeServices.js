@@ -1,7 +1,7 @@
 var cotizeServices = cotizeModule.service('cotizeServices', []);
 
 cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
-    var serverBaseUrl = 'http://' + window.document.URL.split('/')[2] + '/api/';
+    var serverBaseUrl = window.document.URL.split(':')[0] + '://' + window.document.URL.split('/')[2] + '/api/';
 
     var service = {};
     service.createProject = function (project) {

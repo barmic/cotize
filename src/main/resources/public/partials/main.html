@@ -18,10 +18,10 @@
 
         <p>
         <ul>
-            <li>Lien à fournir aux participants : <a ng-href="http://{{prefix.url}}/#/project/{{project.content.identifier}}">http://{{prefix.url}}/#/project/{{project.content.identifier}}</a>
+            <li>Lien à fournir aux participants : <a ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a>
             </li>
             <li>Lien d'administration du projet : <a
-                    ng-href='http://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}'>http://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}</a>
+                    ng-href='{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}'>{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}</a>
             </li>
         </ul>
         </p>
