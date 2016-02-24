@@ -15,6 +15,7 @@ public class Contribution {
 
     private Long date;
     private String name;
+    private Boolean payed;
 
     public Contribution() {
     }
@@ -25,6 +26,7 @@ public class Contribution {
         this.amount = contribution.getAmount();
         this.mail = contribution.getMail();
         this.date = contribution.getDate();
+        this.payed = contribution.getPayed();
     }
 
     public Contribution(String contributionId, String author, int amount, String mail, String...debtors) {
@@ -33,6 +35,7 @@ public class Contribution {
         this.amount = amount;
         this.mail = mail;
         this.date = System.currentTimeMillis();
+        this.payed = false;
     }
 
     public Contribution(JsonObject json) {
@@ -41,6 +44,7 @@ public class Contribution {
         this.amount = json.getInteger("amount");
         this.mail = json.getString("mail");
         this.date = json.getLong("date");
+        this.payed = json.getBoolean("payed", false);
     }
 
     public JsonObject toJson() {
@@ -49,7 +53,8 @@ public class Contribution {
                 .put("author", author)
                 .put("amount", amount)
                 .put("mail", mail)
-                .put("date", date);
+                .put("date", date)
+                .put("payed", payed);
     }
 
     public String getContributionId() {
@@ -103,6 +108,15 @@ public class Contribution {
 
     public Contribution setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public Boolean getPayed() {
+        return payed;
+    }
+
+    public Contribution setPayed(Boolean payed) {
+        this.payed = payed;
         return this;
     }
 }

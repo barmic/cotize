@@ -126,9 +126,6 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         cotizeProjectService.removeContribution($routeParams.projectId, contributionId)
             .success(function (data) {
                 $scope.project.content = data;
-//                cotizeProjectService.loadProject($routeParams.projectId)
-//                                    .success(function (data) { $scope.project.content = data; })
-//                                    .error(function (data, status) { });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
