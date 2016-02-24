@@ -18,6 +18,10 @@ cotizeModule.config(['$routeProvider',
         templateUrl: 'partials/contribution.html',
         controller: 'cotizeContribution'
       }).
+      when('/project/:projectId/admin/:passAdmin', {
+        templateUrl: 'partials/admin.html',
+        controller: 'cotizeAdmin'
+      }).
       otherwise({
         redirectTo: '/index'
       });

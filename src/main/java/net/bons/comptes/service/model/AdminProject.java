@@ -59,7 +59,7 @@ public class AdminProject implements Project {
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
         this.contributions = project.getContributions().stream()
-                                    .map(contribution -> new Contribution(null, contribution.getAuthor(), 0, null))
+                                    .map(contribution -> new Contribution(contribution.getContributionId(), contribution.getAuthor(), contribution.getAmount(), null))
                                     .collect(Collectors.toList());
     }
 
@@ -77,7 +77,7 @@ public class AdminProject implements Project {
 
     public JsonObject toJson() {
         JsonArray jsonDeals = new JsonArray();
-        contributions.stream().map(d -> d.toJson()).forEach(jsonDeals::add);
+        contributions.stream().map(Contribution::toJson).forEach(jsonDeals::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)

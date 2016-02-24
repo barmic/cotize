@@ -1,0 +1,34 @@
+<!--
+  Licence Public Barmic
+  copyright 2014 Michel Barret <michel.barret@gmail.com>
+-->
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+        <div id="getting-started">
+            <h2>Résultat du projet {{project.content.name}}</h2>
+            <p>Le projet a déjà réunis {{project.content.amount}}</p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Contribution</th>
+                    <th>Payé ?</th>
+                    <th>Supprimer</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="contributor in project.content.contributions">
+                    <td>{{contributor.author}}</td>
+                    <td>{{contributor.amount}}</td>
+                    <td>
+                        <button ng-click="contrib.remove(contributor.contributionId)" class="btn btn-primary">Payé</button>
+                    </td>
+                    <td>
+                        <button ng-click="contrib.remove(contributor.contributionId)" class="btn btn-primary">Supprimer</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

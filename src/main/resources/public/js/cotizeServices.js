@@ -28,6 +28,14 @@ cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
         var query = serverBaseUrl + 'project/' + projectID + '/contribution/' + contributionId;
         return $http.post(query, contribution);
     };
+    service.removeContribution = function (projectId, contributionId) {
+        var query = serverBaseUrl + 'project/' + projectId + '/contribution/' + contributionId;
+        return $http.delete(query);
+    };
+    service.payedContribution = function (projectId, contributionId) {
+        var query = serverBaseUrl + 'project/' + projectID + '/contribution/' + contributionId;
+        return $http.post(query);
+    };
     return service;
     }
 ]);
