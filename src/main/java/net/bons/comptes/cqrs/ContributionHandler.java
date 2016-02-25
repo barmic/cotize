@@ -2,6 +2,7 @@ package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -47,6 +48,17 @@ public class ContributionHandler implements Handler<RoutingContext> {
                          event.response()
                               .putHeader("Content-Type", "application/json")
                               .end(project.toJson().toString());
+                     }, error -> {
+                         if (error instanceof ValidationError) {
+                             ValidationError validationError = (ValidationError) error;
+                             JsonArray array = new JsonArray();
+                             validationError.getViolations()
+                                            .forEach(violation -> array.add(violation.getMessage()));
+                             event.response().setStatusCode(400).end(array.toString());
+                         } else {
+                             event.response().setStatusCode(400)
+                                  .end(new JsonArray().add(error.getMessage()).toString());
+                         }
                      });
     }
 
@@ -58,12 +70,12 @@ public class ContributionHandler implements Handler<RoutingContext> {
                                  .findFirst()
                                  .isPresent();
         RawProject.Builder rawProjectBuilder = RawProject.builder(project);
-        Contribution contribution = null;
-        if (!present) {
-            contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(),
-                                                         contribute.getMail());
-            rawProjectBuilder.addContribution(contribution);
-        } // TODO throw error if a contribution already exists
+        if (present) {
+            throw new ContribAlreadyExistError("La contribution de " + contribute.getAuthor() + " existe déjà");
+        }
+        Contribution contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(),
+                                                     contribute.getMail());
+        rawProjectBuilder.addContribution(contribution);
         return Tuple.of(rawProjectBuilder.createRawProject(), contribution);
     }
 

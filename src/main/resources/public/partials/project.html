@@ -14,6 +14,15 @@
         <li ng-repeat="contributor in project.content.contributions">{{contributor.author}}</li>
     </ul>
 
+    <div class="alert alert-danger" role="alert" ng-show="newcontrib.state == 'error'">
+        <h3>Erreur !</h3>
+        <p>
+        <ul>
+            <li ng-repeat="error in newcontrib.status">{{error}}</li>
+        </ul>
+        </p>
+    </div>
+
     <div class="alert alert-success" role="alert" ng-show="newcontrib.state == 'created'">
         Merci pour votre contribution !</br>
         <a href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{newcontrib.content.contributionId}}">Modifier votre contribution.</a>

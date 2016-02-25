@@ -63,7 +63,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
-                $scope.project.status = status;
+                $scope.newcontrib.status = data;
             });
     };
 }]);
