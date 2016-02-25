@@ -18,7 +18,7 @@ public class CommandExtractor {
         this.validator = validator;
     }
 
-    public boolean validCmd(Command command) {
+    public boolean validCmd(Command command) throws ValidationError {
         Collection<ConstraintViolation<Command>> constraintViolations = validator.validate(command);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Nb errors {}", constraintViolations.size());
@@ -26,6 +26,9 @@ public class CommandExtractor {
                     violation -> LOG.debug("Violation : {} (field : {}; value {})", violation.getMessage(),
                                            violation.getPropertyPath(), violation.getInvalidValue()));
         }
-        return constraintViolations.isEmpty();
+        if (!constraintViolations.isEmpty()) {
+            throw new ValidationError("Erreur du message reçus", constraintViolations);
+        }
+        return true;
     }
 }

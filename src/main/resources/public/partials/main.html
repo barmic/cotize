@@ -9,11 +9,16 @@
 </div>
 
 <div class="row">
-    <!--[% IF error_msg %]-->
-    <!--<div class="alert alert-danger" role="alert" th:class="">[% error_msg %]</div>-->
-    <!--[% END %]-->
+    <div class="alert alert-danger" role="alert" ng-show="project.state == 'error'">
+        <h3>Erreur !</h3>
+        <p>
+            <ul>
+                <li ng-repeat="error in project.status">{{error}}</li>
+            </ul>
+        </p>
+    </div>
 
-    <div class="alert alert-success" role="alert" ng-show="project.state">
+    <div class="alert alert-success" role="alert" ng-show="project.state == 'created'">
         <h3>La création du projet s'est bien déroulée !</h3>
 
         <p>

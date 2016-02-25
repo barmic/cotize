@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject;
 import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.cqrs.event.ProjectCreated;
 import net.bons.comptes.service.model.DecisionProjectionProject;
+import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class CreateProject implements Command {
     private String author;
     @NotNull
     private String description;
-    @NotNull
+    @NotNull @Email
     private String mail;
 
     public CreateProject() {

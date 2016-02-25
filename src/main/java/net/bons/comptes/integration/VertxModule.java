@@ -5,7 +5,6 @@ import com.google.inject.Provides;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mail.MailConfig;
-import io.vertx.ext.mail.StartTLSOptions;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mail.MailClient;
@@ -126,16 +125,16 @@ public class VertxModule extends AbstractModule {
     @Singleton
     MailClient provideMailClient() {
         MailConfig config = new MailConfig();
-        JsonObject userConfig = this.config.getJsonObject("user").getJsonObject("mail");
-        JsonObject mailConfig = this.config.getJsonObject("internal").getJsonObject("mail");
+//        JsonObject userConfig = this.config.getJsonObject("user").getJsonObject("mail");
+//        JsonObject mailConfig = this.config.getJsonObject("internal").getJsonObject("mail");
 
-        config.setHostname(userConfig.getString("hostname", mailConfig.getString("hostname")))
-              .setPort(userConfig.getInteger("port", mailConfig.getInteger("port")))
-              .setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))))
-              .setUsername(userConfig.getString("username", mailConfig.getString("username")))
-              .setPassword(userConfig.getString("password", mailConfig.getString("password")));
+        config.setHostname("smtp.gmail.com")
+              .setPort(465)
+//              .setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))))
+              .setUsername("michel.barret@gmail.com")
+              .setPassword("AmwsY7vr");
 
-        return MailClient.createNonShared(vertx, config);
+        return MailClient.createShared(vertx, config);
     }
 
     @Provides

@@ -22,7 +22,7 @@ function ($http, $scope, cotizeProjectService) {
             })
             .error(function (data, status) {
                 $scope.project.state = "error";
-                $scope.project.status = status;
+                $scope.project.status = data;
             });
     };
 

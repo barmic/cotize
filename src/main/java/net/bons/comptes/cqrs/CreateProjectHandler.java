@@ -2,6 +2,7 @@ package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.rxjava.core.eventbus.EventBus;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -42,6 +43,14 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
                          event.response()
                               .putHeader("Content-Type", "application/json")
                               .end(tuple2._2.toString());
+                     }, error -> {
+                         if (error instanceof ValidationError) {
+                             ValidationError validationError = (ValidationError) error;
+                             JsonArray array = new JsonArray();
+                             validationError.getViolations()
+                                            .forEach(violation -> array.add(violation.getMessage()));
+                             event.response().setStatusCode(400).end(array.toString());
+                         }
                      });
 
     }

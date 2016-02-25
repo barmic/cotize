@@ -3,6 +3,7 @@ package net.bons.comptes.cqrs.command;
 import io.vertx.core.json.JsonObject;
 import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.service.model.DecisionProjectionProject;
+import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Objects;
 public class ContributeProject implements Command {
     @NotNull
     private String author;
-    @NotNull
+    @NotNull @Email
     private String mail;
     @NotNull
     private int amount;
