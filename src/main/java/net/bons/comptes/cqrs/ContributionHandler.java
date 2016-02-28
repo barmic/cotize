@@ -9,6 +9,7 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import javaslang.Tuple2;
 import net.bons.comptes.cqrs.command.ContributeProject;
+import net.bons.comptes.service.MailService;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
@@ -21,11 +22,13 @@ public class ContributionHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
+    private MailService mailService;
 
     @Inject
-    public ContributionHandler(MongoClient mongoClient, CommandExtractor commandExtractor) {
+    public ContributionHandler(MongoClient mongoClient, CommandExtractor commandExtractor, MailService mailService) {
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
+        this.mailService = mailService;
     }
 
     @Override
@@ -43,11 +46,11 @@ public class ContributionHandler implements Handler<RoutingContext> {
                      .map(tuple -> compute(tuple._1, tuple._2))
                      .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project._1.toJson())
                                                     .map(Void -> project))
-                     .map(project -> project._2)
                      .subscribe(project -> {
+                         mailService.sendNewContribution(project._1, project._2);
                          event.response()
                               .putHeader("Content-Type", "application/json")
-                              .end(project.toJson().toString());
+                              .end(project._2.toJson().toString());
                      }, error -> {
                          if (error instanceof ValidationError) {
                              ValidationError validationError = (ValidationError) error;

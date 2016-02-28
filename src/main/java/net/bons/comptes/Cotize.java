@@ -3,7 +3,6 @@ package net.bons.comptes;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import io.vertx.rxjava.core.AbstractVerticle;
-import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.serviceproxy.ProxyHelper;
 import net.bons.comptes.integration.VertxModule;
@@ -14,12 +13,6 @@ import org.slf4j.LoggerFactory;
 
 public class Cotize extends AbstractVerticle {
   private static final Logger LOG = LoggerFactory.getLogger(Cotize.class);
-
-  public static void main(String[] args) {
-    Vertx vertx = Vertx.vertx();
-
-    vertx.deployVerticle(Cotize.class.getName());
-  }
 
   @Override
   public void start() {

@@ -41,6 +41,7 @@ public class VertxModule extends AbstractModule {
         io.vertx.core.Vertx delegate = (io.vertx.core.Vertx) vertx.getDelegate();
         bind(io.vertx.core.Vertx.class).toInstance(delegate);
         bind(Vertx.class).toInstance(vertx);
+        bind(JsonObject.class).toInstance(config);
 
         EventStore service = ProxyHelper.createProxy(EventStore.class, delegate, "database-service-address");
         bind(EventStore.class).toInstance(service);
@@ -108,7 +109,6 @@ public class VertxModule extends AbstractModule {
                        LOG.info("Created ok!");
                    }, throwable -> {
                        LOG.warn("Can't create the collection {}", throwable.getMessage());
-//                 LOG.debug("Can't create the collection", throwable);
                    });
         return mongoClient;
     }
@@ -124,15 +124,12 @@ public class VertxModule extends AbstractModule {
     @Provides
     @Singleton
     MailClient provideMailClient() {
-        MailConfig config = new MailConfig();
-//        JsonObject userConfig = this.config.getJsonObject("user").getJsonObject("mail");
-//        JsonObject mailConfig = this.config.getJsonObject("internal").getJsonObject("mail");
-
-        config.setHostname("smtp.gmail.com")
-              .setPort(465)
-//              .setStarttls(StartTLSOptions.valueOf(userConfig.getString("tls", mailConfig.getString("tls"))))
-              .setUsername("michel.barret@gmail.com")
-              .setPassword("AmwsY7vr");
+        JsonObject mailConfig = this.config.getJsonObject("mail");
+        MailConfig config = new MailConfig().setHostname(mailConfig.getString("host"))
+                                            .setSsl(true)
+                                            .setPort(mailConfig.getInteger("port"))
+                                            .setUsername(mailConfig.getString("user"))
+                                            .setPassword(mailConfig.getString("password"));
 
         return MailClient.createShared(vertx, config);
     }
