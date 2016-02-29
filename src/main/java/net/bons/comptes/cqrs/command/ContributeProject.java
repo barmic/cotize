@@ -11,9 +11,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class ContributeProject implements Command {
-    @NotNull @NotBlank
+    @NotNull @NotBlank(message = "L'autheur ne peut être vide")
     private String author;
-    @NotNull @Email @NotBlank
+    @NotNull @Email @NotBlank(message = "L'e-mail ne peut être vide")
     private String mail;
     @NotNull @Min(0L)
     private int amount;

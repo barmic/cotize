@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <property name="ROOTDIR" value="/opt/cotize"/>
+    <property name="ARCHIVE" value="${ROOTDIR}/logs/archives"/>
+    <property name="LOGS_SIZE" value="50MB"/>
+    <property name="RETENTION" value="10"/>
+
+    <appender name="COTIZE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${ROOTDIR}/logs/cotize.log</File>
+        <Append>true</Append>
         <encoder>
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            <charset>UTF-8</charset>
+            <pattern>%d %-5p %c - %m%n</pattern>
         </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${ARCHIVE}/cotize.%i.zip</fileNamePattern>
+            <maxIndex>${RETENTION}</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${LOGS_SIZE}</maxFileSize>
+        </triggeringPolicy>
     </appender>
 
-    <logger name="net.bons.comptes" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
+    <logger name="net.bons.comptes" level="INFO" additivity="false">
+        <appender-ref ref="COTIZE"/>
     </logger>
 
-    <root level="WARN">
-        <appender-ref ref="STDOUT"/>
+    <root level="INFO">
+        <appender-ref ref="COTIZE"/>
     </root>
 
 </configuration>

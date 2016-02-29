@@ -24,7 +24,6 @@ import javax.validation.Validator;
 
 public class VertxModule extends AbstractModule {
     private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
-    private static final String EVENT_COLLECTION_NAME = "CotizeEvents";
 
     private final Vertx vertx;
     private final JsonObject config;
@@ -104,14 +103,6 @@ public class VertxModule extends AbstractModule {
                        LOG.warn("Can't create the collection {}", throwable.getMessage());
                    });
         return mongoClient;
-    }
-
-    private String getStrEnvOrDefault(String envVar, String defaultValue) {
-        String mongoHost = System.getenv(envVar);
-        if (mongoHost == null) {
-            mongoHost = defaultValue;
-        }
-        return mongoHost;
     }
 
     @Provides
