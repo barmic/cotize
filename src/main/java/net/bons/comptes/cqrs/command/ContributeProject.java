@@ -4,16 +4,18 @@ import io.vertx.core.json.JsonObject;
 import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.service.model.DecisionProjectionProject;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class ContributeProject implements Command {
-    @NotNull
+    @NotNull @NotBlank
     private String author;
-    @NotNull @Email
+    @NotNull @Email @NotBlank
     private String mail;
-    @NotNull
+    @NotNull @Min(0L)
     private int amount;
 
     public ContributeProject() {

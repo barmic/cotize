@@ -6,6 +6,7 @@ import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.cqrs.event.ProjectCreated;
 import net.bons.comptes.service.model.DecisionProjectionProject;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -13,13 +14,13 @@ import java.util.UUID;
 
 @DataObject(generateConverter = true, inheritConverter = true)
 public class CreateProject implements Command {
-    @NotNull
+    @NotNull @NotBlank
     private String name;
-    @NotNull
+    @NotNull @NotBlank
     private String author;
-    @NotNull
+    @NotNull @NotBlank
     private String description;
-    @NotNull @Email
+    @NotNull @Email @NotBlank
     private String mail;
 
     public CreateProject() {

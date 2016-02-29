@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-8 col-sm-offset-2">
+    <div class="col-sm-10 col-sm-offset-1">
         <p class="lead">
             Ce site a pour objectif de permettre de se cotiser.<br/>
             Pour cela vous pouvez créer un projet et donner à vos amis un lien pour
@@ -32,7 +32,7 @@
         </p>
     </div>
 
-    <div class="col-sm-8 col-sm-offset-2">
+    <div class="col-sm-10 col-sm-offset-1">
         <h2>Créer un projet</h2>
 
         <div role="form" class="form-horizontal">
@@ -55,18 +55,18 @@
                                        placeholder="moi" ng-model="project.author"/>
                             </div>
                         </div>
-                        <div class="col-sm-2 control-group">
+                        <div class="col-sm-3 control-group">
                             <label for="mail" class="control-label">Addresse e-mail</label>
 
                             <div class="input-group">
-                                <span class="input-group-addon">@</span>
+                                <!--<span class="input-group-addon">@</span>-->
                                 <input id="mail" class="form-control" type="mail" name="mail"
                                        placeholder="prenom.nom@exemple.net" ng-model="project.mail"/>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-8 control-group">
+                        <div class="col-sm-6 control-group">
                             <label for="description" class="control-label">Description</label>
 
                             <div class="input-group">
@@ -74,10 +74,10 @@
                                               placeholder="Description..." ng-model="project.description"></textarea>
                             </div>
                         </div>
+                        <div class="col-sm-3 form-action">
+                            <button ng-click="project.create()" class="btn btn-primary" style="maring: 15px">Créer</button>
+                        </div>
                     </div>
-                </div>
-                <div class="form-action">
-                    <button ng-click="project.create()" class="btn btn-primary">Créer</button>
                 </div>
             </fieldset>
         </div><!-- form -->

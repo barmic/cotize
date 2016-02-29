@@ -85,26 +85,19 @@ public class VertxModule extends AbstractModule {
     @Provides
     @Singleton
     MongoClient provideMongoClient(Vertx vertx) {
-        int mongoPort = 27017; // default mongo port
-        try {
-            mongoPort = Integer.parseInt(System.getenv("MONGO_PORT"));
-        } catch (NumberFormatException e) {
-            LOG.warn("Impossible to use MONGO_PORT env var (value is not a number)");
-        }
-        String mongoHost = getStrEnvOrDefault("MONGO_HOST", "127.0.0.1");
+        JsonObject mongo = config.getJsonObject("mongo");
         JsonObject host = new JsonObject()
-                .put("host", mongoHost)
-                .put("port", mongoPort);
-        String mongoDbname = getStrEnvOrDefault("MONGO_DBNAME", "bonscomptes");
+                .put("host", mongo.getString("host"))
+                .put("port", mongo.getInteger("port"));
         JsonObject config = new JsonObject()
-                .put("db_name", mongoDbname)
+                .put("db_name", mongo.getString("dbname"))
                 .put("useObjectId", true)
                 .put("hosts", new JsonArray().add(host))
                 .put("username", System.getenv("MONGO_USER"))
                 .put("password", System.getenv("MONGO_PASSWD"));
 
         MongoClient mongoClient = MongoClient.createShared(vertx, config);
-        mongoClient.createCollectionObservable(EVENT_COLLECTION_NAME)
+        mongoClient.createCollectionObservable(mongo.getString("collection"))
                    .subscribe(aVoid -> {
                        LOG.info("Created ok!");
                    }, throwable -> {

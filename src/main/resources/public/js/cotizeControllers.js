@@ -124,8 +124,12 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
 
     $scope.contrib.remove = function (contributionId) {
         cotizeProjectService.removeContribution($routeParams.projectId, contributionId)
-            .success(function (data) {
-                $scope.project.content = data;
+            .success(function (newProject) {
+                $scope.project.content.amount = newProject.amount;
+                $scope.project.content.contributions.length = 0;
+                newProject.forEach(function (contrib) {
+                    $scope.project.content.contributions.push(contrib);
+                });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
