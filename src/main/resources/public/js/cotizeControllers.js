@@ -3,22 +3,19 @@ var cotizeControllers = angular.module('cotizeControllers', []);
 cotizeControllers.controller('cotizeCreateProject', ['$http', '$scope', 'cotizeProjectService',
 function ($http, $scope, cotizeProjectService) {
     // App session information
-    $scope.project = {
-        name : '',
-        author : '',
-        mail : '',
-        description : ''
-    };
+    $scope.project = {};
+    $scope.newproject = {};
     $scope.prefix = {
         url : window.document.URL.split('/')[2],
         scheme : window.document.URL.split(':')[0]
     };
 
     $scope.project.create = function () {
-        cotizeProjectService.createProject($scope.project)
+        cotizeProjectService.createProject($scope.newproject)
             .success(function (data) {
                 $scope.project.state = "created";
                 $scope.project.content = data;
+                $scope.newproject = {};
             })
             .error(function (data, status) {
                 $scope.project.state = "error";
@@ -57,6 +54,12 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             .success(function (data) {
                 $scope.newcontrib.state = "created";
                 $scope.newcontrib.content = data;
+                $scope.contribution = {
+                    "author": "",
+                    "mail": "",
+                    "amount": "",
+                    "projectId": $routeParams.projectId
+                };
                 cotizeProjectService.loadProject($routeParams.projectId)
                                     .success(function (data) { $scope.project.content = data; })
                                     .error(function (data, status) {});
