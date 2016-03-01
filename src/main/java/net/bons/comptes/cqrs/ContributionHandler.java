@@ -77,7 +77,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
             throw new ContribAlreadyExistError("La contribution de " + contribute.getAuthor() + " existe déjà");
         }
         Contribution contribution = new Contribution(createId(), contribute.getAuthor(), contribute.getAmount(),
-                                                     contribute.getMail());
+                                                     contribute.getMail(), false);
         rawProjectBuilder.addContribution(contribution);
         return Tuple.of(rawProjectBuilder.createRawProject(), contribution);
     }

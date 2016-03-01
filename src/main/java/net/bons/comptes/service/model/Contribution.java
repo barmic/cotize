@@ -29,13 +29,13 @@ public class Contribution {
         this.payed = contribution.getPayed();
     }
 
-    public Contribution(String contributionId, String author, int amount, String mail, String...debtors) {
+    public Contribution(String contributionId, String author, int amount, String mail, Boolean payed, String...debtors) {
         this.contributionId = contributionId;
         this.author = author;
         this.amount = amount;
         this.mail = mail;
         this.date = System.currentTimeMillis();
-        this.payed = false;
+        this.payed = payed;
     }
 
     public Contribution(JsonObject json) {

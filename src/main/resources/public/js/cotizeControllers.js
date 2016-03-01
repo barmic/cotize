@@ -140,12 +140,15 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             });
     };
 
-    $scope.contrib.payed = function (contributionId) {
-        cotizeProjectService.payedContribution($routeParams.projectId, contributionId)
+    $scope.contrib.payed = function (contributionIndex) {
+        contrib = $scope.project.content.contributions[contributionIndex]
+        cotizeProjectService.payedContribution($routeParams.projectId, contrib.contributionId)
             .success(function (data) {
-                cotizeProjectService.loadProject($routeParams.projectId)
-                                    .success(function (data) { $scope.project.content = data; })
-                                    .error(function (data, status) { });
+                // TODO to be improve ?
+                contrib.payed = typeof contrib.payed === 'undefined' || !contrib.payed;
+//                cotizeProjectService.loadProject($routeParams.projectId)
+//                                    .success(function (data) { $scope.project.content = data; })
+//                                    .error(function (data, status) { });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";

@@ -29,9 +29,9 @@
                     </td>
                     <td>
                         <!--<button ng-click="contrib.payed(contributor.contributionId)" class="btn btn-primary">Payé</button>-->
-                        <button ng-click="contrib.payed(contributor.contributionId)"
-                                class="btn" ng-class="{true:'btn-primary', false:'btn-success'}[contributor.payed == true]">
-                            Payé
+                        <button ng-click="contrib.payed($index)"
+                                class="btn" ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
+                            {{contributor.payed  ? "Payé" : "À payer"}}
                         </button>
                     </td>
                     <td>

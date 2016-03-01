@@ -59,7 +59,7 @@ public class AdminProject implements Project {
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
         this.contributions = project.getContributions().stream()
-                                    .map(contribution -> new Contribution(contribution.getContributionId(), contribution.getAuthor(), contribution.getAmount(), null))
+                                    .map(contribution -> new Contribution(contribution.getContributionId(), contribution.getAuthor(), contribution.getAmount(), null, contribution.getPayed()))
                                     .collect(Collectors.toList());
     }
 

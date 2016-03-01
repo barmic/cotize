@@ -54,7 +54,7 @@ public class SimpleProject implements Project {
         this.identifier = project.getIdentifier();
         this.amount = project.getAmount();
         this.contributions = project.getContributions().stream()
-                                    .map(contribution -> new Contribution(null, contribution.getAuthor(), 0, null))
+                                    .map(contribution -> new Contribution(null, contribution.getAuthor(), 0, null, null))
                                     .collect(Collectors.toList());
     }
 
