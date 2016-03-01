@@ -9,7 +9,7 @@
     <h3>Contribution de {{ contribution.author }}</h3>
     <p>Le projet a déjà réunis {{ project.content.amount }} € !</p>
 
-    <div class="alert alert-danger" role="alert" ng-if="newcontrib.state == 'error'">
+    <div class="alert alert-danger" role="alert" ng-if="newcontrib.state == 'error' || loadingdata.error">
         <h3>Erreur !</h3>
         <p>
             <ul>
@@ -22,7 +22,7 @@
         <h3>Votre contribution a était mise à jour !</h3>
     </div>
 
-    <div role="form">
+    <div role="form" ng-if="isUndefined(contribution.author)">
         <fieldset>
             <div class="control-group">
                 <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>

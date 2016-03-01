@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs;
 
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class GetContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
@@ -34,13 +36,17 @@ public class GetContribution implements Handler<RoutingContext> {
                    .map(obj -> filter(obj, contributionId))
                    .subscribe(obj -> {
                        routingContext.response().putHeader("Content-Type", "application/json").end(obj.toJson().toString());
-                   }, throwable -> routingContext.fail(throwable));
+                   }, throwable -> {
+                       routingContext.response().setStatusCode(404).end(new JsonArray().add(throwable.getMessage())
+                                                                                       .toString());
+                   });
     }
 
     Contribution filter(RawProject project, String contributionId) {
-        return project.getContributions().stream()
-                      .filter(contribution -> contribution.getContributionId().equals(contributionId))
-                      .findFirst()
-                      .get();
+        Optional<Contribution> contribution = project.getContributions().stream()
+                                                     .filter(contrib -> contrib.getContributionId()
+                                                                               .equals(contributionId))
+                                                     .findFirst();
+        return contribution.orElseThrow(() -> new RuntimeException("Impossible de trouver la contribution " + contributionId));
     }
 }

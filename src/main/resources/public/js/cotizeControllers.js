@@ -85,14 +85,21 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     $scope.project = {}
     $scope.create = {}
     $scope.newcontrib = {}
+    $scope.loadingdata = {}
 
     cotizeProjectService.loadProject($routeParams.projectId)
             .success(function (data) { $scope.project.content = data; })
-            .error(function (data, status) { });
+            .error(function (data, status) {
+                $scope.loadingdata.error = true;
+                $scope.project.status = status;
+            });
 
     cotizeProjectService.loadContribution($routeParams.projectId, $routeParams.contributionId)
             .success(function (data) { $scope.contribution = data; })
-            .error(function (data, status) { });
+            .error(function (data, status) {
+                $scope.loadingdata.error = true;
+                $scope.project.status = status;
+            });
 
     $scope.contrib.update = function () {
         cotizeProjectService.updateContribution($routeParams.projectId, $routeParams.contributionId, $scope.contribution)
