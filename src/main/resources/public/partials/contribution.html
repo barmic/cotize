@@ -25,15 +25,15 @@
     <div role="form">
         <fieldset>
             <div class="control-group">
-                <label for="amount" class="control-label">Changez votre participation ?</label>
+                <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>
                 <div class="input-controls">
-                    <input type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" ng-model="contribution.amount" required />
+                    <input type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" ng-model="contribution.amount" ng-readonly="contribution.payed" required />
                     <span class="input-group-addon">€</span>
                 </div>
             </div>
             <br/>
             <div class="form-action">
-                <button ng-click="contrib.update()" type="submit" class="btn btn-primary">Participer</button>
+                <button ng-disabled="contribution.payed" ng-click="contrib.update()" type="submit" class="btn btn-primary">Participer</button>
             </div>
         </fieldset>
     </div>
