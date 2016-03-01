@@ -44,7 +44,7 @@
 
                             <div class="input-group">
                                 <input type="text" class="form-control" id="name" name="name"
-                                       placeholder="Anniversaire de ..." ng-model="project.name"/>
+                                       placeholder="Anniversaire de ..." ng-model="project.name" required/>
                             </div>
                         </div>
                         <div class="col-sm-3 control-group">
@@ -52,7 +52,7 @@
 
                             <div class="input-group">
                                 <input id="author" class="form-control" type="text" name="author"
-                                       placeholder="moi" ng-model="project.author"/>
+                                       placeholder="moi" ng-model="project.author" required/>
                             </div>
                         </div>
                         <div class="col-sm-3 control-group">
@@ -61,7 +61,7 @@
                             <div class="input-group">
                                 <!--<span class="input-group-addon">@</span>-->
                                 <input id="mail" class="form-control" type="mail" name="mail"
-                                       placeholder="prenom.nom@exemple.net" ng-model="project.mail"/>
+                                       placeholder="prenom.nom@exemple.net" ng-model="project.mail" required/>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
 
                             <div class="input-group">
                                     <textarea type="text" class="form-control" id="description" name="description"
-                                              placeholder="Description..." ng-model="project.description"></textarea>
+                                              placeholder="Description..." ng-model="project.description" required></textarea>
                             </div>
                         </div>
                         <div class="col-sm-3 form-action">

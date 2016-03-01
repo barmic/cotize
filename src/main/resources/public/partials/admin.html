@@ -19,7 +19,10 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="contributor in project.content.contributions">
-                    <td><a href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a></td>
+                    <td>
+                        <a title="Éditer la contribution"
+                           href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
+                    </td>
                     <td>{{contributor.amount}}</td>
                     <td>
                         <button ng-click="contrib.payed(contributor.contributionId)" class="btn btn-primary">Relancer</button>
