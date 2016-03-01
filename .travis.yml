@@ -1,3 +1,5 @@
 language: java
 jdk:
   - oraclejdk8
+notifications:
+  slack: cotize:RUaYY3WMStlrk19sl6DLIrWg
