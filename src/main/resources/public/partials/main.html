@@ -9,7 +9,7 @@
 </div>
 
 <div class="row">
-    <div class="alert alert-danger" role="alert" ng-show="project.state == 'error'">
+    <div class="alert alert-danger" role="alert" ng-if="project.state == 'error'">
         <h3>Erreur !</h3>
         <p>
             <ul>
@@ -18,7 +18,7 @@
         </p>
     </div>
 
-    <div class="alert alert-success" role="alert" ng-show="project.state == 'created'">
+    <div class="alert alert-success" role="alert" ng-if="project.state == 'created'">
         <h3>La création du projet s'est bien déroulée !</h3>
 
         <p>

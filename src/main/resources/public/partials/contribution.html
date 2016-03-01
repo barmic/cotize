@@ -9,6 +9,19 @@
     <h3>Contribution de {{ contribution.author }}</h3>
     <p>Le projet a déjà réunis {{ project.content.amount }} € !</p>
 
+    <div class="alert alert-danger" role="alert" ng-if="newcontrib.state == 'error'">
+        <h3>Erreur !</h3>
+        <p>
+            <ul>
+                <li ng-repeat="error in project.status">{{error}}</li>
+            </ul>
+        </p>
+    </div>
+
+    <div class="alert alert-success" role="alert" ng-if="newcontrib.state == 'updated'">
+        <h3>Votre contribution a était mise à jour !</h3>
+    </div>
+
     <div role="form">
         <fieldset>
             <div class="control-group">
