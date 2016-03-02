@@ -15,8 +15,10 @@ import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.ConstraintViolation;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ContributionHandler implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
@@ -56,7 +58,9 @@ public class ContributionHandler implements Handler<RoutingContext> {
                              ValidationError validationError = (ValidationError) error;
                              JsonArray array = new JsonArray();
                              validationError.getViolations()
-                                            .forEach(violation -> array.add(violation.getMessage()));
+                                            .stream().map(ConstraintViolation::getMessage)
+                                            .collect(Collectors.toSet())
+                                            .forEach(violation -> array.add(violation));
                              event.response().setStatusCode(400).end(array.toString());
                          } else {
                              event.response().setStatusCode(400)

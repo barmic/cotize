@@ -24,8 +24,9 @@ public class ContributeProject implements Command {
     public ContributeProject(JsonObject json) {
         this.author = json.getString("author");
         this.mail = json.getString("mail");
-        this.amount = json.getInteger("amount");
-
+        if (json.containsKey("amount")) {
+            this.amount = json.getInteger("amount");
+        }
     }
 
     public ContributeProject(String author, String mail, int amount) {

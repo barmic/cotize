@@ -9,11 +9,11 @@
 </div>
 
 <div class="row">
-    <div class="alert alert-danger" role="alert" ng-if="project.state == 'error'">
+    <div class="alert alert-danger" role="alert" ng-if="project.error.length > 0">
         <h3>Erreur !</h3>
         <p>
             <ul>
-                <li ng-repeat="error in project.status">{{error}}</li>
+                <li ng-repeat="error in project.error">{{error}}</li>
             </ul>
         </p>
     </div>

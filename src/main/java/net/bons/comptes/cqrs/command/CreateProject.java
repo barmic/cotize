@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @DataObject(generateConverter = true, inheritConverter = true)
 public class CreateProject implements Command {
-    @NotNull @NotBlank(message = "Le nom ne peut être vide")
+    @NotNull(message = "Le nom ne peut être vide") @NotBlank(message = "Le nom ne peut être vide")
     private String name;
-    @NotNull @NotBlank(message = "L'autheur ne peut être vide")
+    @NotNull(message = "L'autheur ne peut être vide") @NotBlank(message = "L'autheur ne peut être vide")
     private String author;
-    @NotNull
+    @NotNull(message = "La description ne peut être vide")
     private String description;
-    @NotNull @Email @NotBlank(message = "Le nom ne peut être vide")
+    @NotNull(message = "L'email ne peut être vide") @Email @NotBlank(message = "L'email ne peut être vide")
     private String mail;
 
     public CreateProject() {
