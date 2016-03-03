@@ -14,22 +14,21 @@
         <li ng-repeat="contributor in project.content.contributions">{{contributor.author}}</li>
     </ul>
 
-    <div class="alert alert-danger col-sm-4 col-sm-offset-4" role="alert" ng-if="newcontrib.errors.length > 0">
-        <h3>Erreur !</h3>
-        <p>
+    <div class="row alert alert-danger col-sm-6 col-sm-offset-3" role="alert" ng-if="newcontrib.errors.length > 0">
+        <p>Erreur !
         <ul>
             <li ng-repeat="error in newcontrib.errors">{{error}}</li>
         </ul>
         </p>
     </div>
 
-    <div class="alert alert-success col-sm-4 col-sm-offset-4" role="alert" ng-if="newcontrib.state == 'created'">
+    <div class="alert alert-success col-sm-6 col-sm-offset-3" role="alert" ng-if="newcontrib.state == 'created'">
         Merci pour votre contribution !</br>
         <a href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{newcontrib.content.contributionId}}">Modifier votre contribution.</a>
     </div>
 
-    <h3>Participez</h3>
     <div role="form" class="form-horizontal">
+        <h3>Participez</h3>
         <fieldset>
             <div class="container">
                 <div class="row">

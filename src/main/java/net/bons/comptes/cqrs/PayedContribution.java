@@ -2,6 +2,7 @@ package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -16,12 +17,10 @@ import java.util.Optional;
 public class PayedContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
     private MongoClient mongoClient;
-    private CommandExtractor commandExtractor;
 
     @Inject
-    public PayedContribution(MongoClient mongoClient, CommandExtractor commandExtractor) {
+    public PayedContribution(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
-        this.commandExtractor = commandExtractor;
     }
 
     @Override
@@ -37,10 +36,21 @@ public class PayedContribution implements Handler<RoutingContext> {
                    .map(projectJson -> togglePayed(new RawProject(projectJson), contribId))
                    .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
                                                   .map(Void -> new AdminProject(project)))
-                   .subscribe(project -> {
+                   .map(project -> project.getContributions()
+                                          .stream()
+                                          .filter(c -> c.getContributionId().equals(contribId))
+                                          .findFirst()
+                                          .get())
+                   .subscribe(contribution -> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
-                                     .end(project.toJson().toString());
+                                     .end(contribution.toJson().toString());
+                   }, throwable -> {
+                       JsonArray array = new JsonArray().add(throwable.getMessage());
+                       routingContext.response()
+                                     .setStatusCode(400)
+                                     .putHeader("Content-Type", "application/json")
+                                     .end(array.toString());
                    });
     }
 
@@ -49,6 +59,9 @@ public class PayedContribution implements Handler<RoutingContext> {
                                                         .filter(contrib -> contrib.getContributionId()
                                                                                   .equals(contribId))
                                                         .findFirst();
+        if (!contribution.isPresent()) {
+            throw new RuntimeException("Impossible to find the contribution " + contribId);
+        }
         Contribution contribution1 = contribution.get();
         contribution1.setPayed(!contribution1.getPayed());
         return rawProject;

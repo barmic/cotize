@@ -133,14 +133,12 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             .success(function (data) { $scope.project.content = data; })
             .error(function (data, status) { });
 
-    $scope.contrib.remove = function (contributionId) {
-        cotizeProjectService.removeContribution($routeParams.projectId, contributionId)
+    $scope.contrib.remove = function (contributionIndex) {
+        contrib = $scope.project.content.contributions[contributionIndex]
+        cotizeProjectService.removeContribution($routeParams.projectId, contrib.contributionId)
             .success(function (newProject) {
+                $scope.project.content.contributions.splice(contributionIndex, 1);
                 $scope.project.content.amount = newProject.amount;
-                $scope.project.content.contributions.length = 0;
-                newProject.forEach(function (contrib) {
-                    $scope.project.content.contributions.push(contrib);
-                });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
@@ -152,11 +150,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         contrib = $scope.project.content.contributions[contributionIndex]
         cotizeProjectService.payedContribution($routeParams.projectId, contrib.contributionId)
             .success(function (data) {
-                // TODO to be improve ?
-                contrib.payed = typeof contrib.payed === 'undefined' || !contrib.payed;
-//                cotizeProjectService.loadProject($routeParams.projectId)
-//                                    .success(function (data) { $scope.project.content = data; })
-//                                    .error(function (data, status) { });
+                $scope.project.content.contributions[contributionIndex] = data;
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
