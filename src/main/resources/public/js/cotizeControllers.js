@@ -54,7 +54,6 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         cotizeProjectService.contribute($routeParams.projectId, $scope.contribution)
             .success(function (data) {
                 $scope.newcontrib.state = "created";
-                $scope.newcontrib.errors.length = 0;
                 $scope.newcontrib.content = data;
                 $scope.contribution = {
                     "author": "",
@@ -65,8 +64,10 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 cotizeProjectService.loadProject($routeParams.projectId)
                                     .success(function (data) { $scope.project.content = data; })
                                     .error(function (data, status) {});
+                $scope.newcontrib.errors.length.splice(0, $scope.newcontrib.errors.length);
             })
             .error(function (data, status) {
+                $scope.newcontrib.state = "error";
                 $scope.newcontrib.errors = data;
             });
     };
