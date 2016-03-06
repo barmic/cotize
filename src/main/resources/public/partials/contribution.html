@@ -22,7 +22,7 @@
         <h3>Votre contribution a était mise à jour !</h3>
     </div>
 
-    <div role="form" ng-if="isUndefined(contribution.author)">
+    <div role="form" ng-if="isUndefined(contribution.payed) || !contribution.payed">
         <fieldset>
             <div class="control-group">
                 <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>

@@ -57,11 +57,14 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
                                               .filter(d -> d.getAuthor().equals(contribution.getAuthor()))
                                               .findFirst();
         RawProject.Builder builder = RawProject.builder(project);
-        LOG.debug("Author {}", contribution.getAuthor());
         if (deal1.isPresent()) {
-            deal1.get().setAmount(contribution.getAmount());
-            LOG.debug("Projet result {}", project.toJson());
+            Contribution contribution1 = deal1.get();
+            if (contribution1.getPayed()) {
+                throw new RuntimeException("Impossible de mettre à jour une contribution déjà payée");
+            }
+            contribution1.setAmount(contribution.getAmount());
+            return Tuple.of(builder.createRawProject(), contribution1);
         }
-        return Tuple.of(builder.createRawProject(), deal1.get());
+        throw new RuntimeException("La contribution " + contribution.getAuthor() + " est introuvable dans le projet " + project.getIdentifier());
     }
 }
