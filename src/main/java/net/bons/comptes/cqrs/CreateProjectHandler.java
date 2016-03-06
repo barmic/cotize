@@ -61,7 +61,7 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
                              validationError.getViolations()
                                             .stream()
                                             .map(ConstraintViolation::getMessage).collect(Collectors.toSet())
-                                            .forEach(violation -> array.add(violation));
+                                            .forEach(array::add);
                              event.response().setStatusCode(400).end(array.toString());
                          }
                      });
