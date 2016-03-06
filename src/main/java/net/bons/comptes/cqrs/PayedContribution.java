@@ -2,7 +2,6 @@ package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -45,13 +44,7 @@ public class PayedContribution implements Handler<RoutingContext> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
                                      .end(contribution.toJson().toString());
-                   }, throwable -> {
-                       JsonArray array = new JsonArray().add(throwable.getMessage());
-                       routingContext.response()
-                                     .setStatusCode(400)
-                                     .putHeader("Content-Type", "application/json")
-                                     .end(array.toString());
-                   });
+                   }, Utils.manageError(routingContext));
     }
 
     private RawProject togglePayed(RawProject rawProject, String contribId) {

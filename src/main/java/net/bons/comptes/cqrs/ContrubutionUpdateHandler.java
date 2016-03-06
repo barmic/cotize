@@ -47,7 +47,7 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
                          event.response()
                               .putHeader("Content-Type", "application/json")
                               .end(project._2.toJson().toString());
-                     });
+                     }, Utils.manageError(event));
 
     }
 

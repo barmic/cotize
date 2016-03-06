@@ -158,4 +158,16 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 $scope.project.status = status;
             });
     };
+
+    $scope.contrib.remind = function (contributionIndex) {
+        contrib = $scope.project.content.contributions[contributionIndex]
+        cotizeProjectService.remindContribution($routeParams.projectId, contrib.contributionId)
+            .success(function (data) {
+                $scope.project.content.contributions[contributionIndex] = data;
+            })
+            .error(function (data, status) {
+                $scope.newcontrib.state = "error";
+                $scope.project.status = status;
+            });
+    };
 }]);

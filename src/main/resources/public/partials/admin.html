@@ -28,7 +28,7 @@
                     </td>
                     <td>{{contributor.amount}}</td>
                     <td>
-                        <button ng-if="!contributor.payed" ng-click="contrib.payed(contributor.contributionId)" class="btn btn-primary">Relancer</button>
+                        <button ng-if="!contributor.payed" ng-click="contrib.remind($index)" class="btn btn-primary">Relancer</button>
                     </td>
                     <td>
                         <!--<button ng-click="contrib.payed(contributor.contributionId)" class="btn btn-primary">Payé</button>-->

@@ -1,7 +1,6 @@
 package net.bons.comptes.cqrs;
 
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -36,10 +35,7 @@ public class GetContribution implements Handler<RoutingContext> {
                    .map(obj -> filter(obj, contributionId))
                    .subscribe(obj -> {
                        routingContext.response().putHeader("Content-Type", "application/json").end(obj.toJson().toString());
-                   }, throwable -> {
-                       routingContext.response().setStatusCode(404).end(new JsonArray().add(throwable.getMessage())
-                                                                                       .toString());
-                   });
+                   }, Utils.manageError(routingContext));
     }
 
     Contribution filter(RawProject project, String contributionId) {

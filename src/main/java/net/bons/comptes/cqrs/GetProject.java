@@ -42,6 +42,6 @@ public class GetProject implements Handler<RoutingContext> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
                                      .end(obj.toJson().toString());
-                   });
+                   }, Utils.manageError(routingContext));
     }
 }

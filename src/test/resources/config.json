@@ -1,8 +1,8 @@
 {
     "base_url": "http://localhost:5000",
     "mail" : {
-        "user" : "micet@gmail.com",
-        "password" : "",
+        "user" : "michel.barret@gmail.com",
+        "password" : "AmwsY7vr",
         "port" : 465,
         "host" : "smtp.gmail.com"
     },

@@ -99,4 +99,38 @@ public class MailService {
             e.printStackTrace();
         }
     }
+
+    public void sendRelance(RawProject rawProject, Contribution contribution) {
+        MailMessage message = new MailMessage();
+        message.setFrom(configuration.getJsonObject("mail").getString("user"));
+        message.setTo(rawProject.getMail());
+
+        Map<String, Object> root = new HashMap<>();
+        root.put("project", rawProject);
+        root.put("contribution", contribution);
+        root.put("base_url", configuration.getString("base_url"));
+
+        try {
+            Template temp = cfg.getTemplate("remind.ftl");
+            StringWriter out = new StringWriter();
+            temp.process(root, out);
+
+            Template object = new Template("subject", "Relance du projet : ${project.name}", cfg);
+            StringWriter outSuject = new StringWriter();
+            object.process(root, outSuject);
+
+            message.setSubject(outSuject.toString());
+            message.setText(out.toString());
+
+            mailClient.sendMail(message, result -> {
+                if (result.succeeded()) {
+                    System.out.println(result.result());
+                } else {
+                    result.cause().printStackTrace();
+                }
+            });
+        } catch (IOException|TemplateException e) {
+            e.printStackTrace();
+        }
+    }
 }

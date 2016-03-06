@@ -42,7 +42,7 @@ public class DeleteContribution implements Handler<RoutingContext> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
                                      .end(project.toJson().toString());
-                   });
+                   }, Utils.manageError(routingContext));
     }
 
     private RawProject removeContrib(RawProject rawProject, String contribId) {
