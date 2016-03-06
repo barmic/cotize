@@ -7,7 +7,7 @@
         <div id="getting-started">
             <h2>Résultat du projet {{project.content.name}}</h2>
             <p>
-                Lien de participation au projet : <a>{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
+                Lien de participation au projet : <a data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
                 Le projet a déjà réunis {{project.content.amount}}
             </p>
             <table class="table table-striped">
@@ -21,25 +21,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="contributor in project.content.contributions">
+                <tr data-ng-repeat="contributor in project.content.contributions">
                     <td>
                         <a title="Éditer la contribution"
-                           href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
+                           data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
                     </td>
                     <td>{{contributor.amount}}</td>
                     <td>
-                        <button ng-if="!contributor.payed" ng-click="contrib.remind($index)" class="btn btn-primary">Relancer</button>
+                        <button data-ng-if="!contributor.payed" data-ng-click="contrib.remind($index)" class="btn btn-primary">Relancer</button>
                     </td>
                     <td>
-                        <!--<button ng-click="contrib.payed(contributor.contributionId)" class="btn btn-primary">Payé</button>-->
-                        <button ng-click="contrib.payed($index)"
-                                class="btn" ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
+                        <button data-ng-click="contrib.payed($index)"
+                                class="btn" data-ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
                             {{contributor.payed  ? "Payé" : "À payer"}}
                         </button>
                     </td>
                     <td>
-                        <button ng-click="contrib.remove($index)" class="btn btn-danger">
+                        <button data-ng-click="del.contribIndex = $index" class="btn btn-danger" data-ng-if="del.contribIndex != $index && !contributor.payed">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                        <button data-ng-click="del.contribIndex = -1" class="btn btn-warning" data-ng-if="del.contribIndex == $index">
+                            Annuler
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                        </button>
+                        <button data-ng-click="contrib.remove($index)" class="btn btn-danger" data-ng-if="del.contribIndex == $index">
+                            Supprimer ?
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                         </button>
                     </td>
                 </tr>

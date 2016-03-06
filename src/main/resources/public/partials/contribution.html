@@ -9,31 +9,31 @@
     <h3>Contribution de {{ contribution.author }}</h3>
     <p>Le projet a déjà réunis {{ project.content.amount }} € !</p>
 
-    <div class="alert alert-danger" role="alert" ng-if="newcontrib.state == 'error' || loadingdata.error">
+    <div class="alert alert-danger" role="alert" data-ng-if="newcontrib.state == 'error' || loadingdata.error">
         <h3>Erreur !</h3>
         <p>
             <ul>
-                <li ng-repeat="error in project.status">{{error}}</li>
+                <li data-ng-repeat="error in project.status">{{error}}</li>
             </ul>
         </p>
     </div>
 
-    <div class="alert alert-success" role="alert" ng-if="newcontrib.state == 'updated'">
+    <div class="alert alert-success" role="alert" data-ng-if="newcontrib.state == 'updated'">
         <h3>Votre contribution a était mise à jour !</h3>
     </div>
 
-    <div role="form" ng-if="isUndefined(contribution.payed) || !contribution.payed">
+    <div role="form" data-ng-if="isUndefined(contribution.payed) || !contribution.payed">
         <fieldset>
             <div class="control-group">
                 <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>
                 <div class="input-controls">
-                    <input type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" ng-model="contribution.amount" ng-readonly="contribution.payed" required />
+                    <input type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" data-ng-model="contribution.amount" data-ng-readonly="contribution.payed" required />
                     <span class="input-group-addon">€</span>
                 </div>
             </div>
             <br/>
             <div class="form-action">
-                <button ng-disabled="contribution.payed" ng-click="contrib.update()" type="submit" class="btn btn-primary">Participer</button>
+                <button data-ng-disabled="contribution.payed" data-ng-click="contrib.update()" type="submit" class="btn btn-primary">Participer</button>
             </div>
         </fieldset>
     </div>

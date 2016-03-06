@@ -9,24 +9,24 @@
 </div>
 
 <div class="row">
-    <div class="alert alert-danger" role="alert" ng-if="project.error.length > 0">
+    <div class="alert alert-danger" role="alert" data-ng-if="project.error.length > 0">
         <h3>Erreur !</h3>
         <p>
             <ul>
-                <li ng-repeat="error in project.error">{{error}}</li>
+                <li data-ng-repeat="error in project.error">{{error}}</li>
             </ul>
         </p>
     </div>
 
-    <div class="alert alert-success" role="alert" ng-if="project.state == 'created'">
+    <div class="alert alert-success" role="alert" data-ng-if="project.state == 'created'">
         <h3>La création du projet s'est bien déroulée !</h3>
 
         <p>
         <ul>
-            <li>Lien à fournir aux participants : <a ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a>
+            <li>Lien à fournir aux participants : <a data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a>
             </li>
             <li>Lien d'administration du projet : <a
-                    ng-href='{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}'>{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}</a>
+                    data-ng-href='{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}'>{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/admin/{{project.content.passAdmin}}</a>
             </li>
         </ul>
         </p>
@@ -44,7 +44,7 @@
 
                             <div class="input-group">
                                 <input type="text" class="form-control" id="name" name="name"
-                                       placeholder="Anniversaire de ..." ng-model="newproject.name" required/>
+                                       placeholder="Anniversaire de ..." data-ng-model="newproject.name" required/>
                             </div>
                         </div>
                         <div class="col-sm-3 control-group">
@@ -52,7 +52,7 @@
 
                             <div class="input-group">
                                 <input id="author" class="form-control" type="text" name="author"
-                                       placeholder="moi" ng-model="newproject.author" required/>
+                                       placeholder="moi" data-ng-model="newproject.author" required/>
                             </div>
                         </div>
                         <div class="col-sm-3 control-group">
@@ -61,7 +61,7 @@
                             <div class="input-group">
                                 <!--<span class="input-group-addon">@</span>-->
                                 <input id="mail" class="form-control" type="mail" name="mail"
-                                       placeholder="prenom.nom@exemple.net" ng-model="newproject.mail" required/>
+                                       placeholder="prenom.nom@exemple.net" data-ng-model="newproject.mail" required/>
                             </div>
                         </div>
                     </div>
@@ -71,11 +71,11 @@
 
                             <div class="input-group">
                                     <textarea type="text" class="form-control" id="description" name="description"
-                                              placeholder="Description..." ng-model="newproject.description" required></textarea>
+                                              placeholder="Description..." data-ng-model="newproject.description" required></textarea>
                             </div>
                         </div>
                         <div class="col-sm-3 form-action">
-                            <button ng-click="project.create()" class="btn btn-primary" style="maring: 15px" type="submit">Créer</button>
+                            <button data-ng-click="project.create()" class="btn btn-primary" style="maring: 15px" type="submit">Créer</button>
                         </div>
                     </div>
                 </div>

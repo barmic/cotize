@@ -129,6 +129,9 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     $scope.project = {}
     $scope.create = {}
     $scope.contrib = {}
+    $scope.del = {
+        contribIndex : -1
+    }
 
     cotizeProjectService.loadProjectAdmin($routeParams.projectId, $routeParams.passAdmin)
             .success(function (data) { $scope.project.content = data; })
