@@ -40,6 +40,14 @@ cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
         var query = serverBaseUrl + 'project/' + projectId + '/contribution/' + contributionId + '/remind';
         return $http.post(query);
     };
+    service.allProjects = function (rootSecret, contributionId) {
+        var query = serverBaseUrl + 'admin/' + rootSecret + '/project';
+        return $http.get(query);
+    };
+    service.removeProject = function (rootSecret, projectId) {
+        var query = serverBaseUrl + 'admin/' + rootSecret + '/project/' + projectId;
+        return $http.delete(query);
+    };
     return service;
     }
 ]);

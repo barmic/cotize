@@ -51,7 +51,7 @@ public class VertxModule extends AbstractModule {
                          ContrubutionUpdateHandler contrubutionUpdateHandler, ProjectAgreggate projectAgreggate,
                          CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler,
                          GetContribution getContribution, DeleteContribution deleteContribution,
-                         PayedContribution payedContribution, Remind remind) {
+                         PayedContribution payedContribution, Remind remind, ListProject listProject, DeleteProject deleteProject) {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
@@ -64,6 +64,10 @@ public class VertxModule extends AbstractModule {
         router.delete("/api/project/:projectId/contribution/:contributionId").handler(deleteContribution);
         router.post("/api/project/:projectId/contribution/:contributionId/payed").handler(payedContribution);
         router.post("/api/project/:projectId/contribution/:contributionId/remind").handler(remind);
+        if (config.containsKey("root_secret")) {
+            router.get("/api/admin/" + config.getString("root_secret") + "/project").handler(listProject);
+            router.delete("/api/admin/" + config.getString("root_secret") + "/project/:projectId").handler(deleteProject);
+        }
 
         // query
         router.get("/api/project/:projectId").handler(getProject);

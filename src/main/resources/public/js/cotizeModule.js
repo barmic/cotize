@@ -22,6 +22,10 @@ cotizeModule.config(['$routeProvider',
         templateUrl: 'partials/admin.html',
         controller: 'cotizeAdmin'
       }).
+      when('/admin/:rootSecret/project', {
+        templateUrl: 'partials/root.html',
+        controller: 'cotizeRoot'
+      }).
       otherwise({
         redirectTo: '/index'
       });

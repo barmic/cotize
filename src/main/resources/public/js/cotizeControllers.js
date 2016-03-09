@@ -143,6 +143,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             .success(function (newProject) {
                 $scope.project.content.contributions.splice(contributionIndex, 1);
                 $scope.project.content.amount = newProject.amount;
+                $scope.del.contribIndex = -1;
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
@@ -167,6 +168,37 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         cotizeProjectService.remindContribution($routeParams.projectId, contrib.contributionId)
             .success(function (data) {
                 $scope.project.content.contributions[contributionIndex] = data;
+            })
+            .error(function (data, status) {
+                $scope.newcontrib.state = "error";
+                $scope.project.status = status;
+            });
+    };
+}]);
+
+cotizeControllers.controller('cotizeRoot', ['$http', '$scope', 'cotizeProjectService', '$routeParams',
+function ($http, $scope, cotizeProjectService, $routeParams) {
+    // App session information
+    $scope.prefix = {
+        url : window.document.URL.split('/')[2],
+        scheme : window.document.URL.split(':')[0]
+    };
+    $scope.projects = {}
+    $scope.create = {}
+    $scope.del = {
+        projectIndex : -1
+    }
+
+    cotizeProjectService.allProjects($routeParams.rootSecret)
+            .success(function (data) { $scope.projects.content = data; })
+            .error(function (data, status) { });
+
+    $scope.projects.remove = function (projectIndex) {
+        project = $scope.projects.content[projectIndex]
+        cotizeProjectService.removeProject($routeParams.rootSecret, project.identifier)
+            .success(function (newProject) {
+                $scope.del.projectIndex = -1;
+                $scope.projects.content.splice(projectIndex, 1);
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
