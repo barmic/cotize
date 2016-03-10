@@ -8,7 +8,7 @@
             <h2>Résultat du projet {{project.content.name}}</h2>
             <p>
                 Lien de participation au projet : <a data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
-                Le projet a déjà réunis {{project.content.amount}}
+                Le projet a déjà réunis {{project.content.amount}} €
             </p>
             <table class="table table-striped">
                 <thead>
@@ -26,7 +26,7 @@
                         <a title="Éditer la contribution"
                            data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
                     </td>
-                    <td>{{contributor.amount}}</td>
+                    <td>{{contributor.amount}} €</td>
                     <td>
                         <button data-ng-if="!contributor.payed" data-ng-click="contrib.remind($index)" class="btn btn-primary">Relancer</button>
                     </td>
