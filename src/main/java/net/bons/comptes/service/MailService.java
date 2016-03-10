@@ -10,6 +10,8 @@ import io.vertx.ext.mail.MailMessage;
 import io.vertx.rxjava.ext.mail.MailClient;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MailService {
+    private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
     private MailClient mailClient;
     private JsonObject configuration;
     private final Configuration cfg;
@@ -56,20 +59,20 @@ public class MailService {
 
             mailClient.sendMail(message, result -> {
                 if (result.succeeded()) {
-                    System.out.println(result.result());
+                    LOG.info("Send mail : {}", result.result());
                 } else {
-                    result.cause().printStackTrace();
+                    LOG.error("Error during sending mail", result.cause());
                 }
             });
         } catch (IOException|TemplateException e) {
-            e.printStackTrace();
+            LOG.error("Error during sending mail", e);
         }
     }
 
     public void sendNewContribution(RawProject rawProject, Contribution contribution) {
         MailMessage message = new MailMessage();
         message.setFrom(configuration.getJsonObject("mail").getString("user"));
-        message.setTo(rawProject.getMail());
+        message.setTo(contribution.getMail());
 
         Map<String, Object> root = new HashMap<>();
         root.put("project", rawProject);
@@ -90,20 +93,20 @@ public class MailService {
 
             mailClient.sendMail(message, result -> {
                 if (result.succeeded()) {
-                    System.out.println(result.result());
+                    LOG.info("Send mail : {}", result.result());
                 } else {
-                    result.cause().printStackTrace();
+                    LOG.error("Error during sending mail", result.cause());
                 }
             });
         } catch (IOException|TemplateException e) {
-            e.printStackTrace();
+            LOG.error("Error during sending mail", e);
         }
     }
 
     public void sendRelance(RawProject rawProject, Contribution contribution) {
         MailMessage message = new MailMessage();
         message.setFrom(configuration.getJsonObject("mail").getString("user"));
-        message.setTo(rawProject.getMail());
+        message.setTo(contribution.getMail());
 
         Map<String, Object> root = new HashMap<>();
         root.put("project", rawProject);
@@ -124,13 +127,13 @@ public class MailService {
 
             mailClient.sendMail(message, result -> {
                 if (result.succeeded()) {
-                    System.out.println(result.result());
+                    LOG.info("Send mail : {}", result.result());
                 } else {
-                    result.cause().printStackTrace();
+                    LOG.error("Error during sending mail", result.cause());
                 }
             });
         } catch (IOException|TemplateException e) {
-            e.printStackTrace();
+            LOG.error("Error during sending mail", e);
         }
     }
 }
