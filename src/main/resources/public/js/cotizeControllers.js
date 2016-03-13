@@ -134,7 +134,13 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     }
 
     cotizeProjectService.loadProjectAdmin($routeParams.projectId, $routeParams.passAdmin)
-            .success(function (data) { $scope.project.content = data; })
+            .success(function (data) {
+                $scope.project.content = data;
+                $scope.project.rest = $scope.project.content.contributions
+                  .filter(function (contrib) { return !contrib.payed; })
+                  .map(function (contrib) { return contrib.amount; })
+                  .reduce(function(pv, cv) { return pv + cv; }, 0);
+            })
             .error(function (data, status) { });
 
     $scope.contrib.remove = function (contributionIndex) {
@@ -156,6 +162,8 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         cotizeProjectService.payedContribution($routeParams.projectId, contrib.contributionId)
             .success(function (data) {
                 $scope.project.content.contributions[contributionIndex] = data;
+                $scope.project.rest = data.payed ? $scope.project.rest - data.amount
+                                                 : $scope.project.rest + data.amount;
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
