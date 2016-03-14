@@ -1,0 +1,10 @@
+[Unit]
+Description=cotize
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/bin/java -jar /opt/cotize/{{ package }}
+
+[Install]
+WantedBy=multi-user.target

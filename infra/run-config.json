@@ -1,0 +1,16 @@
+{
+	"root_secret" : "",
+    "base_url": "http://localhost:5000",
+    "mail" : {
+        "user" : "@gmail.com",
+        "password" : "<password>",
+        "port" : 465,
+        "host" : "smtp.gmail.com"
+    },
+    "mongo" : {
+    	"host" : "localhost",
+    	"port" : 27017,
+    	"collection" : "CotizeEvents",
+    	"dbname" : "bonscomptes"
+    }
+}

@@ -1,0 +1,19 @@
+---
+- hosts: cotize
+  vars:
+    package: BonsComptes-jar-with-dependencies.jar
+    subdomain: cotize2
+    domain: barmic.eu
+    proxy_port: 5000
+    become_method: su
+    php: no
+  tasks:
+  - name: Upload package
+    copy: src=target/{{ package }} dest=/opt/cotize
+    become: true
+  - name: Upload config
+    copy: src=config.json dest=/opt/cotize
+    become: true
+  - name: Run cotize deamon
+    command: systemctl restart cotize.service
+    become: true

@@ -1,0 +1,57 @@
+<!--
+  Licence Public Barmic
+  copyright 2014 Michel Barret <michel.barret@gmail.com>
+-->
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+        <div id="getting-started">
+            <h2>Résultat du projet {{project.content.name}}</h2>
+            <p>
+                Lien de participation au projet : <a data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
+                Le projet a déjà réunis {{project.content.amount}} € (reste à pourvoir {{project.rest}} €).
+            </p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Contribution</th>
+                    <th>Relancer</th>
+                    <th>Payé ?</th>
+                    <th>Supprimer</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="contributor in project.content.contributions">
+                    <td>
+                        <a title="Éditer la contribution"
+                           data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
+                    </td>
+                    <td>{{contributor.amount}} €</td>
+                    <td>
+                        <button data-ng-if="!contributor.payed" data-ng-click="contrib.remind($index)" class="btn btn-primary">Relancer</button>
+                    </td>
+                    <td>
+                        <button data-ng-click="contrib.payed($index)"
+                                class="btn" data-ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
+                            {{contributor.payed  ? "Payé" : "À payer"}}
+                        </button>
+                    </td>
+                    <td>
+                        <button data-ng-click="del.contribIndex = $index" class="btn btn-danger" data-ng-if="del.contribIndex != $index && !contributor.payed">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                        <button data-ng-click="del.contribIndex = -1" class="btn btn-warning" data-ng-if="del.contribIndex == $index">
+                            Annuler
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                        </button>
+                        <button data-ng-click="contrib.remove($index)" class="btn btn-danger" data-ng-if="del.contribIndex == $index">
+                            Supprimer ?
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

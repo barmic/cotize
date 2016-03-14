@@ -1,0 +1,33 @@
+---
+- hosts: cotize
+  vars:
+    package: BonsComptes-jar-with-dependencies.jar
+    subdomain: cotize2
+    domain: barmic.eu
+    proxy_port: 5000
+    become_method: su
+    php: no
+  tasks:
+  - name: Install dependencies
+    apt: name={{ item }} state=present cache_valid_time=3600 force=yes
+    become: true
+    with_items:
+      - openjdk-8-jdk
+      - mongodb-server
+  - file: path=/opt/cotize state=directory
+    become: true
+  - name: Install subdomain configuration
+    template: src=nginx-subdomain.conf.j2 dest=/etc/nginx/sites-available/{{ subdomain }} owner=www-data group=www-data
+    become: true
+  - name: Upload package
+    copy: src=target/{{ package }} dest=/opt/cotize
+    become: true
+  - name: Init configuration
+    template: src=cotize_unit.j2 dest=/etc/systemd/system/cotize.service
+    become: true
+  - name: Active cotize deamon
+    command: systemctl enable cotize.service
+    become: true
+  - name: Run cotize deamon
+    command: systemctl restart cotize.service
+    become: true
