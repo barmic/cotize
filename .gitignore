@@ -5,3 +5,4 @@ target
 build
 .gradle
 .vertx
+bower_components
