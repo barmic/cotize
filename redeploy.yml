@@ -9,11 +9,10 @@
     php: no
   tasks:
   - name: Upload package
-    copy: src=target/{{ package }} dest=/opt/cotize
+    copy: src=backend/target/{{ package }} dest=/opt/cotize
     become: true
   - name: Upload config
-    copy: src=config.json dest=/opt/cotize
+    copy: src=infra/config.json dest=/opt/cotize
     become: true
-  - name: Run cotize deamon
-    command: systemctl restart cotize.service
-    become: true
+  - name: Upload statics files
+    synchronize: src=frontend/ dest=/opt/cotize/public
