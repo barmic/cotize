@@ -23,11 +23,13 @@ public class MailService {
     private MailClient mailClient;
     private JsonObject configuration;
     private final Configuration cfg;
+    private String fromUser;
 
     @Inject
     public MailService(MailClient mailClient, JsonObject configuration) {
         this.mailClient = mailClient;
         this.configuration = configuration;
+        this.fromUser = configuration.getJsonObject("mail").getString("user");
 
         cfg = new Configuration(Configuration.VERSION_2_3_23);
         cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/mail-template");
@@ -38,40 +40,21 @@ public class MailService {
 
     public void sendCreatedProject(RawProject rawProject) {
         MailMessage message = new MailMessage();
-        message.setFrom(configuration.getJsonObject("mail").getString("user"));
+        message.setFrom(fromUser);
         message.setTo(rawProject.getMail());
 
         Map<String, Object> root = new HashMap<>();
         root.put("project", rawProject);
         root.put("base_url", configuration.getString("base_url"));
 
-        try {
-            Template temp = cfg.getTemplate("new_project.ftl");
-            StringWriter out = new StringWriter();
-            temp.process(root, out);
-
-            Template object = new Template("subject", "Création du projet : ${project.name} !", cfg);
-            StringWriter outSuject = new StringWriter();
-            object.process(root, outSuject);
-
-            message.setSubject(outSuject.toString());
-            message.setText(out.toString());
-
-            mailClient.sendMail(message, result -> {
-                if (result.succeeded()) {
-                    LOG.info("Send mail : {}", result.result());
-                } else {
-                    LOG.error("Error during sending mail", result.cause());
-                }
-            });
-        } catch (IOException|TemplateException e) {
-            LOG.error("Error during sending mail", e);
-        }
+        String subjectTemplate = "Création du projet : ${project.name} !";
+        String templateName = "new_project.ftl";
+        sendMail(root, message, subjectTemplate, templateName);
     }
 
     public void sendNewContribution(RawProject rawProject, Contribution contribution) {
         MailMessage message = new MailMessage();
-        message.setFrom(configuration.getJsonObject("mail").getString("user"));
+        message.setFrom(fromUser);
         message.setTo(contribution.getMail());
 
         Map<String, Object> root = new HashMap<>();
@@ -79,33 +62,12 @@ public class MailService {
         root.put("contribution", contribution);
         root.put("base_url", configuration.getString("base_url"));
 
-        try {
-            Template temp = cfg.getTemplate("new_contrib.ftl");
-            StringWriter out = new StringWriter();
-            temp.process(root, out);
-
-            Template object = new Template("subject", "Merci de contribuer au projet : ${project.name} !", cfg);
-            StringWriter outSuject = new StringWriter();
-            object.process(root, outSuject);
-
-            message.setSubject(outSuject.toString());
-            message.setText(out.toString());
-
-            mailClient.sendMail(message, result -> {
-                if (result.succeeded()) {
-                    LOG.info("Send mail : {}", result.result());
-                } else {
-                    LOG.error("Error during sending mail", result.cause());
-                }
-            });
-        } catch (IOException|TemplateException e) {
-            LOG.error("Error during sending mail", e);
-        }
+        sendMail(root, message, "Merci de contribuer au projet : ${project.name} !", "new_contrib.ftl");
     }
 
     public void sendRelance(RawProject rawProject, Contribution contribution) {
         MailMessage message = new MailMessage();
-        message.setFrom(configuration.getJsonObject("mail").getString("user"));
+        message.setFrom(fromUser);
         message.setTo(contribution.getMail());
 
         Map<String, Object> root = new HashMap<>();
@@ -113,12 +75,22 @@ public class MailService {
         root.put("contribution", contribution);
         root.put("base_url", configuration.getString("base_url"));
 
+        sendMail(root, message, "Relance du projet : ${project.name}", "remind.ftl");
+
+        MailMessage notification = new MailMessage();
+        notification.setFrom(configuration.getJsonObject("mail").getString("user"));
+        notification.setTo(contribution.getMail());
+
+        sendMail(root, notification, "Nouvelle contribution au projet ${project.name}", "notification_new_contribution.ftl");
+    }
+
+    private void sendMail(Map<String, Object> root, MailMessage message, String subjectTemplate, String templateName) {
         try {
-            Template temp = cfg.getTemplate("remind.ftl");
+            Template temp = cfg.getTemplate(templateName);
             StringWriter out = new StringWriter();
             temp.process(root, out);
 
-            Template object = new Template("subject", "Relance du projet : ${project.name}", cfg);
+            Template object = new Template("subject", subjectTemplate, cfg);
             StringWriter outSuject = new StringWriter();
             object.process(root, outSuject);
 
@@ -132,7 +104,7 @@ public class MailService {
                     LOG.error("Error during sending mail", result.cause());
                 }
             });
-        } catch (IOException|TemplateException e) {
+        } catch (IOException |TemplateException e) {
             LOG.error("Error during sending mail", e);
         }
     }
