@@ -16,3 +16,9 @@
     become: true
   - name: Upload statics files
     synchronize: src=frontend/ dest=/opt/cotize/public
+  - name: Restart cotize
+    service: name=cotize state=restarted
+    become: true
+  - name: Restart nginx
+    service: name=nginx state=restarted
+    become: true

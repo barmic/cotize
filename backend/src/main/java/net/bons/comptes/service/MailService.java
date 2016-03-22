@@ -63,6 +63,13 @@ public class MailService {
         root.put("base_url", configuration.getString("base_url"));
 
         sendMail(root, message, "Merci de contribuer au projet : ${project.name} !", "new_contrib.ftl");
+
+        MailMessage notification = new MailMessage();
+        notification.setFrom(configuration.getJsonObject("mail").getString("user"));
+        notification.setTo(rawProject.getMail());
+
+        LOG.info("Send notification");
+        sendMail(root, notification, "Nouvelle contribution au projet ${project.name}", "notification_new_contrib.ftl");
     }
 
     public void sendRelance(RawProject rawProject, Contribution contribution) {
@@ -76,12 +83,6 @@ public class MailService {
         root.put("base_url", configuration.getString("base_url"));
 
         sendMail(root, message, "Relance du projet : ${project.name}", "remind.ftl");
-
-        MailMessage notification = new MailMessage();
-        notification.setFrom(configuration.getJsonObject("mail").getString("user"));
-        notification.setTo(contribution.getMail());
-
-        sendMail(root, notification, "Nouvelle contribution au projet ${project.name}", "notification_new_contribution.ftl");
     }
 
     private void sendMail(Map<String, Object> root, MailMessage message, String subjectTemplate, String templateName) {

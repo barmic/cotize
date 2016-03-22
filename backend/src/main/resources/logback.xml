@@ -21,6 +21,46 @@
         </triggeringPolicy>
     </appender>
 
+    <appender name="COTIZE-MAIL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${ROOTDIR}/logs/cotize-mail.log</File>
+        <Append>true</Append>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d %-5p %c - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${ARCHIVE}/cotize-mail.%i.zip</fileNamePattern>
+            <maxIndex>${RETENTION}</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${LOGS_SIZE}</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="COTIZE-MONGO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${ROOTDIR}/logs/cotize-mongo.log</File>
+        <Append>true</Append>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d %-5p %c - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${ARCHIVE}/cotize-mongo.%i.zip</fileNamePattern>
+            <maxIndex>${RETENTION}</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${LOGS_SIZE}</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="net.bons.comptes.service.MailService" level="INFO" additivity="false">
+        <appender-ref ref="COTIZE-MAIL"/>
+    </logger>
+
+    <logger name="org.mongodb.driver" level="INFO" additivity="false">
+        <appender-ref ref="COTIZE-MONGO"/>
+    </logger>
+
     <logger name="net.bons.comptes" level="INFO" additivity="false">
         <appender-ref ref="COTIZE"/>
     </logger>

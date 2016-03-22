@@ -1,6 +1,6 @@
 Bonjour,
 
-${contribution.name} vient de contribuer au projet ${project.name} (${contribution.amount} €) !
+${contribution.author} vient de contribuer au projet ${project.name} (${contribution.amount} €) !
 
 Vous pouvez voir la liste des contributeurs le lien suivant :
 
