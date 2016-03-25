@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -18,14 +19,17 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContrubutionUpdateHandler.class);
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
+    private String projectCollectionName;
 
     @Inject
-    public ContrubutionUpdateHandler(MongoClient mongoClient, CommandExtractor commandExtractor) {
+    public ContrubutionUpdateHandler(MongoClient mongoClient, CommandExtractor commandExtractor,
+                                     @Named("ProjectCollectionName") String projectCollectionName) {
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
+        this.projectCollectionName = projectCollectionName;
     }
 
     @Override
@@ -40,10 +44,10 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
                      .map(RoutingContext::getBodyAsJson)
                      .map(ContributeProject::new)
                      .filter(commandExtractor::validCmd)
-                     .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
+                     .flatMap(cmd -> mongoClient.findOneObservable(projectCollectionName, query, null)
                                                 .map(projectJson -> Tuple.of(new RawProject(projectJson), cmd)))
                      .map(tuple -> updateContrib(tuple._1, tuple._2))
-                     .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project._1.toJson())
+                     .flatMap(project -> mongoClient.replaceObservable(projectCollectionName, query, project._1.toJson())
                                                     .map(Void -> project))
                      .subscribe(project -> {
                          event.response()

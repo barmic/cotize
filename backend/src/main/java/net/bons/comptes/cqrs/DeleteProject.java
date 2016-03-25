@@ -1,5 +1,6 @@
 package net.bons.comptes.cqrs;
 
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -13,10 +14,12 @@ import javax.inject.Inject;
 public class DeleteProject implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ListProject.class);
     private MongoClient mongoClient;
+    private String projectCollection;
 
     @Inject
-    public DeleteProject(MongoClient mongoClient) {
+    public DeleteProject(MongoClient mongoClient, @Named("ProjectCollectionName") String projectCollection) {
         this.mongoClient = mongoClient;
+        this.projectCollection = projectCollection;
     }
 
     @Override
@@ -25,7 +28,7 @@ public class DeleteProject implements Handler<RoutingContext> {
 
         JsonObject query = new JsonObject().put("identifier", projectId);
 
-        mongoClient.removeOneObservable("CotizeEvents", query)
+        mongoClient.removeOneObservable(projectCollection, query)
                    .subscribe(obj -> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")

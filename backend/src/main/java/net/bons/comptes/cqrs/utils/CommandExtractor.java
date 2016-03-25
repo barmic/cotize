@@ -1,7 +1,6 @@
 package net.bons.comptes.cqrs.utils;
 
 import com.google.inject.Inject;
-import net.bons.comptes.cqrs.ProjectAgreggate;
 import net.bons.comptes.cqrs.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,7 @@ import javax.validation.Validator;
 import java.util.Collection;
 
 public class CommandExtractor {
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CommandExtractor.class);
     private Validator validator;
 
     @Inject

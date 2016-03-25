@@ -1,5 +1,6 @@
 package net.bons.comptes.cqrs;
 
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -16,11 +17,13 @@ import java.util.function.Function;
 
 public class GetProject implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
-    private MongoClient mongoClient;
+    private final MongoClient mongoClient;
+    private final String projectCollection;
 
     @Inject
-    public GetProject(MongoClient mongoClient) {
+    public GetProject(MongoClient mongoClient, @Named("ProjectCollectionName") String projectCollection) {
         this.mongoClient = mongoClient;
+        this.projectCollection = projectCollection;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class GetProject implements Handler<RoutingContext> {
             map = filter(contributionId);
         }
 
-        mongoClient.findOneObservable("CotizeEvents", query, null)
+        mongoClient.findOneObservable(projectCollection, query, null)
                    .map(RawProject::new)
                    .map(map::apply)
                    .subscribe(obj -> {

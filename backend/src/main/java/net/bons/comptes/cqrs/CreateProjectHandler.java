@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -21,16 +22,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CreateProjectHandler implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateProjectHandler.class);
     private static final int NB_ID_GEN = 10;
     private static final int SIZE_ID = 10;
-    private final String cotizeEvents = "CotizeEvents";
+    private String cotizeEvents;
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
     private MailService mailService;
 
     @Inject
-    public CreateProjectHandler(MongoClient mongoClient, CommandExtractor commandExtractor, MailService mailService) {
+    public CreateProjectHandler(@Named("ProjectCollectionName") String cotizeEvents, MongoClient mongoClient, CommandExtractor commandExtractor,
+                                MailService mailService) {
+        this.cotizeEvents = cotizeEvents;
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
         this.mailService = mailService;

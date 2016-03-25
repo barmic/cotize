@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -17,10 +18,12 @@ import java.util.Optional;
 public class PayedContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
     private MongoClient mongoClient;
+    private String collectionName;
 
     @Inject
-    public PayedContribution(MongoClient mongoClient) {
+    public PayedContribution(MongoClient mongoClient, @Named("ProjectCollectionName") String collectionName) {
         this.mongoClient = mongoClient;
+        this.collectionName = collectionName;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class PayedContribution implements Handler<RoutingContext> {
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
                    .map(projectJson -> togglePayed(new RawProject(projectJson), contribId))
-                   .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
+                   .flatMap(project -> mongoClient.replaceObservable(collectionName, query, project.toJson())
                                                   .map(Void -> new AdminProject(project)))
                    .map(project -> project.getContributions()
                                           .stream()

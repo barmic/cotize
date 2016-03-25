@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -19,11 +20,13 @@ public class Remind implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
     private MongoClient mongoClient;
     private MailService mailService;
+    private final String projectCollection;
 
     @Inject
-    public Remind(MongoClient mongoClient, MailService mailService) {
+    public Remind(MongoClient mongoClient, MailService mailService, @Named("ProjectCollectionName") String projectCollection) {
         this.mongoClient = mongoClient;
         this.mailService = mailService;
+        this.projectCollection = projectCollection;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class Remind implements Handler<RoutingContext> {
         LOG.debug("Search projectId {}, contributionId {}", projectId, contribId);
         JsonObject query = new JsonObject().put("identifier", projectId);
 
-        mongoClient.findOneObservable("CotizeEvents", query, null)
+        mongoClient.findOneObservable(projectCollection, query, null)
                    .map(RawProject::new)
                    .map(project -> Tuple.of(project, getContrib(project, contribId)))
                    .subscribe(tuple -> mailService.sendRelance(tuple._1, tuple._2),

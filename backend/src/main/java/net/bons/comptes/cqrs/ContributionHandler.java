@@ -1,6 +1,7 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -21,16 +22,19 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ContributionHandler implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectAgreggate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContributionHandler.class);
     private MongoClient mongoClient;
     private CommandExtractor commandExtractor;
     private MailService mailService;
+    private String projectCollectionName;
 
     @Inject
-    public ContributionHandler(MongoClient mongoClient, CommandExtractor commandExtractor, MailService mailService) {
+    public ContributionHandler(MongoClient mongoClient, CommandExtractor commandExtractor, MailService mailService,
+                               @Named("ProjectCollectionName") String projectCollectionName) {
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
         this.mailService = mailService;
+        this.projectCollectionName = projectCollectionName;
     }
 
     @Override
@@ -43,10 +47,10 @@ public class ContributionHandler implements Handler<RoutingContext> {
                      .map(RoutingContext::getBodyAsJson)
                      .map(ContributeProject::new)
                      .filter(commandExtractor::validCmd)
-                     .flatMap(cmd -> mongoClient.findOneObservable("CotizeEvents", query, null)
+                     .flatMap(cmd -> mongoClient.findOneObservable(projectCollectionName, query, null)
                                                 .map(projectJson -> Tuple.of(new RawProject(projectJson), cmd)))
                      .map(tuple -> compute(tuple._1, tuple._2))
-                     .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project._1.toJson())
+                     .flatMap(project -> mongoClient.replaceObservable(projectCollectionName, query, project._1.toJson())
                                                     .map(Void -> project))
                      .subscribe(project -> {
                          mailService.sendNewContribution(project._1, project._2);

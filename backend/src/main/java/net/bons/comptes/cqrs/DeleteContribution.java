@@ -1,11 +1,11 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.model.AdminProject;
 import net.bons.comptes.service.model.Contribution;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 public class DeleteContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(DeleteContribution.class);
     private MongoClient mongoClient;
-    private CommandExtractor commandExtractor;
+    private String projectCollection;
 
     @Inject
-    public DeleteContribution(MongoClient mongoClient, CommandExtractor commandExtractor) {
+    public DeleteContribution(MongoClient mongoClient, @Named("ProjectCollectionName") String projectCollection) {
         this.mongoClient = mongoClient;
-        this.commandExtractor = commandExtractor;
+        this.projectCollection = projectCollection;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class DeleteContribution implements Handler<RoutingContext> {
 
         mongoClient.findOneObservable("CotizeEvents", query, null)
                    .map(projectJson -> removeContrib(new RawProject(projectJson), contribId))
-                   .flatMap(project -> mongoClient.replaceObservable("CotizeEvents", query, project.toJson())
-                                              .map(Void -> new AdminProject(project)))
+                   .flatMap(project -> mongoClient.replaceObservable(projectCollection, query, project.toJson())
+                                                  .map(Void -> new AdminProject(project)))
                    .subscribe(project -> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")

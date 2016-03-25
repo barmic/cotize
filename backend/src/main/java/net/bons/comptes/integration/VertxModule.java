@@ -2,6 +2,7 @@ package net.bons.comptes.integration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mail.MailConfig;
@@ -44,12 +45,16 @@ public class VertxModule extends AbstractModule {
 
         EventStore service = ProxyHelper.createProxy(EventStore.class, delegate, "database-service-address");
         bind(EventStore.class).toInstance(service);
+
+        String collectionName = config.getJsonObject("mongo").getString("collection");
+        bind(String.class).annotatedWith(Names.named("ProjectCollectionName"))
+                          .toInstance(collectionName);
     }
 
     @Provides
     Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject,
-                         ContrubutionUpdateHandler contrubutionUpdateHandler, ProjectAgreggate projectAgreggate,
-                         CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler,
+                         ContrubutionUpdateHandler contrubutionUpdateHandler, CreateProjectHandler createProjectHandler,
+                         ContributionHandler contributionHandler,
                          DeleteContribution deleteContribution, PayedContribution payedContribution, Remind remind,
                          ListProject listProject, DeleteProject deleteProject) {
         Router router = Router.router(vertx);
@@ -66,7 +71,8 @@ public class VertxModule extends AbstractModule {
         router.post("/api/project/:projectId/contribution/:contributionId/remind").handler(remind);
         if (config.containsKey("root_secret")) {
             router.get("/api/admin/" + config.getString("root_secret") + "/project").handler(listProject);
-            router.delete("/api/admin/" + config.getString("root_secret") + "/project/:projectId").handler(deleteProject);
+            router.delete("/api/admin/" + config.getString("root_secret") + "/project/:projectId").handler(
+                    deleteProject);
         }
 
         // query
