@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
+import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.MailService;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;

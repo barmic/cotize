@@ -50,8 +50,8 @@ public class VertxModule extends AbstractModule {
     Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject,
                          ContrubutionUpdateHandler contrubutionUpdateHandler, ProjectAgreggate projectAgreggate,
                          CreateProjectHandler createProjectHandler, ContributionHandler contributionHandler,
-                         GetContribution getContribution, DeleteContribution deleteContribution,
-                         PayedContribution payedContribution, Remind remind, ListProject listProject, DeleteProject deleteProject) {
+                         DeleteContribution deleteContribution, PayedContribution payedContribution, Remind remind,
+                         ListProject listProject, DeleteProject deleteProject) {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
@@ -72,7 +72,7 @@ public class VertxModule extends AbstractModule {
         // query
         router.get("/api/project/:projectId").handler(getProject);
         router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
-        router.get("/api/project/:projectId/contribution/:contributionId").handler(getContribution);
+        router.get("/api/project/:projectId/contribution/:contributionId").handler(getProject);
 
         router.get("/*").handler(staticHandler);
 

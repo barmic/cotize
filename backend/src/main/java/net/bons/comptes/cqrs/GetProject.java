@@ -4,14 +4,15 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import net.bons.comptes.service.model.AdminProject;
-import net.bons.comptes.service.model.RawProject;
-import net.bons.comptes.service.model.SimpleProject;
+import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.service.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class GetProject implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
@@ -26,6 +27,7 @@ public class GetProject implements Handler<RoutingContext> {
     public void handle(RoutingContext routingContext) {
         final String adminPass = routingContext.request().getParam("adminPass");
         final String projectId = routingContext.request().getParam("projectId");
+        final String contributionId = routingContext.request().getParam("contributionId");
 
         LOG.debug("Search projectId {}", projectId);
 
@@ -34,14 +36,30 @@ public class GetProject implements Handler<RoutingContext> {
             query.put("passAdmin", adminPass);
         }
 
+        Function<RawProject, JsonModel> map = project -> !Objects.equals(project.getPassAdmin(), adminPass) ? new SimpleProject(project)
+                                                                                                            : new AdminProject(project);
+        if (contributionId != null) {
+            map = filter(contributionId);
+        }
+
         mongoClient.findOneObservable("CotizeEvents", query, null)
                    .map(RawProject::new)
-                   .map(project -> !Objects.equals(project.getPassAdmin(), adminPass) ? new SimpleProject(project)
-                                                                                      : new AdminProject(project))
+                   .map(map::apply)
                    .subscribe(obj -> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
                                      .end(obj.toJson().toString());
                    }, Utils.manageError(routingContext));
+    }
+
+    private Function<RawProject, JsonModel> filter(String contributionId) {
+        return project -> {
+            Optional<Contribution> contribution = project.getContributions().stream()
+                                                         .filter(contrib -> contrib.getContributionId()
+                                                                                   .equals(contributionId))
+                                                         .findFirst();
+            return contribution.orElseThrow(
+                    () -> new RuntimeException("Impossible de trouver la contribution " + contributionId));
+        };
     }
 }

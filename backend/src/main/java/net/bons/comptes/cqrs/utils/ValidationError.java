@@ -1,4 +1,4 @@
-package net.bons.comptes.cqrs;
+package net.bons.comptes.cqrs.utils;
 
 import net.bons.comptes.cqrs.command.Command;
 

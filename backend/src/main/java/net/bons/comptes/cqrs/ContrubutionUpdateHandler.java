@@ -8,6 +8,8 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import javaslang.Tuple2;
 import net.bons.comptes.cqrs.command.ContributeProject;
+import net.bons.comptes.cqrs.utils.CommandExtractor;
+import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;

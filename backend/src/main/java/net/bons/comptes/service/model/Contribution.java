@@ -7,7 +7,7 @@ package net.bons.comptes.service.model;
 
 import io.vertx.core.json.JsonObject;
 
-public class Contribution {
+public class Contribution implements JsonModel {
     private String contributionId;
     private String author;
     private int amount;
@@ -47,6 +47,7 @@ public class Contribution {
         this.payed = json.getBoolean("payed", false);
     }
 
+    @Override
     public JsonObject toJson() {
         return new JsonObject()
                 .put("contributionId", contributionId)

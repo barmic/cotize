@@ -2,7 +2,8 @@ package net.bons.comptes.service.model;
 
 import io.vertx.core.json.JsonObject;
 
-public interface Project {
+public interface Project extends JsonModel {
+    @Override
     JsonObject toJson();
 
     String getName();

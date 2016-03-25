@@ -1,6 +1,7 @@
-package net.bons.comptes.cqrs;
+package net.bons.comptes.cqrs.utils;
 
 import com.google.inject.Inject;
+import net.bons.comptes.cqrs.ProjectAgreggate;
 import net.bons.comptes.cqrs.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

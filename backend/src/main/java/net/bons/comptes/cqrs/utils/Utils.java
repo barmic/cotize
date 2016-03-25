@@ -1,4 +1,4 @@
-package net.bons.comptes.cqrs;
+package net.bons.comptes.cqrs.utils;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.rxjava.ext.web.RoutingContext;
