@@ -93,28 +93,7 @@ public class MailService {
         root.put("contribution", contribution);
         root.put("base_url", configuration.getString("base_url"));
 
-//        sendMail(root, message, "Relance du projet : ${project.name}", "remind.ftl", result);
-        result.handle(new AsyncResult<MailResult>() {
-            @Override
-            public MailResult result() {
-                return null;
-            }
-
-            @Override
-            public Throwable cause() {
-                return new RuntimeException("J'ai niqué ta mère !");
-            }
-
-            @Override
-            public boolean succeeded() {
-                return false;
-            }
-
-            @Override
-            public boolean failed() {
-                return false;
-            }
-        });
+        sendMail(root, message, "Relance du projet : ${project.name}", "remind.ftl", result);
     }
 
     private void sendMail(Map<String, Object> root, MailMessage message, String subjectTemplate, String templateName,
