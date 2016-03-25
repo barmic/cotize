@@ -23,7 +23,8 @@ public class Remind implements Handler<RoutingContext> {
     private final String projectCollection;
 
     @Inject
-    public Remind(MongoClient mongoClient, MailService mailService, @Named("ProjectCollectionName") String projectCollection) {
+    public Remind(MongoClient mongoClient, MailService mailService,
+                  @Named("ProjectCollectionName") String projectCollection) {
         this.mongoClient = mongoClient;
         this.mailService = mailService;
         this.projectCollection = projectCollection;
@@ -41,7 +42,15 @@ public class Remind implements Handler<RoutingContext> {
         mongoClient.findOneObservable(projectCollection, query, null)
                    .map(RawProject::new)
                    .map(project -> Tuple.of(project, getContrib(project, contribId)))
-                   .subscribe(tuple -> mailService.sendRelance(tuple._1, tuple._2),
+                   .subscribe(tuple -> mailService.sendRelance(tuple._1, tuple._2,
+                                                               result -> {
+                                                                   if (result.failed()) {
+                                                                       Utils.manageError(routingContext, 500).call(result.cause());
+                                                                   } else {
+                                                                       routingContext.response().end();
+                                                                   }
+                                                               })
+                              ,
                               Utils.manageError(routingContext));
     }
 

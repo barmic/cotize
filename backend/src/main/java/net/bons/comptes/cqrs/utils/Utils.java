@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 public class Utils {
     public static Action1<Throwable> manageError(RoutingContext event) {
+        return manageError(event, 400);
+    }
+    public static Action1<Throwable> manageError(RoutingContext event, int code) {
         return throwable -> {
             JsonArray array = new JsonArray();
             if (throwable instanceof ValidationError) {
@@ -21,7 +24,7 @@ public class Utils {
                 array.add(throwable.getMessage());
             }
             event.response()
-                 .setStatusCode(400)
+                 .setStatusCode(code)
                  .putHeader("Content-Type", "application/json")
                  .end(array.toString());
         };

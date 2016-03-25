@@ -76,9 +76,9 @@ public class VertxModule extends AbstractModule {
         }
 
         // query
-        router.get("/api/project/:projectId").handler(getProject);
-        router.get("/api/project/:projectId/admin/:adminPass").handler(getProject);
-        router.get("/api/project/:projectId/contribution/:contributionId").handler(getProject);
+        router.get("/api/project/:projectId").produces("application/json").handler(getProject);
+        router.get("/api/project/:projectId/admin/:adminPass").produces("application/json").handler(getProject);
+        router.get("/api/project/:projectId/contribution/:contributionId").produces("application/json").handler(getProject);
 
         router.get("/*").handler(staticHandler);
 

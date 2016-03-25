@@ -10,6 +10,18 @@
                 Lien de participation au projet : <a data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
                 Le projet a déjà réunis {{project.content.amount}} € (reste à pourvoir {{project.rest}} €).
             </p>
+
+            <div class="row alert alert-danger" role="alert" data-ng-if="event.state == 'error'">
+                Erreur !
+                <ul>
+                    <li data-ng-repeat="error in event.errors">{{error}}</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-success" role="alert" data-ng-if="event.state == 'success'">
+                {{event.message}}
+            </div>
+
             <table class="table table-striped">
                 <thead>
                 <tr>

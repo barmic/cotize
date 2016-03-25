@@ -129,6 +129,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     $scope.project = {}
     $scope.create = {}
     $scope.contrib = {}
+    $scope.event = {}
     $scope.del = {
         contribIndex : -1
     }
@@ -175,11 +176,12 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         contrib = $scope.project.content.contributions[contributionIndex]
         cotizeProjectService.remindContribution($routeParams.projectId, contrib.contributionId)
             .success(function (data) {
-                $scope.project.content.contributions[contributionIndex] = data;
+                $scope.event.state = "success";
+                $scope.event.message = "Vous venez d'envoyer une relance à " + contrib.author;
             })
             .error(function (data, status) {
-                $scope.newcontrib.state = "error";
-                $scope.project.status = status;
+                $scope.event.state = "error";
+                $scope.event.errors = [ "Erreur lors de l'envoi de la relance à " + contrib.author ];
             });
     };
 }]);

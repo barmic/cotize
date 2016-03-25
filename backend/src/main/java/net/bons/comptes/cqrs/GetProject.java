@@ -50,7 +50,7 @@ public class GetProject implements Handler<RoutingContext> {
                    .map(map::apply)
                    .subscribe(obj -> {
                        routingContext.response()
-                                     .putHeader("Content-Type", "application/json")
+                                     .putHeader("Content-Type", routingContext.getAcceptableContentType())
                                      .end(obj.toJson().toString());
                    }, Utils.manageError(routingContext));
     }
