@@ -1,12 +1,12 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.model.AdminProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
@@ -21,9 +21,9 @@ public class PayedContribution implements Handler<RoutingContext> {
     private String collectionName;
 
     @Inject
-    public PayedContribution(MongoClient mongoClient, @Named("ProjectCollectionName") String collectionName) {
+    public PayedContribution(MongoClient mongoClient, MongoConfig collectionName) {
         this.mongoClient = mongoClient;
-        this.collectionName = collectionName;
+        this.collectionName = collectionName.getProjectCollection();
     }
 
     @Override

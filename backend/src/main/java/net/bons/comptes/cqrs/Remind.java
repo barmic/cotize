@@ -1,13 +1,13 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import javaslang.Tuple;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.MailService;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
@@ -24,10 +24,10 @@ public class Remind implements Handler<RoutingContext> {
 
     @Inject
     public Remind(MongoClient mongoClient, MailService mailService,
-                  @Named("ProjectCollectionName") String projectCollection) {
+                  MongoConfig projectCollection) {
         this.mongoClient = mongoClient;
         this.mailService = mailService;
-        this.projectCollection = projectCollection;
+        this.projectCollection = projectCollection.getProjectCollection();
     }
 
     @Override

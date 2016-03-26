@@ -1,7 +1,6 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -11,6 +10,7 @@ import javaslang.Tuple;
 import net.bons.comptes.cqrs.command.CreateProject;
 import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.MailService;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
@@ -31,9 +31,9 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
     private MailService mailService;
 
     @Inject
-    public CreateProjectHandler(@Named("ProjectCollectionName") String cotizeEvents, MongoClient mongoClient, CommandExtractor commandExtractor,
+    public CreateProjectHandler(MongoConfig cotizeEvents, MongoClient mongoClient, CommandExtractor commandExtractor,
                                 MailService mailService) {
-        this.cotizeEvents = cotizeEvents;
+        this.cotizeEvents = cotizeEvents.getProjectCollection();
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
         this.mailService = mailService;

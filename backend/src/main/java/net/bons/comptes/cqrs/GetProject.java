@@ -1,11 +1,11 @@
 package net.bons.comptes.cqrs;
 
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,9 @@ public class GetProject implements Handler<RoutingContext> {
     private final String projectCollection;
 
     @Inject
-    public GetProject(MongoClient mongoClient, @Named("ProjectCollectionName") String projectCollection) {
+    public GetProject(MongoClient mongoClient, MongoConfig projectCollection) {
         this.mongoClient = mongoClient;
-        this.projectCollection = projectCollection;
+        this.projectCollection = projectCollection.getProjectCollection();
     }
 
     @Override

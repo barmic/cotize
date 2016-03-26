@@ -1,7 +1,6 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
@@ -11,6 +10,7 @@ import javaslang.Tuple2;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
@@ -26,10 +26,10 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
 
     @Inject
     public ContrubutionUpdateHandler(MongoClient mongoClient, CommandExtractor commandExtractor,
-                                     @Named("ProjectCollectionName") String projectCollectionName) {
+                                     MongoConfig projectCollectionName) {
         this.mongoClient = mongoClient;
         this.commandExtractor = commandExtractor;
-        this.projectCollectionName = projectCollectionName;
+        this.projectCollectionName = projectCollectionName.getProjectCollection();
     }
 
     @Override

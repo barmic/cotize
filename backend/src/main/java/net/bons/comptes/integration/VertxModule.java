@@ -2,7 +2,6 @@ package net.bons.comptes.integration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mail.MailConfig;
@@ -45,10 +44,6 @@ public class VertxModule extends AbstractModule {
 
         EventStore service = ProxyHelper.createProxy(EventStore.class, delegate, "database-service-address");
         bind(EventStore.class).toInstance(service);
-
-        String collectionName = config.getJsonObject("mongo").getString("collection");
-        bind(String.class).annotatedWith(Names.named("ProjectCollectionName"))
-                          .toInstance(collectionName);
     }
 
     @Provides
@@ -90,6 +85,11 @@ public class VertxModule extends AbstractModule {
         StaticHandler staticHandler = StaticHandler.create("public");
         staticHandler.setIndexPage("index.html");
         return staticHandler;
+    }
+
+    @Provides
+    MongoConfig provideMongoConfig() {
+        return new MongoConfig(config.getJsonObject("mongo").getString("collection"));
     }
 
     @Provides

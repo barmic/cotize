@@ -1,11 +1,11 @@
 package net.bons.comptes.cqrs;
 
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +17,9 @@ public class DeleteProject implements Handler<RoutingContext> {
     private String projectCollection;
 
     @Inject
-    public DeleteProject(MongoClient mongoClient, @Named("ProjectCollectionName") String projectCollection) {
+    public DeleteProject(MongoClient mongoClient, MongoConfig projectCollection) {
         this.mongoClient = mongoClient;
-        this.projectCollection = projectCollection;
+        this.projectCollection = projectCollection.getProjectCollection();
     }
 
     @Override

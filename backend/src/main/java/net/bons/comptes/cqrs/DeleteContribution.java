@@ -1,12 +1,12 @@
 package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
+import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.model.AdminProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
@@ -22,9 +22,9 @@ public class DeleteContribution implements Handler<RoutingContext> {
     private String projectCollection;
 
     @Inject
-    public DeleteContribution(MongoClient mongoClient, @Named("ProjectCollectionName") String projectCollection) {
+    public DeleteContribution(MongoClient mongoClient, MongoConfig projectCollection) {
         this.mongoClient = mongoClient;
-        this.projectCollection = projectCollection;
+        this.projectCollection = projectCollection.getProjectCollection();
     }
 
     @Override
