@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=root
-ExecStart=/usr/bin/java -jar /opt/cotize/{{ package }}
+ExecStart=/usr/bin/java -jar -XX:+UseG1GC -XX:+UseStringDeduplication /opt/cotize/{{ package }}
 
 [Install]
 WantedBy=multi-user.target
