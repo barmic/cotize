@@ -205,9 +205,11 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         contributionsIdx.forEach(function (idx) {
             cotizeProjectService.remindContribution($routeParams.projectId, $scope.project.content.contributions[idx].contributionId)
                 .success(function (data) {
+                    $scope.contrib.prepareRemind(idx);
                     $scope.event.messages.push("Vous venez d'envoyer une relance à " + $scope.project.content.contributions[idx].author);
                 })
                 .error(function (data, status) {
+                    $scope.contrib.prepareRemind(idx);
                     $scope.event.errors.push("Erreur lors de l'envoi de la relance à " + $scope.project.content.contributions[idx].author);
                 });
         });
