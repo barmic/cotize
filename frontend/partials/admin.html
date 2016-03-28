@@ -11,16 +11,39 @@
                 Le projet a déjà réunis {{project.content.amount}} € (reste à pourvoir {{project.rest}} €).
             </p>
 
-            <div class="row alert alert-danger" role="alert" data-ng-if="event.state == 'error'">
+            <div class="row alert alert-danger" role="alert" data-ng-if="event.errors.length != 0">
                 Erreur !
                 <ul>
                     <li data-ng-repeat="error in event.errors">{{error}}</li>
                 </ul>
+                <button data-ng-click="event.errors.splice(0, event.errors.length)" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
             </div>
 
-            <div class="alert alert-success" role="alert" data-ng-if="event.state == 'success'">
-                {{event.message}}
+            <div class="alert alert-success" role="alert" data-ng-if="event.messages.length != 0">
+                <ul>
+                    <li data-ng-repeat="message in event.messages">{{message}}</li>
+                </ul>
+                <button data-ng-click="event.messages.splice(0, event.messages.length)" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
             </div>
+
+            <div class="alert alert-warning" role="alert" data-ng-if="event.users.size != 0">
+                Attention vous vous aller envoyer un mail de relance aux utilisateurs suivants :
+                <ul>
+                    <li data-ng-repeat="userIdx in event.usersTab">{{project.content.contributions[userIdx].author}}
+                        <button data-ng-click="contrib.prepareRemind(userIdx)" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button></li>
+                </ul>
+
+                <button data-ng-click="event.users.clear()" class="btn btn-danger">Annulation</button>
+                <button data-ng-click="contrib.remind(event.users)" class="btn btn-primary">Relancer</button>
+            </div>
+
+            <button data-ng-click="contrib.prepareRemindAll()" class="btn btn-primary">Relancer tout le monde</button>
 
             <table class="table table-striped">
                 <thead>
@@ -40,7 +63,8 @@
                     </td>
                     <td>{{contributor.amount}} €</td>
                     <td>
-                        <button data-ng-if="!contributor.payed" data-ng-click="contrib.remind($index)" class="btn btn-primary">Relancer</button>
+                        <button data-ng-if="!contributor.payed && !event.users.has($index)" data-ng-click="contrib.prepareRemind($index)" class="btn btn-primary">Relancer</button>
+                        <button data-ng-if="!contributor.payed && event.users.has($index)" data-ng-click="contrib.prepareRemind($index)" class="btn btn-secondary">Ne pas relancer</button>
                     </td>
                     <td>
                         <button data-ng-click="contrib.payed($index)"

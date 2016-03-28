@@ -64,7 +64,7 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 cotizeProjectService.loadProject($routeParams.projectId)
                                     .success(function (data) { $scope.project.content = data; })
                                     .error(function (data, status) {});
-                $scope.newcontrib.errors.length.splice(0, $scope.newcontrib.errors.length);
+                $scope.newcontrib.errors.splice(0, $scope.newcontrib.errors.length);
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
@@ -129,7 +129,12 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     $scope.project = {}
     $scope.create = {}
     $scope.contrib = {}
-    $scope.event = {}
+    $scope.event = {
+        users : new Set(),
+        usersTab : [],
+        errors : [],
+        messages : []
+    }
     $scope.del = {
         contribIndex : -1
     }
@@ -172,17 +177,40 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
             });
     };
 
-    $scope.contrib.remind = function (contributionIndex) {
-        contrib = $scope.project.content.contributions[contributionIndex]
-        cotizeProjectService.remindContribution($routeParams.projectId, contrib.contributionId)
-            .success(function (data) {
-                $scope.event.state = "success";
-                $scope.event.message = "Vous venez d'envoyer une relance à " + contrib.author;
-            })
-            .error(function (data, status) {
-                $scope.event.state = "error";
-                $scope.event.errors = [ "Erreur lors de l'envoi de la relance à " + contrib.author ];
-            });
+    $scope.contrib.prepareRemindAll = function () {
+        $scope.event.usersTab = []; //FIXME beurk... (if you find how to apply an ngRepeate on Set...)
+        $scope.project.content.contributions.forEach(function (element, index, array) {
+            if (!element.payed) {
+                $scope.event.usersTab.push(index);
+            }
+        });
+        $scope.event.users = new Set($scope.event.usersTab);
+    };
+
+    $scope.contrib.prepareRemind = function (contributionIndex) {
+        if (!$scope.event.users.has(contributionIndex)) {
+            $scope.event.users.add(contributionIndex);
+        } else {
+            $scope.event.users.delete(contributionIndex);
+        }
+        $scope.event.usersTab = []; //FIXME beurk... (if you find how to apply an ngRepeate on Set...)
+        $scope.event.users.forEach(function(value) {
+            $scope.event.usersTab.push(value);
+        });
+    };
+
+    $scope.contrib.remind = function (contributionsIdx) {
+        $scope.event.messages = [];
+        $scope.event.errors = [];
+        contributionsIdx.forEach(function (idx) {
+            cotizeProjectService.remindContribution($routeParams.projectId, $scope.project.content.contributions[idx].contributionId)
+                .success(function (data) {
+                    $scope.event.messages.push("Vous venez d'envoyer une relance à " + $scope.project.content.contributions[idx].author);
+                })
+                .error(function (data, status) {
+                    $scope.event.errors.push("Erreur lors de l'envoi de la relance à " + $scope.project.content.contributions[idx].author);
+                });
+        });
     };
 }]);
 
