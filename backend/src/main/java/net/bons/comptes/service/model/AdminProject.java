@@ -1,5 +1,9 @@
 package net.bons.comptes.service.model;
 
+/* Licence Public Barmic
+ * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
+ */
+
 import com.google.common.collect.Lists;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;

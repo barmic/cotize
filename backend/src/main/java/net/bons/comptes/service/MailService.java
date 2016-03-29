@@ -1,5 +1,9 @@
 package net.bons.comptes.service;
 
+/* Licence Public Barmic
+ * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
+ */
+
 import com.google.inject.Inject;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

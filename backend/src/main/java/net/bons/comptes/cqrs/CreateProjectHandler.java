@@ -1,5 +1,9 @@
 package net.bons.comptes.cqrs;
 
+/* Licence Public Barmic
+ * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
+ */
+
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;

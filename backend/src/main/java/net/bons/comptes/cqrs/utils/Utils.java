@@ -1,5 +1,9 @@
 package net.bons.comptes.cqrs.utils;
 
+/* Licence Public Barmic
+ * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
+ */
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import rx.functions.Action1;

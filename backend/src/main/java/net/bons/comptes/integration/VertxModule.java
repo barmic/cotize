@@ -1,5 +1,9 @@
 package net.bons.comptes.integration;
 
+/* Licence Public Barmic
+ * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
+ */
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import io.vertx.core.json.JsonArray;

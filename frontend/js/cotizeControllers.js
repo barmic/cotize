@@ -1,3 +1,5 @@
+//  Licence Public Barmic
+//  copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
 var cotizeControllers = angular.module('cotizeControllers', []);
 
 cotizeControllers.controller('cotizeCreateProject', ['$http', '$scope', 'cotizeProjectService',

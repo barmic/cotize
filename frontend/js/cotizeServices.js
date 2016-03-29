@@ -1,3 +1,5 @@
+//  Licence Public Barmic
+//  copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
 var cotizeServices = cotizeModule.service('cotizeServices', []);
 
 cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
