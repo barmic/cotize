@@ -141,10 +141,9 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         contribIndex : -1
     }
 
-    //FIXME beurk... (if you find how to apply an ngRepeate on Set...)
     $scope.event.users.toArray = function () {
-        usersTab = [];
-        $scope.event.users.forEach(function(value) {
+        var usersTab = [];
+        this.forEach(function(value) {
             usersTab.push(value);
         });
         return usersTab;
