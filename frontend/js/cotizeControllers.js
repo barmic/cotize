@@ -139,6 +139,15 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         contribIndex : -1
     }
 
+    //FIXME beurk... (if you find how to apply an ngRepeate on Set...)
+    $scope.event.users.toArray = function () {
+        usersTab = [];
+        $scope.event.users.forEach(function(value) {
+            usersTab.push(value);
+        });
+        return usersTab;
+    };
+
     cotizeProjectService.loadProjectAdmin($routeParams.projectId, $routeParams.passAdmin)
             .success(function (data) {
                 $scope.project.content = data;
@@ -178,13 +187,12 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     };
 
     $scope.contrib.prepareRemindAll = function () {
-        $scope.event.usersTab = []; //FIXME beurk... (if you find how to apply an ngRepeate on Set...)
+        $scope.event.users.clear();
         $scope.project.content.contributions.forEach(function (element, index, array) {
             if (!element.payed) {
-                $scope.event.usersTab.push(index);
+                $scope.event.users.add(index);
             }
         });
-        $scope.event.users = new Set($scope.event.usersTab);
     };
 
     $scope.contrib.prepareRemind = function (contributionIndex) {
@@ -193,10 +201,6 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         } else {
             $scope.event.users.delete(contributionIndex);
         }
-        $scope.event.usersTab = []; //FIXME beurk... (if you find how to apply an ngRepeate on Set...)
-        $scope.event.users.forEach(function(value) {
-            $scope.event.usersTab.push(value);
-        });
     };
 
     $scope.contrib.remind = function (contributionsIdx) {
