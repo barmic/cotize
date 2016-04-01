@@ -65,7 +65,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
     }
 
     private Tuple2<RawProject, Contribution> compute(RawProject project, ContributeProject contribute) {
-        LOG.debug("RawProject to contribute : {}", project.toJson());
+        LOG.debug("RawProject  to contribute : {}", project.toJson());
         boolean present = project.getContributions()
                                  .stream()
                                  .filter(deal -> Objects.equals(deal.getAuthor(), contribute.getAuthor()))
