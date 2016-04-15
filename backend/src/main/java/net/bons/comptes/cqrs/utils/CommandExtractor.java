@@ -5,12 +5,16 @@ package net.bons.comptes.cqrs.utils;
  */
 
 import com.google.inject.Inject;
+import io.vertx.core.json.JsonObject;
+import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 
 public class CommandExtractor {
@@ -22,7 +26,18 @@ public class CommandExtractor {
         this.validator = validator;
     }
 
-    public boolean validCmd(Command command) throws ValidationError {
+    public <T extends Command> Observable<T> readQuery(RoutingContext context, Class<T> clazz) {
+        try {
+            final Constructor<T> constructor = clazz.getConstructor(JsonObject.class);
+            final T value = constructor.newInstance(context.getBodyAsJson());
+            validCmd(value);
+            return rx.Observable.just(value);
+        } catch (Exception error) {
+            return rx.Observable.error(error);
+        }
+    }
+
+    private boolean validCmd(Command command) throws ValidationEexception {
         Collection<ConstraintViolation<Command>> constraintViolations = validator.validate(command);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Nb errors {}", constraintViolations.size());
@@ -31,7 +46,7 @@ public class CommandExtractor {
                                            violation.getPropertyPath(), violation.getInvalidValue()));
         }
         if (!constraintViolations.isEmpty()) {
-            throw new ValidationError("Erreur du message reçus", constraintViolations);
+            throw new ValidationEexception("Erreur du message reçus", constraintViolations);
         }
         return true;
     }

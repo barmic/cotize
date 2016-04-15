@@ -5,14 +5,13 @@ package net.bons.comptes.cqrs;
  */
 
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
-import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
-import net.bons.comptes.integration.MongoConfig;
+import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import javax.inject.Inject;
 import java.util.Objects;
@@ -21,13 +20,11 @@ import java.util.function.Function;
 
 public class GetProject implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(GetProject.class);
-    private final MongoClient mongoClient;
-    private final String projectCollection;
+    private final ProjectStore projectStore;
 
     @Inject
-    public GetProject(MongoClient mongoClient, MongoConfig projectCollection) {
-        this.mongoClient = mongoClient;
-        this.projectCollection = projectCollection.getProjectCollection();
+    public GetProject(ProjectStore projectStore) {
+        this.projectStore = projectStore;
     }
 
     @Override
@@ -38,28 +35,29 @@ public class GetProject implements Handler<RoutingContext> {
 
         LOG.debug("Search projectId {}", projectId);
 
-        JsonObject query = new JsonObject().put("identifier", projectId);
+        Observable<RawProject> sourceProject;
+
         if (adminPass != null && !adminPass.isEmpty()) {
-            query.put("passAdmin", adminPass);
+            sourceProject = projectStore.loadProject(projectId, adminPass);
+        } else {
+            sourceProject = projectStore.loadProject(projectId);
         }
 
         Function<RawProject, JsonModel> map = project -> !Objects.equals(project.getPassAdmin(), adminPass) ? new SimpleProject(project)
                                                                                                             : new AdminProject(project);
         if (contributionId != null) {
-            map = filter(contributionId);
+            map = extractContribution(contributionId);
         }
 
-        mongoClient.findOneObservable(projectCollection, query, null)
-                   .map(RawProject::new)
-                   .map(map::apply)
-                   .subscribe(obj -> {
-                       routingContext.response()
-                                     .putHeader("Content-Type", routingContext.getAcceptableContentType())
-                                     .end(obj.toJson().toString());
-                   }, Utils.manageError(routingContext));
+        sourceProject.map(map::apply)
+                     .subscribe(obj -> {
+                         routingContext.response()
+                                       .putHeader("Content-Type", routingContext.getAcceptableContentType())
+                                       .end(obj.toJson().toString());
+                     }, Utils.manageError(routingContext));
     }
 
-    private Function<RawProject, JsonModel> filter(String contributionId) {
+    private Function<RawProject, JsonModel> extractContribution(String contributionId) {
         return project -> {
             Optional<Contribution> contribution = project.getContributions().stream()
                                                          .filter(contrib -> contrib.getContributionId()

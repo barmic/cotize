@@ -6,11 +6,9 @@ package net.bons.comptes.cqrs;
 
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
-import io.vertx.rxjava.ext.mongo.MongoClient;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
-import net.bons.comptes.integration.MongoConfig;
+import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.AdminProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
@@ -21,13 +19,11 @@ import java.util.Optional;
 
 public class PayedContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
-    private MongoClient mongoClient;
-    private String collectionName;
+    private ProjectStore projectStore;
 
     @Inject
-    public PayedContribution(MongoClient mongoClient, MongoConfig collectionName) {
-        this.mongoClient = mongoClient;
-        this.collectionName = collectionName.getProjectCollection();
+    public PayedContribution(ProjectStore projectStore) {
+        this.projectStore = projectStore;
     }
 
     @Override
@@ -35,24 +31,24 @@ public class PayedContribution implements Handler<RoutingContext> {
         String projectId = routingContext.request().getParam("projectId");
         String contribId = routingContext.request().getParam("contributionId");
 
-
-        LOG.debug("Search projectId {}, contributionId {}", projectId, contribId);
-        JsonObject query = new JsonObject().put("identifier", projectId);
-
-        mongoClient.findOneObservable("CotizeEvents", query, null)
-                   .map(projectJson -> togglePayed(new RawProject(projectJson), contribId))
-                   .flatMap(project -> mongoClient.replaceObservable(collectionName, query, project.toJson())
-                                                  .map(Void -> new AdminProject(project)))
-                   .map(project -> project.getContributions()
-                                          .stream()
-                                          .filter(c -> c.getContributionId().equals(contribId))
-                                          .findFirst()
-                                          .get())
+        projectStore.loadProject(projectId)
+                   .map(project -> togglePayed(project, contribId))
+                   .flatMap(project -> projectStore.updateProject(project)
+                                                   .map(Void -> new AdminProject(project)))
+                   .map(project -> foundUpdatedContribution(contribId, project))
                    .subscribe(contribution -> {
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
                                      .end(contribution.toJson().toString());
                    }, Utils.manageError(routingContext));
+    }
+
+    private Contribution foundUpdatedContribution(String contribId, AdminProject project) {
+        return project.getContributions()
+                      .stream()
+                      .filter(c -> c.getContributionId().equals(contribId))
+                      .findFirst()
+                      .get();
     }
 
     private RawProject togglePayed(RawProject rawProject, String contribId) {

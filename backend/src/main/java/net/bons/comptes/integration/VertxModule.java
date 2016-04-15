@@ -57,6 +57,14 @@ public class VertxModule extends AbstractModule {
                          DeleteContribution deleteContribution, PayedContribution payedContribution, Remind remind,
                          ListProject listProject, DeleteProject deleteProject) {
         Router router = Router.router(vertx);
+//        JsonObject credentials = new JsonObject()
+//                .put("clientID", "<client-id>")
+//                .put("clientSecret", "<client-secret>")
+//                .put("site", "https://accounts.google.com");
+//
+//
+//        OAuth2Auth oauth2 = OAuth2Auth.create(vertx, OAuth2FlowType.CLIENT, credentials);
+//        OAuth2AuthHandler.create(oauth2, "");
 
         router.route().handler(BodyHandler.create());
 
