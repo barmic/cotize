@@ -50,6 +50,15 @@ cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
         var query = serverBaseUrl + 'admin/' + rootSecret + '/project/' + projectId;
         return $http.delete(query);
     };
+    service.updateProject = function (projectId, adminPass, fieldName, oldValue, newValue) {
+        var query = serverBaseUrl + 'project/' + projectId + '/admin/' + adminPass;
+        var data = {
+            field : fieldName,
+            oldValue : oldValue,
+            newValue : newValue
+        };
+        return $http.post(query, data);
+    };
     return service;
     }
 ]);

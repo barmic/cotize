@@ -6,15 +6,11 @@ package net.bons.comptes.cqrs.command;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
-import net.bons.comptes.cqrs.event.Event;
-import net.bons.comptes.cqrs.event.ProjectCreated;
-import net.bons.comptes.service.model.DecisionProjectionProject;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.UUID;
 
 @DataObject(generateConverter = true, inheritConverter = true)
 public class CreateProject implements Command {
@@ -113,11 +109,5 @@ public class CreateProject implements Command {
     @Override
     public int hashCode() {
         return Objects.hash(name, author, description, mail);
-    }
-
-    @Override
-    public Event apply(DecisionProjectionProject project) {
-        return new ProjectCreated(UUID.randomUUID().toString(), name, author, description, mail,
-                                  System.currentTimeMillis());
     }
 }

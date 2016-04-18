@@ -5,8 +5,6 @@ package net.bons.comptes.cqrs.command;
  */
 
 import io.vertx.core.json.JsonObject;
-import net.bons.comptes.cqrs.event.Event;
-import net.bons.comptes.service.model.DecisionProjectionProject;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -64,11 +62,6 @@ public class ContributeProject implements Command {
     public ContributeProject setAmount(int amount) {
         this.amount = amount;
         return this;
-    }
-
-    @Override
-    public Event apply(DecisionProjectionProject decisionProjectionProject) {
-        return null;
     }
 
     @Override

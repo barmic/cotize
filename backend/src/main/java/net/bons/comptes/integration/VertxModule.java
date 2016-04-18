@@ -53,7 +53,7 @@ public class VertxModule extends AbstractModule {
     @Provides
     Router provideRouter(Vertx vertx, StaticHandler staticHandler, GetProject getProject,
                          ContrubutionUpdateHandler contrubutionUpdateHandler, CreateProjectHandler createProjectHandler,
-                         ContributionHandler contributionHandler,
+                         ContributionHandler contributionHandler, UpdateProject updateProject,
                          DeleteContribution deleteContribution, PayedContribution payedContribution, Remind remind,
                          ListProject listProject, DeleteProject deleteProject) {
         Router router = Router.router(vertx);
@@ -76,6 +76,9 @@ public class VertxModule extends AbstractModule {
         router.delete("/api/project/:projectId/contribution/:contributionId").handler(deleteContribution);
         router.post("/api/project/:projectId/contribution/:contributionId/payed").handler(payedContribution);
         router.post("/api/project/:projectId/contribution/:contributionId/remind").handler(remind);
+
+        router.post("/api/project/:projectId/admin/:adminPass").produces("application/json").handler(updateProject);
+
         if (config.containsKey("root_secret")) {
             router.get("/api/admin/" + config.getString("root_secret") + "/project").handler(listProject);
             router.delete("/api/admin/" + config.getString("root_secret") + "/project/:projectId").handler(

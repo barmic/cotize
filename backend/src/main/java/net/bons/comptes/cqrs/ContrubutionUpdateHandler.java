@@ -39,17 +39,16 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
         LOG.debug("Search projectId {}, contributionId {}", projectId, contribId);
 
         commandExtractor.readQuery(event, ContributeProject.class)
-                     .flatMap(cmd -> projectStore.loadProject(projectId)
-                                                 .map(projectJson -> Tuple.of(projectJson, cmd)))
-                     .map(tuple -> updateContrib(tuple._1, tuple._2))
-                     .flatMap(project -> projectStore.updateProject(project._1)
-                                                     .map(Void -> project))
-                     .subscribe(project -> {
-                         event.response()
-                              .putHeader("Content-Type", "application/json")
-                              .end(project._2.toJson().toString());
-                     }, Utils.manageError(event));
-
+                        .flatMap(cmd -> projectStore.loadProject(projectId)
+                                                    .map(projectJson -> Tuple.of(projectJson, cmd)))
+                        .map(tuple -> updateContrib(tuple._1, tuple._2))
+                        .flatMap(project -> projectStore.updateProject(project._1)
+                                                        .map(Void -> project))
+                        .subscribe(project -> {
+                            event.response()
+                                 .putHeader("Content-Type", "application/json")
+                                 .end(project._2.toJson().toString());
+                        }, Utils.manageError(event));
     }
 
     private Tuple2<RawProject, Contribution> updateContrib(RawProject project, ContributeProject contribution) {

@@ -128,7 +128,11 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
         url : window.document.URL.split('/')[2],
         scheme : window.document.URL.split(':')[0]
     };
+    $scope.edit = {
+        title : false
+    };
     $scope.project = {}
+    $scope.newContrib = {}
     $scope.create = {}
     $scope.contrib = {}
     $scope.event = {
@@ -158,6 +162,19 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                   .reduce(function(pv, cv) { return pv + cv; }, 0);
             })
             .error(function (data, status) { });
+
+    $scope.project.update = function (fieldName, oldValue, newValue) {
+        cotizeProjectService.updateProject($routeParams.projectId, $routeParams.passAdmin, fieldName, oldValue, newValue)
+            .success(function (newProject) {
+                if (fieldName === 'name') {
+                    $scope.project.content.name = newValue;
+                }
+            })
+            .error(function (data, status) {
+//                $scope.newcontrib.state = "error";
+                $scope.project.status = status;
+            });
+    }
 
     $scope.contrib.remove = function (contributionIndex) {
         contrib = $scope.project.content.contributions[contributionIndex]
