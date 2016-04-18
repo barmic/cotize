@@ -33,9 +33,10 @@
             <div class="alert alert-warning" role="alert" data-ng-if="event.users.size != 0">
                 Attention vous vous aller envoyer un mail de relance aux utilisateurs suivants :
                 <ul>
-                    <li data-ng-repeat="userIdx in event.users.toArray()">{{project.content.contributions[userIdx].author}}
-                        <button data-ng-click="contrib.prepareRemind(userIdx)" class="btn btn-danger">
+                    <li data-ng-repeat="userIdx in event.users.toArray()">
+                        <button data-ng-click="contrib.prepareRemind(userIdx)" class="btn btn-primary">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            {{project.content.contributions[userIdx].author}}
                         </button></li>
                 </ul>
 
