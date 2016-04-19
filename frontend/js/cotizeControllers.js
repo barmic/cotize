@@ -169,6 +169,9 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 if (fieldName === 'name') {
                     $scope.project.content.name = newValue;
                 }
+                if (fieldName === 'description') {
+                    $scope.project.content.description = newValue;
+                }
             })
             .error(function (data, status) {
 //                $scope.newcontrib.state = "error";
