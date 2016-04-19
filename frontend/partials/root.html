@@ -10,6 +10,7 @@
                 <thead>
                 <tr>
                     <th>Nom</th>
+                    <th>Description</th>
                     <th>Montant</th>
                     <th>Auteur</th>
                     <th>Supprimer</th>
@@ -21,6 +22,7 @@
                         <a title="Administration du projet"
                            data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.identifier}}/admin/{{project.passAdmin}}">{{project.name}}</a>
                     </td>
+                    <td>{{project.description | limitTo:25}}</td>
                     <td>{{project.amount}}</td>
                     <td>{{project.author}}</td>
                     <td>
