@@ -17,7 +17,7 @@ public class ProjectOptions implements JsonModel {
     }
 
     public ProjectOptions(ProjectOptions options) {
-        this.spam = options.getSpam();
+        this.spam = options != null ? options.getSpam() : true;
     }
 
     public ProjectOptions(JsonObject jsonObject) {
