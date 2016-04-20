@@ -121,8 +121,8 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     };
 }]);
 
-cotizeControllers.controller('cotizeAdmin', ['$http', '$scope', 'cotizeProjectService', '$routeParams',
-function ($http, $scope, cotizeProjectService, $routeParams) {
+cotizeControllers.controller('cotizeAdmin', ['$http', '$scope', '$timeout', 'cotizeProjectService', '$routeParams',
+function ($http, $scope, $timeout, cotizeProjectService, $routeParams) {
     // App session information
     $scope.prefix = {
         url : window.document.URL.split('/')[2],
@@ -135,6 +135,9 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
     $scope.newContrib = {}
     $scope.create = {}
     $scope.contrib = {}
+    $scope.upd = {
+        spam : false
+    }
     $scope.event = {
         users : new Set(),
         usersTab : [],
@@ -174,6 +177,8 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 }
                 if (fieldName === 'spam') {
                     $scope.project.content.options.spam = newValue;
+                    $scope.upd.spam = true;
+                    $timeout( function(){ $scope.upd.spam = false; }, 1000);
                 }
             })
             .error(function (data, status) {
