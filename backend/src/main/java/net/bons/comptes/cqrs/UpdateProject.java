@@ -50,12 +50,19 @@ public class UpdateProject implements Handler<RoutingContext> {
         switch (params._2.getFieldName()) {
             case "name":
                 Preconditions.checkState(Objects.equals(params._1.getName(), params._2.getOldValue()));
-                builder.name(params._2.getNewValue());
+                builder.name(params._2.getNewValue().toString());
                 break;
             case "description":
                 Preconditions.checkState(Objects.equals(params._1.getDescription(), params._2.getOldValue()));
-                builder.description(params._2.getNewValue());
+                builder.description(params._2.getNewValue().toString());
                 break;
+            case "spam":
+                if (params._2.getNewValue() instanceof Boolean) {
+                    builder.spam(((Boolean) params._2.getNewValue()));
+                }
+                break;
+            default:
+                // TODO error
         }
         return builder.createRawProject();
     }

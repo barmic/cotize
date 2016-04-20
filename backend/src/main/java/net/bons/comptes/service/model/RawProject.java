@@ -21,6 +21,7 @@ public class RawProject implements Project {
     private String passAdmin;
     private int amount;
     private Collection<Contribution> contributions;
+    private ProjectOptions options;
 
     public RawProject(JsonObject json) {
         this.name = json.getString("name");
@@ -36,6 +37,7 @@ public class RawProject implements Project {
         else {
             this.contributions = Collections.emptyList();
         }
+        this.options = new ProjectOptions(json.getJsonObject("options"));
     }
 
     public RawProject() {
@@ -50,10 +52,11 @@ public class RawProject implements Project {
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
         this.contributions = project.getContributions();
+        this.options = new ProjectOptions(project.getOptions());
     }
 
     RawProject(String name, String author, String description, String mail, String identifier,
-               String passAdmin, Collection<Contribution> contributions) {
+               String passAdmin, Collection<Contribution> contributions, ProjectOptions options) {
         this.name = name;
         this.author = author;
         this.description = description;
@@ -61,12 +64,13 @@ public class RawProject implements Project {
         this.identifier = identifier;
         this.passAdmin = passAdmin;
         this.contributions = contributions;
+        this.options = new ProjectOptions(options);
         this.amount = contributions.stream().collect(Collectors.summingInt(Contribution::getAmount));
     }
 
     public JsonObject toJson() {
         JsonArray jsonDeals = new JsonArray();
-        contributions.stream().map(d -> d.toJson()).forEach(jsonDeals::add);
+        contributions.stream().map(Contribution::toJson).forEach(jsonDeals::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)
@@ -75,6 +79,7 @@ public class RawProject implements Project {
                 .put("identifier", this.identifier)
                 .put("passAdmin", this.passAdmin)
                 .put("amount", this.amount)
+                .put("options", this.options.toJson())
                 .put("contributions", jsonDeals);
     }
 
@@ -118,6 +123,10 @@ public class RawProject implements Project {
         return contributions;
     }
 
+    public ProjectOptions getOptions() {
+        return options;
+    }
+
     public static class Builder {
         private String name;
         private String author;
@@ -125,10 +134,12 @@ public class RawProject implements Project {
         private String mail;
         private String identifier;
         private String passAdmin;
+        private ProjectOptions options;
         private Collection<Contribution> contributions;
 
         public Builder() {
             contributions = Collections.emptyList();
+            options = new ProjectOptions();
         }
 
         public Builder(RawProject project) {
@@ -186,8 +197,13 @@ public class RawProject implements Project {
             return this;
         }
 
+        public Builder spam(boolean spam) {
+            this.options = new ProjectOptions(spam);
+            return this;
+        }
+
         public RawProject createRawProject() {
-            return new RawProject(name, author, description, mail, identifier, passAdmin, contributions);
+            return new RawProject(name, author, description, mail, identifier, passAdmin, contributions, options);
         }
     }
 }

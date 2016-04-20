@@ -172,6 +172,9 @@ function ($http, $scope, cotizeProjectService, $routeParams) {
                 if (fieldName === 'description') {
                     $scope.project.content.description = newValue;
                 }
+                if (fieldName === 'spam') {
+                    $scope.project.content.options.spam = newValue;
+                }
             })
             .error(function (data, status) {
 //                $scope.newcontrib.state = "error";

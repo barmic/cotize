@@ -46,7 +46,9 @@ public class ContributionHandler implements Handler<RoutingContext> {
                         .map(this::storeProject)
                         .flatMap(project -> projectStore.updateProject(project._1).map(Void -> project))
                         .subscribe(project -> {
-                            mailService.sendNewContribution(project._1, project._2);
+                            if (project._1.getOptions().getSpam()) {
+                                mailService.sendNewContribution(project._1, project._2);
+                            }
                             event.response()
                                  .putHeader("Content-Type", "application/json")
                                  .end(project._2.toJson().toString());

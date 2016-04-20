@@ -20,6 +20,7 @@ public class AdminProject implements Project {
     private String identifier;
     private String passAdmin;
     private int amount;
+    private ProjectOptions options;
     private Collection<Contribution> contributions;
 
     public AdminProject(JsonObject json) {
@@ -38,6 +39,7 @@ public class AdminProject implements Project {
         else {
             this.contributions = Collections.emptyList();
         }
+        this.options = new ProjectOptions(json.getJsonObject("options"));
     }
 
     public AdminProject() {
@@ -52,6 +54,7 @@ public class AdminProject implements Project {
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
         this.contributions = project.getContributions();
+        this.options = new ProjectOptions(project.getOptions());
     }
 
     public AdminProject(RawProject project) {
@@ -65,6 +68,7 @@ public class AdminProject implements Project {
         this.contributions = project.getContributions().stream()
                                     .map(contribution -> new Contribution(contribution.getContributionId(), contribution.getAuthor(), contribution.getAmount(), null, contribution.getPayed()))
                                     .collect(Collectors.toList());
+        this.options = new ProjectOptions(project.getOptions());
     }
 
     AdminProject(String name, String author, String description, String mail, String identifier,
@@ -90,6 +94,7 @@ public class AdminProject implements Project {
                 .put("identifier", this.identifier)
                 .put("passAdmin", this.passAdmin)
                 .put("amount", this.amount)
+                .put("options", this.options.toJson())
                 .put("contributions", jsonDeals);
     }
 
@@ -131,6 +136,10 @@ public class AdminProject implements Project {
 
     public Collection<Contribution> getContributions() {
         return contributions;
+    }
+
+    public ProjectOptions getOptions() {
+        return options;
     }
 
     public static class Builder {
@@ -189,10 +198,6 @@ public class AdminProject implements Project {
         public Builder deals(Collection<Contribution> contributions) {
             this.contributions = contributions;
             return this;
-        }
-
-        public RawProject createRawProject() {
-            return new RawProject(name, author, description, mail, identifier, passAdmin, contributions);
         }
     }
 }

@@ -10,15 +10,14 @@ import java.util.Objects;
  *
  */
 public class UpdateProjectCommand implements Command {
-    @NotNull
-    @NotBlank(message = "L'autheur ne peut être vide")
-    private String fieldName;
     @NotNull @NotBlank
-    private String oldValue;
-    @NotNull @NotBlank(message = "La nouvelle valeur ne peut être vide")
-    private String newValue;
+    private String fieldName;
+    @NotNull
+    private Object oldValue;
+    @NotNull
+    private Object newValue;
 
-    public UpdateProjectCommand(String fieldName, String oldValue, String newValue) {
+    public UpdateProjectCommand(String fieldName, Object oldValue, Object newValue) {
         this.fieldName = fieldName;
         this.oldValue = oldValue;
         this.newValue = newValue;
@@ -26,19 +25,19 @@ public class UpdateProjectCommand implements Command {
 
     public UpdateProjectCommand(JsonObject json) {
         this.fieldName = json.getString("field");
-        this.oldValue = json.getString("oldValue");
-        this.newValue = json.getString("newValue");
+        this.oldValue = json.getValue("oldValue");
+        this.newValue = json.getValue("newValue");
     }
 
     public String getFieldName() {
         return fieldName;
     }
 
-    public String getOldValue() {
+    public Object getOldValue() {
         return oldValue;
     }
 
-    public String getNewValue() {
+    public Object getNewValue() {
         return newValue;
     }
 

@@ -2,122 +2,136 @@
   Licence Public Barmic
   copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
 -->
-<div class="row">
-    <div class="col-sm-8 col-sm-offset-2">
-        <div id="getting-started">
-            <h2 data-ng-if="!edit.title">Résultat du projet {{project.content.name}}
-                <button class="btn btn-secondary" data-ng-click="edit.title = true;edit.new.title = project.content.name">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                </button>
-            </h2>
-            <div data-ng-if="edit.title">
-                <label for="project-name" class="control-label">Nom du projet :</label>
-                <input type="text" id="project-name" name="project-name" class="form-control" placeholder="nom" data-ng-model="edit.new.title" />
-                <button class="btn btn-danger" data-ng-click="edit.title = false"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <button class="btn btn-primary" data-ng-click="project.update('name', project.content.name, edit.new.title); edit.title = false">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                </button>
-            </div>
-
-            <p data-ng-if="!edit.description">
-                {{project.content.description}}
-                <button class="btn btn-secondary"
-                        data-ng-click="edit.description = true;edit.new.description = project.content.description">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                </button>
-            </p>
-            <div data-ng-if="edit.description">
-                <label for="project-desc" class="control-label">Description du projet :</label>
-                <textarea id="project-desc" name="project-desc" class="form-control" placeholder="nom" data-ng-model="edit.new.description"></textarea>
-                <button class="btn btn-danger" data-ng-click="edit.description = false"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <button class="btn btn-primary" data-ng-click="project.update('description', project.content.description, edit.new.description); edit.description = false">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                </button>
-            </div>
-
-            <p>
-                Lien de participation au projet : <a data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
-                Le projet a déjà réunis {{project.content.amount}} € (reste à pourvoir {{project.rest}} €).
-            </p>
-
-            <div class="row alert alert-danger" role="alert" data-ng-if="event.errors.length != 0">
-                Erreur !
-                <ul>
-                    <li data-ng-repeat="error in event.errors">{{error}}</li>
-                </ul>
-                <button data-ng-click="event.errors.splice(0, event.errors.length)" class="btn btn-danger">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-            </div>
-
-            <div class="alert alert-success" role="alert" data-ng-if="event.messages.length != 0">
-                <ul>
-                    <li data-ng-repeat="message in event.messages">{{message}}</li>
-                </ul>
-                <button data-ng-click="event.messages.splice(0, event.messages.length)" class="btn btn-danger">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-            </div>
-
-            <div class="alert alert-warning" role="alert" data-ng-if="event.users.size != 0">
-                Attention vous vous aller envoyer un mail de relance aux utilisateurs suivants :
-                <ul>
-                    <li data-ng-repeat="userIdx in event.users.toArray()">
-                        <button data-ng-click="contrib.prepareRemind(userIdx)" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            {{project.content.contributions[userIdx].author}}
-                        </button></li>
-                </ul>
-
-                <button data-ng-click="event.users.clear()" class="btn btn-danger">Annulation</button>
-                <button data-ng-click="contrib.remind(event.users)" class="btn btn-primary">Relancer</button>
-            </div>
-
-            <button data-ng-click="contrib.prepareRemindAll()" class="btn btn-primary">Relancer tout le monde</button>
-
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Contribution</th>
-                    <th>Relancer</th>
-                    <th>Payé ?</th>
-                    <th>Supprimer</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr data-ng-repeat="contributor in project.content.contributions">
-                    <td>
-                        <a title="Éditer la contribution"
-                           data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
-                    </td>
-                    <td>{{contributor.amount}} €</td>
-                    <td>
-                        <button data-ng-if="!contributor.payed && !event.users.has($index)" data-ng-click="contrib.prepareRemind($index)" class="btn btn-primary">Relancer</button>
-                        <button data-ng-if="!contributor.payed && event.users.has($index)" data-ng-click="contrib.prepareRemind($index)" class="btn btn-secondary">Ne pas relancer</button>
-                    </td>
-                    <td>
-                        <button data-ng-click="contrib.payed($index)"
-                                class="btn" data-ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
-                            {{contributor.payed  ? "Payé" : "À payer"}}
-                        </button>
-                    </td>
-                    <td>
-                        <button data-ng-click="del.contribIndex = $index" class="btn btn-danger" data-ng-if="del.contribIndex != $index && !contributor.payed">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        </button>
-                        <button data-ng-click="del.contribIndex = -1" class="btn btn-warning" data-ng-if="del.contribIndex == $index">
-                            Annuler
-                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                        </button>
-                        <button data-ng-click="contrib.remove($index)" class="btn btn-danger" data-ng-if="del.contribIndex == $index">
-                            Supprimer ?
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="row col-sm-8 col-sm-offset-2">
+    <h2 data-ng-if="!edit.title">Résultat du projet {{project.content.name}}
+        <button class="btn btn-secondary" data-ng-click="edit.title = true;edit.new.title = project.content.name">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </button>
+    </h2>
+    <div data-ng-if="edit.title">
+        <label for="project-name" class="control-label">Nom du projet :</label>
+        <input type="text" id="project-name" name="project-name" class="form-control" placeholder="nom"
+               data-ng-model="edit.new.title"/>
+        <button class="btn btn-danger" data-ng-click="edit.title = false"><span class="glyphicon glyphicon-remove"
+                                                                                aria-hidden="true"></span></button>
+        <button class="btn btn-primary"
+                data-ng-click="project.update('name', project.content.name, edit.new.title); edit.title = false">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        </button>
     </div>
+
+    <p data-ng-if="!edit.description">
+        {{project.content.description}}
+        <button class="btn btn-secondary"
+                data-ng-click="edit.description = true;edit.new.description = project.content.description">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </button>
+    </p>
+    <div data-ng-if="edit.description">
+        <label for="project-desc" class="control-label">Description du projet :</label>
+            <textarea id="project-desc" name="project-desc" class="form-control" placeholder="nom"
+                      data-ng-model="edit.new.description"></textarea>
+        <button class="btn btn-danger" data-ng-click="edit.description = false"><span
+                class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+        <button class="btn btn-primary"
+                data-ng-click="project.update('description', project.content.description, edit.new.description); edit.description = false">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <p>
+        Lien de participation au projet : <a
+            data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}">{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}</a><br/>
+        Le projet a déjà réunis {{project.content.amount}} € (reste à pourvoir {{project.rest}} €).
+    </p>
+
+    <div class="row alert alert-danger" role="alert" data-ng-if="event.errors.length != 0">
+        Erreur !
+        <ul>
+            <li data-ng-repeat="error in event.errors">{{error}}</li>
+        </ul>
+        <button data-ng-click="event.errors.splice(0, event.errors.length)" class="btn btn-danger">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="alert alert-success" role="alert" data-ng-if="event.messages.length != 0">
+        <ul>
+            <li data-ng-repeat="message in event.messages">{{message}}</li>
+        </ul>
+        <button data-ng-click="event.messages.splice(0, event.messages.length)" class="btn btn-danger">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="alert alert-warning" role="alert" data-ng-if="event.users.size != 0">
+        Attention vous vous aller envoyer un mail de relance aux utilisateurs suivants :
+        <ul>
+            <li data-ng-repeat="userIdx in event.users.toArray()">
+                <button data-ng-click="contrib.prepareRemind(userIdx)" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    {{project.content.contributions[userIdx].author}}
+                </button>
+            </li>
+        </ul>
+
+        <button data-ng-click="event.users.clear()" class="btn btn-danger">Annulation</button>
+        <button data-ng-click="contrib.remind(event.users)" class="btn btn-primary">Relancer</button>
+    </div>
+
+    <button data-ng-click="contrib.prepareRemindAll()" class="btn btn-primary">Relancer tout le monde</button>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Contribution</th>
+            <th>Relancer</th>
+            <th>Payé ?</th>
+            <th>Supprimer</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-ng-repeat="contributor in project.content.contributions">
+            <td>
+                <a title="Éditer la contribution"
+                   data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
+            </td>
+            <td>{{contributor.amount}} €</td>
+            <td>
+                <button data-ng-if="!contributor.payed && !event.users.has($index)"
+                        data-ng-click="contrib.prepareRemind($index)" class="btn btn-primary">Relancer
+                </button>
+                <button data-ng-if="!contributor.payed && event.users.has($index)"
+                        data-ng-click="contrib.prepareRemind($index)" class="btn btn-secondary">Ne pas relancer
+                </button>
+            </td>
+            <td>
+                <button data-ng-click="contrib.payed($index)"
+                        class="btn" data-ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
+                    {{contributor.payed ? "Payé" : "À payer"}}
+                </button>
+            </td>
+            <td>
+                <button data-ng-click="del.contribIndex = $index" class="btn btn-danger"
+                        data-ng-if="del.contribIndex != $index && !contributor.payed">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <button data-ng-click="del.contribIndex = -1" class="btn btn-warning"
+                        data-ng-if="del.contribIndex == $index">
+                    Annuler
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                </button>
+                <button data-ng-click="contrib.remove($index)" class="btn btn-danger"
+                        data-ng-if="del.contribIndex == $index">
+                    Supprimer ?
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h3>Options</h3>
+    <label for="spam" class="control-label">Ne pas m'envoyer de mail à chaque participation :</label>
+    <input type="checkbox" ng-model="project.content.options.spam" ng-change="project.update('spam', !project.content.options.spam, project.content.options.spam)" id="spam">
 </div>
