@@ -28,13 +28,7 @@ public class SimpleProject implements Project {
         this.mail = json.getString("mail");
         this.identifier = json.getString("identifier");
         this.amount = json.getInteger("amount", 0);
-        if (json.containsKey("contributions")) {
-            this.contributions = json.getJsonArray("contributions").stream().map(o -> new Contribution((JsonObject) o)).collect(
-                    Collectors.toList());
-        }
-        else {
-            this.contributions = Collections.emptyList();
-        }
+        this.contributions = Utils.extractArray(json, "contributions", Contribution::new);
     }
 
     public SimpleProject() {
