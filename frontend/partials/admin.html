@@ -132,7 +132,9 @@
         </tbody>
     </table>
     <h3>Options</h3>
-    <label for="spam" class="control-label">Notification mail à chaque participation :</label>
-    <input type="checkbox" ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)" id="spam">
+    <label class="control-label">Notification mail à chaque participation :
+    <toggle-switch ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)"></toggle-switch>
+    </label>
+    <!--<input type="checkbox" ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)" id="spam">-->
     <span data-ng-if="upd.spam" class="glyphicon glyphicon-saved" aria-hidden="true"></span>
 </div>
