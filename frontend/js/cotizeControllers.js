@@ -133,8 +133,10 @@ function ($http, $scope, $timeout, cotizeProjectService, $routeParams) {
     };
     $scope.project = {}
     $scope.newContrib = {}
+    $scope.newOutgoing = {}
     $scope.create = {}
     $scope.contrib = {}
+    $scope.contributorsName = []
     $scope.upd = {
         spam : false
     }
@@ -159,6 +161,8 @@ function ($http, $scope, $timeout, cotizeProjectService, $routeParams) {
     cotizeProjectService.loadProjectAdmin($routeParams.projectId, $routeParams.passAdmin)
             .success(function (data) {
                 $scope.project.content = data;
+                $scope.contributorsName = $scope.project.content.contributions
+                                                                .map(function (contrib) { return contrib.author; });
                 $scope.project.rest = $scope.project.content.contributions
                   .filter(function (contrib) { return !contrib.payed; })
                   .map(function (contrib) { return contrib.amount; })
@@ -194,6 +198,8 @@ function ($http, $scope, $timeout, cotizeProjectService, $routeParams) {
                 $scope.project.content.contributions.splice(contributionIndex, 1);
                 $scope.project.content.amount = newProject.amount;
                 $scope.del.contribIndex = -1;
+                $scope.contributorsName = $scope.project.content.contributions
+                                                                .map(function (contrib) { return contrib.author; });
             })
             .error(function (data, status) {
                 $scope.newcontrib.state = "error";
@@ -247,6 +253,27 @@ function ($http, $scope, $timeout, cotizeProjectService, $routeParams) {
                 });
         });
     };
+
+    $scope.newOutgoing.send = function (outgoing) {
+        cotizeProjectService.newOutgoing($routeParams.projectId, $routeParams.passAdmin, outgoing)
+                .success(function (data) {
+                    $scope.project.content = data;
+                    $scope.newOutgoing.author = "";
+                    $scope.newOutgoing.amount = -1;
+                    $scope.newOutgoing.description = "";
+                })
+                .error(function (data, status) {
+                });
+    }
+
+    $scope.delOutgoing = function (outgoingIdx) {
+        cotizeProjectService.delOutgoing($routeParams.projectId, $routeParams.passAdmin, $scope.project.content.outgoings[outgoingIdx])
+                .success(function (data) {
+                    $scope.project.content = data;
+                })
+                .error(function (data, status) {
+                });
+    }
 }]);
 
 cotizeControllers.controller('cotizeRoot', ['$http', '$scope', 'cotizeProjectService', '$routeParams',

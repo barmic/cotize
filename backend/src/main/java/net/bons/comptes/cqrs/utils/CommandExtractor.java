@@ -14,8 +14,8 @@ import rx.Observable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.function.Function;
 
 public class CommandExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(CommandExtractor.class);
@@ -26,10 +26,9 @@ public class CommandExtractor {
         this.validator = validator;
     }
 
-    public <T extends Command> Observable<T> readQuery(RoutingContext context, Class<T> clazz) {
+    public <T extends Command> Observable<T> readQuery(RoutingContext context, Function<JsonObject, T> factory) {
         try {
-            final Constructor<T> constructor = clazz.getConstructor(JsonObject.class);
-            final T value = constructor.newInstance(context.getBodyAsJson());
+            final T value = factory.apply(context.getBodyAsJson());
             validCmd(value);
             return rx.Observable.just(value);
         } catch (Exception error) {

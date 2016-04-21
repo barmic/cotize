@@ -55,7 +55,7 @@ public class VertxModule extends AbstractModule {
                          ContrubutionUpdateHandler contrubutionUpdateHandler, CreateProjectHandler createProjectHandler,
                          ContributionHandler contributionHandler, UpdateProject updateProject,
                          DeleteContribution deleteContribution, PayedContribution payedContribution, Remind remind,
-                         ListProject listProject, DeleteProject deleteProject) {
+                         ListProject listProject, DeleteProject deleteProject, OutgoingHandler outgoingHandler) {
         Router router = Router.router(vertx);
 //        JsonObject credentials = new JsonObject()
 //                .put("clientID", "<client-id>")
@@ -78,6 +78,8 @@ public class VertxModule extends AbstractModule {
         router.post("/api/project/:projectId/contribution/:contributionId/remind").handler(remind);
 
         router.post("/api/project/:projectId/admin/:adminPass").produces("application/json").handler(updateProject);
+        router.post("/api/project/:projectId/admin/:adminPass/outgoing/del").produces("application/json").handler(outgoingHandler);
+        router.post("/api/project/:projectId/admin/:adminPass/outgoing").produces("application/json").handler(outgoingHandler);
 
         if (config.containsKey("root_secret")) {
             router.get("/api/admin/" + config.getString("root_secret") + "/project").handler(listProject);

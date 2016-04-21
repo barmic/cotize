@@ -38,7 +38,7 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
 
         LOG.debug("Search projectId {}, contributionId {}", projectId, contribId);
 
-        commandExtractor.readQuery(event, ContributeProject.class)
+        commandExtractor.readQuery(event, ContributeProject::new)
                         .flatMap(cmd -> projectStore.loadProject(projectId)
                                                     .map(projectJson -> Tuple.of(projectJson, cmd)))
                         .map(tuple -> updateContrib(tuple._1, tuple._2))

@@ -59,6 +59,14 @@ cotizeServices.factory('cotizeProjectService', ['$http', function ($http) {
         };
         return $http.post(query, data);
     };
+    service.delOutgoing = function (projectId, adminPass, outgoing) {
+        var query = serverBaseUrl + 'project/' + projectId + '/admin/' + adminPass + '/outgoing/del';
+        return $http.post(query, outgoing);
+    };
+    service.newOutgoing = function (projectId, adminPass, outgoing) {
+        var query = serverBaseUrl + 'project/' + projectId + '/admin/' + adminPass + '/outgoing';
+        return $http.post(query, outgoing);
+    }
     return service;
     }
 ]);

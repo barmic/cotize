@@ -35,7 +35,7 @@ public class UpdateProject implements Handler<RoutingContext> {
         final String adminPass = context.request().getParam("adminPass");
         final String projectId = context.request().getParam("projectId");
 
-        commandExtractor.readQuery(context, UpdateProjectCommand.class)
+        commandExtractor.readQuery(context, UpdateProjectCommand::new)
                         .flatMap(cmd -> projectStore.loadProject(projectId, adminPass)
                                                     .map(projectJson -> Tuple.of(projectJson, cmd)))
                         .map(this::updateproject)

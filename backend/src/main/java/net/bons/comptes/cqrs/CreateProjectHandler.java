@@ -30,7 +30,7 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext event) {
-        commandExtractor.readQuery(event, CreateProject.class)
+        commandExtractor.readQuery(event, CreateProject::new)
                         .flatMap(project -> projectStore.storeProject(project))
                         .map(project -> {
                             mailService.sendCreatedProject(project);

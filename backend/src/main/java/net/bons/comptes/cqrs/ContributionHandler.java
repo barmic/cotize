@@ -40,7 +40,7 @@ public class ContributionHandler implements Handler<RoutingContext> {
     public void handle(RoutingContext event) {
         String projectId = event.request().getParam("projectId");
 
-        commandExtractor.readQuery(event, ContributeProject.class)
+        commandExtractor.readQuery(event, ContributeProject::new)
                         .flatMap(cmd -> projectStore.loadProject(projectId).map(project -> Tuple.of(project, cmd)))
                         .map(this::checkValidNewContribution)
                         .map(this::storeProject)

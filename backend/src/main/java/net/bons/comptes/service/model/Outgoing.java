@@ -2,6 +2,8 @@ package net.bons.comptes.service.model;
 
 import io.vertx.core.json.JsonObject;
 
+import java.util.Objects;
+
 /**
  *
  */
@@ -48,5 +50,24 @@ public class Outgoing implements JsonModel {
         return new JsonObject().put("amount", amount)
                                .put("author", author)
                                .put("description", description);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Outgoing outgoing = (Outgoing) o;
+        return amount == outgoing.amount &&
+                Objects.equals(author, outgoing.author) &&
+                Objects.equals(description, outgoing.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(author, amount, description);
     }
 }
