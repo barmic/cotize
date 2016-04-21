@@ -35,13 +35,13 @@
                     <div class="col-sm-3 control-group">
                         <label for="username" class="control-label">Votre nom</label>
                         <div class="input-group">
-                            <input type="text" name="username" class="form-control" placeholder="nom" data-ng-model="contribution.author" required />
+                            <input type="text" id="username" class="form-control" placeholder="nom" data-ng-model="contribution.author" required />
                         </div>
                     </div>
                     <div class="col-sm-3 control-group">
                         <label for="amount" class="control-label">Votre participation</label>
                         <div class="input-group">
-                            <input type="number" min="1" name="amount" class="form-control" placeholder="100" data-ng-model="contribution.amount" required />
+                            <input type="number" min="1" id="amount" class="form-control" placeholder="100" data-ng-model="contribution.amount" required />
                             <span class="input-group-addon">€</span>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                         <label for="mail" class="control-label">Votre e-mail</label>
                         <div class="input-group">
                             <span class="input-group-addon">@</span>
-                            <input type="mail" name="mail" class="form-control" placeholder="nom.prenom@exemple.net" data-ng-model="contribution.mail" required />
+                            <input type="mail" id="mail" class="form-control" placeholder="nom.prenom@exemple.net" data-ng-model="contribution.mail" required />
                         </div>
                         <p>
                             Permet d'éditer votre contribution

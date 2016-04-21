@@ -133,7 +133,82 @@
             </table>
             <button data-ng-click="contrib.prepareRemindAll()" class="btn btn-primary">Relancer tout le monde</button>
         </uib-tab>
-        <uib-tab index="1" heading="Dépenses">Dépenses</uib-tab>
+        <uib-tab index="1" heading="Dépenses">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Dépense</th>
+                    <th>Prix</th>
+                    <th>Auteur</th>
+                    <th>Supprimer ?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        Gateau
+                    </td>
+                    <td>12 €</td>
+                    <td>
+                        Dounia
+                    </td>
+                    <td>
+                        <button data-ng-click="del.spendIndex = $index" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                        <!--
+                                data-ng-if="del.spendIndex != $index && !contributor.payed"<button data-ng-click="del.spendIndex = -1" class="btn btn-warning"-->
+                                <!--data-ng-if="del.spendIndex == $index">-->
+                            <!--Annuler-->
+                            <!--<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>-->
+                        <!--</button>-->
+                        <!--<button data-ng-click="contrib.remove($index)" class="btn btn-danger"-->
+                                <!--data-ng-if="del.spendIndex == $index">-->
+                            <!--Supprimer ?-->
+                            <!--<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>-->
+                        <!--</button>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div role="form" class="form-horizontal">
+                <fieldset>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-3 control-group">
+                                <label for="name" class="control-label">Dépense</label>
+
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                           placeholder="Dépense" data-ng-model="newspend.name" required/>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 control-group">
+                                <label for="amount" class="control-label">Montant</label>
+
+                                <div class="input-group">
+                                    <input id="amount" class="form-control" type="number" min="1" name="amount"
+                                           data-ng-model="newspend.amount" required/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 control-group">
+                                <label class="control-label">Par qui ?</label>
+
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" data-ng-model="newspend.author"
+                                            data-ng-options="contributor.author for contributor in project.content.contributions">
+                                        <option>{{contributor}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 form-action">
+                                <button data-ng-click="" class="btn btn-primary" style="maring: 15px" type="submit">Créer</button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div><!-- form -->
+        </uib-tab>
         <uib-tab index="2" heading="Gestion du projet">
             <h3>Options</h3>
             <label class="control-label">Notification mail à chaque participation :
