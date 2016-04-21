@@ -79,62 +79,69 @@
         <button data-ng-click="contrib.remind(event.users)" class="btn btn-primary">Relancer</button>
     </div>
 
-    <button data-ng-click="contrib.prepareRemindAll()" class="btn btn-primary">Relancer tout le monde</button>
+    <uib-tabset active="active">
+        <uib-tab index="0" active="true" heading="Contributions">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Contribution</th>
+                    <th>Relancer</th>
+                    <th>Payé ?</th>
+                    <th>Supprimer</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="contributor in project.content.contributions">
+                    <td>
+                        <a title="Éditer la contribution"
+                           data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
+                    </td>
+                    <td>{{contributor.amount}} €</td>
+                    <td>
+                        <button data-ng-if="!contributor.payed && !event.users.has($index)"
+                                data-ng-click="contrib.prepareRemind($index)" class="btn btn-primary">Relancer
+                        </button>
+                        <button data-ng-if="!contributor.payed && event.users.has($index)"
+                                data-ng-click="contrib.prepareRemind($index)" class="btn btn-secondary">Ne pas relancer
+                        </button>
+                    </td>
+                    <td>
+                        <button data-ng-click="contrib.payed($index)"
+                                class="btn" data-ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
+                            {{contributor.payed ? "Payé" : "À payer"}}
+                        </button>
+                    </td>
+                    <td>
+                        <button data-ng-click="del.contribIndex = $index" class="btn btn-danger"
+                                data-ng-if="del.contribIndex != $index && !contributor.payed">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                        <button data-ng-click="del.contribIndex = -1" class="btn btn-warning"
+                                data-ng-if="del.contribIndex == $index">
+                            Annuler
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                        </button>
+                        <button data-ng-click="contrib.remove($index)" class="btn btn-danger"
+                                data-ng-if="del.contribIndex == $index">
+                            Supprimer ?
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button data-ng-click="contrib.prepareRemindAll()" class="btn btn-primary">Relancer tout le monde</button>
+        </uib-tab>
+        <uib-tab index="1" heading="Dépenses">Dépenses</uib-tab>
+        <uib-tab index="2" heading="Gestion du projet">
+            <h3>Options</h3>
+            <label class="control-label">Notification mail à chaque participation :
+                <toggle-switch ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)"></toggle-switch>
+            </label>
+            <!--<input type="checkbox" ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)" id="spam">-->
+            <span data-ng-if="upd.spam" class="glyphicon glyphicon-saved" aria-hidden="true"></span>
+        </uib-tab>
+    </uib-tabset>
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Contribution</th>
-            <th>Relancer</th>
-            <th>Payé ?</th>
-            <th>Supprimer</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr data-ng-repeat="contributor in project.content.contributions">
-            <td>
-                <a title="Éditer la contribution"
-                   data-ng-href="{{prefix.scheme}}://{{prefix.url}}/#/project/{{project.content.identifier}}/contribution/{{contributor.contributionId}}">{{contributor.author}}</a>
-            </td>
-            <td>{{contributor.amount}} €</td>
-            <td>
-                <button data-ng-if="!contributor.payed && !event.users.has($index)"
-                        data-ng-click="contrib.prepareRemind($index)" class="btn btn-primary">Relancer
-                </button>
-                <button data-ng-if="!contributor.payed && event.users.has($index)"
-                        data-ng-click="contrib.prepareRemind($index)" class="btn btn-secondary">Ne pas relancer
-                </button>
-            </td>
-            <td>
-                <button data-ng-click="contrib.payed($index)"
-                        class="btn" data-ng-class="{true:'btn-success', false:'btn-primary'}[contributor.payed]">
-                    {{contributor.payed ? "Payé" : "À payer"}}
-                </button>
-            </td>
-            <td>
-                <button data-ng-click="del.contribIndex = $index" class="btn btn-danger"
-                        data-ng-if="del.contribIndex != $index && !contributor.payed">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-                <button data-ng-click="del.contribIndex = -1" class="btn btn-warning"
-                        data-ng-if="del.contribIndex == $index">
-                    Annuler
-                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                </button>
-                <button data-ng-click="contrib.remove($index)" class="btn btn-danger"
-                        data-ng-if="del.contribIndex == $index">
-                    Supprimer ?
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                </button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <h3>Options</h3>
-    <label class="control-label">Notification mail à chaque participation :
-    <toggle-switch ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)"></toggle-switch>
-    </label>
-    <!--<input type="checkbox" ng-model="project.content.options.spam" ng-change="upd.spam = false;project.update('spam', !project.content.options.spam, project.content.options.spam)" id="spam">-->
-    <span data-ng-if="upd.spam" class="glyphicon glyphicon-saved" aria-hidden="true"></span>
 </div>
