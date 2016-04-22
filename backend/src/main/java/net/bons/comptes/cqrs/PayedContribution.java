@@ -7,6 +7,7 @@ package net.bons.comptes.cqrs;
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
+import javaslang.control.Option;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.AdminProject;
@@ -14,8 +15,6 @@ import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 public class PayedContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
@@ -45,22 +44,21 @@ public class PayedContribution implements Handler<RoutingContext> {
 
     private Contribution foundUpdatedContribution(String contribId, AdminProject project) {
         return project.getContributions()
-                      .stream()
                       .filter(c -> c.getContributionId().equals(contribId))
-                      .findFirst()
-                      .get();
+                      .head();
     }
 
     private RawProject togglePayed(RawProject rawProject, String contribId) {
-        Optional<Contribution> contribution = rawProject.getContributions().stream()
-                                                        .filter(contrib -> contrib.getContributionId()
-                                                                                  .equals(contribId))
-                                                        .findFirst();
-        if (!contribution.isPresent()) {
+        Option<Contribution> contribution = rawProject.getContributions()
+                                                      .filter(contrib -> contrib.getContributionId().equals(contribId))
+                                                      .headOption();
+        if (contribution.isEmpty()) {
             throw new RuntimeException("Impossible to find the contribution " + contribId);
         }
-        Contribution contribution1 = contribution.get();
-        contribution1.setPayed(!contribution1.getPayed());
+        contribution.map(c -> c.setPayed(!c.getPayed()))
+                    .getOrElseThrow(() -> {
+                        throw new RuntimeException("Impossible to find the contribution " + contribId);
+                    });
         return rawProject;
     }
 }

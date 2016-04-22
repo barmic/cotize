@@ -65,11 +65,8 @@ public class ContributionHandler implements Handler<RoutingContext> {
 
     private Tuple2<RawProject, ContributeProject> checkValidNewContribution(Tuple2<RawProject, ContributeProject> tuple) {
         LOG.debug("RawProject  to contribute : {}", tuple._1.toJson());
-        boolean present = tuple._1.getContributions()
-                                 .stream()
-                                 .filter(deal -> Objects.equals(deal.getAuthor(), tuple._2.getAuthor()))
-                                 .findFirst()
-                                 .isPresent();
+        boolean present = !tuple._1.getContributions()
+                                   .filter(deal -> Objects.equals(deal.getAuthor(), tuple._2.getAuthor())).isEmpty();
         if (present) {
             throw new ContribAlreadyExistError("La contribution de " + tuple._2.getAuthor() + " existe déjà");
         }

@@ -7,6 +7,7 @@ package net.bons.comptes.cqrs;
 import com.google.inject.Inject;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
+import javaslang.collection.Seq;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.AdminProject;
@@ -14,9 +15,6 @@ import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class DeleteContribution implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(DeleteContribution.class);
@@ -44,9 +42,8 @@ public class DeleteContribution implements Handler<RoutingContext> {
     }
 
     private RawProject removeContrib(RawProject rawProject, String contribId) {
-        Collection<Contribution> contribs = rawProject.getContributions().stream()
-                                                      .filter(contrib -> !contrib.getContributionId().equals(contribId))
-                                                      .collect(Collectors.toList());
+        Seq<Contribution> contribs = rawProject.getContributions()
+                                               .filter(contrib -> !contrib.getContributionId().equals(contribId));
         return RawProject.builder(rawProject).contributions(contribs).createRawProject();
     }
 }

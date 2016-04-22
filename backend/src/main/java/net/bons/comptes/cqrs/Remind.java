@@ -16,8 +16,6 @@ import net.bons.comptes.service.model.RawProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 public class Remind implements Handler<RoutingContext> {
     private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
     private MailService mailService;
@@ -49,17 +47,12 @@ public class Remind implements Handler<RoutingContext> {
     }
 
     private Contribution getContrib(RawProject project, String contribId) {
-        Optional<Contribution> contribution = project.getContributions()
-                                                     .stream()
-                                                     .filter(contrib -> contrib.getContributionId().equals(contribId))
-                                                     .findFirst();
-        if (contribution.isPresent()) {
-            Contribution contribution1 = contribution.get();
-            if (contribution1.getPayed()) {
-                new RuntimeException("Impossible de relancer une contribution déjà payée");
-            }
-            return contribution1;
-        }
-        throw new RuntimeException("Impossible to find contribution " + contribId + " in project " + project.getName());
+        return project.getContributions()
+                      .filter(contrib -> contrib.getContributionId().equals(contribId))
+                      .filter(contrib -> !contrib.getPayed())
+                      .getOrElseThrow(() -> {
+                          throw new RuntimeException("Impossible to find contribution " + contribId + " in project "
+                                                             + project.getName());
+                      });
     }
 }

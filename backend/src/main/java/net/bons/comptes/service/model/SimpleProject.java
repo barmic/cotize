@@ -4,13 +4,10 @@ package net.bons.comptes.service.model;
  * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
  */
 
-import com.google.common.collect.Lists;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
+import javaslang.collection.Seq;
+import javaslang.collection.Stream;
 
 public class SimpleProject implements Project {
     private String name;
@@ -19,7 +16,7 @@ public class SimpleProject implements Project {
     private String mail;
     private String identifier;
     private int amount;
-    private Collection<Contribution> contributions;
+    private Seq<Contribution> contributions;
 
     public SimpleProject(JsonObject json) {
         this.name = json.getString("name");
@@ -51,25 +48,24 @@ public class SimpleProject implements Project {
         this.mail = project.getMail();
         this.identifier = project.getIdentifier();
         this.amount = project.getAmount();
-        this.contributions = project.getContributions().stream()
-                                    .map(contribution -> new Contribution(null, contribution.getAuthor(), 0, null, null))
-                                    .collect(Collectors.toList());
+        this.contributions = project.getContributions()
+                                    .map(contribution -> new Contribution(null, contribution.getAuthor(), 0, null, null));
     }
 
-    SimpleProject(String name, String author, String description, String mail, String identifier, Collection<Contribution> contributions) {
+    SimpleProject(String name, String author, String description, String mail, String identifier, Seq<Contribution> contributions) {
         this.name = name;
         this.author = author;
         this.description = description;
         this.mail = mail;
         this.identifier = identifier;
         this.contributions = contributions;
-        this.amount = contributions.stream().collect(Collectors.summingInt(Contribution::getAmount));
+        this.amount = contributions.map(Contribution::getAmount).sum().intValue();
     }
 
     @Override
     public JsonObject toJson() {
         JsonArray jsonDeals = new JsonArray();
-        contributions.stream().map(d -> d.toJson()).forEach(jsonDeals::add);
+        contributions.map(Contribution::toJson).forEach(jsonDeals::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)
@@ -117,7 +113,7 @@ public class SimpleProject implements Project {
         return identifier;
     }
 
-    public Collection<Contribution> getContributions() {
+    public Seq<Contribution> getContributions() {
         return contributions;
     }
 
@@ -127,10 +123,10 @@ public class SimpleProject implements Project {
         private String description;
         private String mail;
         private String identifier;
-        private Collection<Contribution> contributions;
+        private Seq<Contribution> contributions;
 
         public Builder() {
-            contributions = Collections.emptyList();
+            contributions = Stream.empty();
         }
 
         public Builder(SimpleProject project) {
@@ -139,7 +135,7 @@ public class SimpleProject implements Project {
             description = project.getDescription();
             mail = project.getMail();
             identifier = project.getIdentifier();
-            contributions = Lists.newArrayList(project.getContributions());
+            contributions = project.getContributions();
         }
 
         public Builder name(String name) {
@@ -167,7 +163,7 @@ public class SimpleProject implements Project {
             return this;
         }
 
-        public Builder deals(Collection<Contribution> contributions) {
+        public Builder deals(Seq<Contribution> contributions) {
             this.contributions = contributions;
             return this;
         }

@@ -6,9 +6,7 @@ package net.bons.comptes.service.model;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
+import javaslang.collection.Seq;
 
 public class AdminProject implements Project {
     private String name;
@@ -19,8 +17,8 @@ public class AdminProject implements Project {
     private String passAdmin;
     private int amount;
     private ProjectOptions options;
-    private Collection<Contribution> contributions;
-    private Collection<Outgoing> outgoings;
+    private Seq<Contribution> contributions;
+    private Seq<Outgoing> outgoings;
 
     public AdminProject(JsonObject json) {
         this.name = json.getString("name");
@@ -60,17 +58,16 @@ public class AdminProject implements Project {
         this.passAdmin = project.getPassAdmin();
         this.amount = project.getAmount();
         this.outgoings = project.getOutgoings();
-        this.contributions = project.getContributions().stream()
-                                    .map(contribution -> new Contribution(contribution.getContributionId(), contribution.getAuthor(), contribution.getAmount(), null, contribution.getPayed()))
-                                    .collect(Collectors.toList());
+        this.contributions = project.getContributions()
+                                    .map(contribution -> new Contribution(contribution.getContributionId(), contribution.getAuthor(), contribution.getAmount(), null, contribution.getPayed()));
         this.options = new ProjectOptions(project.getOptions());
     }
 
     public JsonObject toJson() {
         JsonArray jsonDeals = new JsonArray();
-        contributions.stream().map(Contribution::toJson).forEach(jsonDeals::add);
+        contributions.map(Contribution::toJson).forEach(jsonDeals::add);
         JsonArray jsonOutgoings = new JsonArray();
-        outgoings.stream().map(Outgoing::toJson).forEach(jsonOutgoings::add);
+        outgoings.map(Outgoing::toJson).forEach(jsonOutgoings::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)
@@ -112,7 +109,7 @@ public class AdminProject implements Project {
         return passAdmin;
     }
 
-    public Collection<Contribution> getContributions() {
+    public Seq<Contribution> getContributions() {
         return contributions;
     }
 
@@ -120,7 +117,7 @@ public class AdminProject implements Project {
         return options;
     }
 
-    public Collection<Outgoing> getOutgoings() {
+    public Seq<Outgoing> getOutgoings() {
         return outgoings;
     }
 }

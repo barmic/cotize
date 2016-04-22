@@ -4,13 +4,11 @@ package net.bons.comptes.service.model;
  * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
  */
 
-import com.google.common.collect.Lists;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
+import javaslang.collection.List;
+import javaslang.collection.Seq;
+import javaslang.collection.Stream;
 
 import static net.bons.comptes.service.model.Utils.extractArray;
 
@@ -22,8 +20,8 @@ public class RawProject implements Project {
     private String identifier;
     private String passAdmin;
     private int amount;
-    private Collection<Contribution> contributions;
-    private Collection<Outgoing> outgoings;
+    private Seq<Contribution> contributions;
+    private Seq<Outgoing> outgoings;
     private ProjectOptions options;
 
     public RawProject(JsonObject json) {
@@ -56,7 +54,7 @@ public class RawProject implements Project {
     }
 
     RawProject(String name, String author, String description, String mail, String identifier,
-               String passAdmin, Collection<Contribution> contributions, Collection<Outgoing> outgoings, ProjectOptions options) {
+               String passAdmin, Seq<Contribution> contributions, Seq<Outgoing> outgoings, ProjectOptions options) {
         this.name = name;
         this.author = author;
         this.description = description;
@@ -66,14 +64,14 @@ public class RawProject implements Project {
         this.contributions = contributions;
         this.outgoings = outgoings;
         this.options = new ProjectOptions(options);
-        this.amount = contributions.stream().collect(Collectors.summingInt(Contribution::getAmount));
+        this.amount = contributions.map(Contribution::getAmount).sum().intValue();
     }
 
     public JsonObject toJson() {
         JsonArray jsonDeals = new JsonArray();
-        contributions.stream().map(Contribution::toJson).forEach(jsonDeals::add);
+        contributions.map(Contribution::toJson).forEach(jsonDeals::add);
         JsonArray jsonOutgoings = new JsonArray();
-        outgoings.stream().map(Outgoing::toJson).forEach(jsonOutgoings::add);
+        outgoings.map(Outgoing::toJson).forEach(jsonOutgoings::add);
         return new JsonObject()
                 .put("name", this.name)
                 .put("author", this.author)
@@ -123,7 +121,7 @@ public class RawProject implements Project {
         return passAdmin;
     }
 
-    public Collection<Contribution> getContributions() {
+    public Seq<Contribution> getContributions() {
         return contributions;
     }
 
@@ -131,7 +129,7 @@ public class RawProject implements Project {
         return options;
     }
 
-    public Collection<Outgoing> getOutgoings() {
+    public Seq<Outgoing> getOutgoings() {
         return outgoings;
     }
 
@@ -143,12 +141,12 @@ public class RawProject implements Project {
         private String identifier;
         private String passAdmin;
         private ProjectOptions options;
-        private Collection<Contribution> contributions;
-        private Collection<Outgoing> outgoings;
+        private Seq<Contribution> contributions;
+        private Seq<Outgoing> outgoings;
 
         public Builder() {
-            contributions = Collections.emptyList();
-            outgoings = Collections.emptyList();
+            contributions = Stream.empty();
+            outgoings = Stream.empty();
             options = new ProjectOptions();
         }
 
@@ -159,7 +157,7 @@ public class RawProject implements Project {
             mail = project.getMail();
             identifier = project.getIdentifier();
             passAdmin = project.getPassAdmin();
-            contributions = Lists.newArrayList(project.getContributions());
+            contributions = project.getContributions();
             options = project.getOptions();
             outgoings = project.getOutgoings();
         }
@@ -194,18 +192,18 @@ public class RawProject implements Project {
             return this;
         }
 
-        public Builder contributions(Collection<Contribution> contributions) {
-            this.contributions = Lists.newArrayList(contributions);
+        public Builder contributions(Seq<Contribution> contributions) {
+            this.contributions = contributions;
             return this;
         }
 
-        public Builder addContributions(Collection<Contribution> contributions) {
-            this.contributions.addAll(contributions);
+        public Builder addContributions(List<Contribution> contributions) {
+            this.contributions = this.contributions.appendAll(contributions);
             return this;
         }
 
         public Builder addContribution(Contribution contribution) {
-            this.contributions.add(contribution);
+            this.contributions = this.contributions.append(contribution);
             return this;
         }
 
@@ -214,7 +212,7 @@ public class RawProject implements Project {
             return this;
         }
 
-        public Builder outgoings(Collection<Outgoing> outgoings) {
+        public Builder outgoings(Seq<Outgoing> outgoings) {
             this.outgoings = outgoings;
             return this;
         }

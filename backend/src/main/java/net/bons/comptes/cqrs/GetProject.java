@@ -8,14 +8,16 @@ import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
-import net.bons.comptes.service.model.*;
+import net.bons.comptes.service.model.AdminProject;
+import net.bons.comptes.service.model.JsonModel;
+import net.bons.comptes.service.model.RawProject;
+import net.bons.comptes.service.model.SimpleProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 
 import javax.inject.Inject;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class GetProject implements Handler<RoutingContext> {
@@ -58,13 +60,9 @@ public class GetProject implements Handler<RoutingContext> {
     }
 
     private Function<RawProject, JsonModel> extractContribution(String contributionId) {
-        return project -> {
-            Optional<Contribution> contribution = project.getContributions().stream()
-                                                         .filter(contrib -> contrib.getContributionId()
-                                                                                   .equals(contributionId))
-                                                         .findFirst();
-            return contribution.orElseThrow(
-                    () -> new RuntimeException("Impossible de trouver la contribution " + contributionId));
-        };
+        return project -> project.getContributions()
+                                 .filter(contrib -> contrib.getContributionId().equals(contributionId))
+                                 .headOption()
+                                 .getOrElseThrow(() -> new RuntimeException("Impossible de trouver la contribution " + contributionId));
     }
 }
