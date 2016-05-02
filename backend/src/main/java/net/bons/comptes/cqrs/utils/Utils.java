@@ -5,20 +5,20 @@ package net.bons.comptes.cqrs.utils;
  */
 
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import rx.Observable;
 import rx.functions.Action1;
 
 import javax.validation.ConstraintViolation;
-import java.lang.reflect.Constructor;
 import java.util.stream.Collectors;
 
 public class Utils {
 
+    private Utils() {}
+
     public static Action1<Throwable> manageError(RoutingContext event) {
         return manageError(event, 400);
     }
+
     public static Action1<Throwable> manageError(RoutingContext event, int code) {
         return throwable -> {
             JsonArray array = new JsonArray();

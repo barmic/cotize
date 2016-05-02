@@ -57,14 +57,6 @@ public class VertxModule extends AbstractModule {
                          DeleteContribution deleteContribution, PayedContribution payedContribution, Remind remind,
                          ListProject listProject, DeleteProject deleteProject, OutgoingHandler outgoingHandler) {
         Router router = Router.router(vertx);
-//        JsonObject credentials = new JsonObject()
-//                .put("clientID", "<client-id>")
-//                .put("clientSecret", "<client-secret>")
-//                .put("site", "https://accounts.google.com");
-//
-//
-//        OAuth2Auth oauth2 = OAuth2Auth.create(vertx, OAuth2FlowType.CLIENT, credentials);
-//        OAuth2AuthHandler.create(oauth2, "");
 
         router.route().handler(BodyHandler.create());
 
@@ -77,9 +69,10 @@ public class VertxModule extends AbstractModule {
         router.post("/api/project/:projectId/contribution/:contributionId/payed").handler(payedContribution);
         router.post("/api/project/:projectId/contribution/:contributionId/remind").handler(remind);
 
-        router.post("/api/project/:projectId/admin/:adminPass").produces("application/json").handler(updateProject);
-        router.post("/api/project/:projectId/admin/:adminPass/outgoing/del").produces("application/json").handler(outgoingHandler);
-        router.post("/api/project/:projectId/admin/:adminPass/outgoing").produces("application/json").handler(outgoingHandler);
+        String jsonContentType = "application/json";
+        router.post("/api/project/:projectId/admin/:adminPass").produces(jsonContentType).handler(updateProject);
+        router.post("/api/project/:projectId/admin/:adminPass/outgoing/del").produces(jsonContentType).handler(outgoingHandler);
+        router.post("/api/project/:projectId/admin/:adminPass/outgoing").produces(jsonContentType).handler(outgoingHandler);
 
         if (config.containsKey("root_secret")) {
             router.get("/api/admin/" + config.getString("root_secret") + "/project").handler(listProject);
@@ -88,9 +81,9 @@ public class VertxModule extends AbstractModule {
         }
 
         // query
-        router.get("/api/project/:projectId").produces("application/json").handler(getProject);
-        router.get("/api/project/:projectId/admin/:adminPass").produces("application/json").handler(getProject);
-        router.get("/api/project/:projectId/contribution/:contributionId").produces("application/json").handler(getProject);
+        router.get("/api/project/:projectId").produces(jsonContentType).handler(getProject);
+        router.get("/api/project/:projectId/admin/:adminPass").produces(jsonContentType).handler(getProject);
+        router.get("/api/project/:projectId/contribution/:contributionId").produces(jsonContentType).handler(getProject);
 
         router.get("/*").handler(staticHandler);
 
@@ -125,11 +118,8 @@ public class VertxModule extends AbstractModule {
 
         MongoClient mongoClient = MongoClient.createShared(vertx, config);
         mongoClient.createCollectionObservable(mongo.getString("collection"))
-                   .subscribe(aVoid -> {
-                       LOG.info("Created ok!");
-                   }, throwable -> {
-                       LOG.warn("Can't create the collection {}", throwable.getMessage());
-                   });
+                   .subscribe(aVoid -> LOG.info("Created ok!"),
+                              throwable -> LOG.warn("Can't create the collection {}", throwable.getMessage()));
         return mongoClient;
     }
 

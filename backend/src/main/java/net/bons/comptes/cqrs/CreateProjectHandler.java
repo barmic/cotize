@@ -12,11 +12,8 @@ import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.MailService;
 import net.bons.comptes.service.ProjectStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CreateProjectHandler implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(CreateProjectHandler.class);
     private CommandExtractor commandExtractor;
     private MailService mailService;
     private ProjectStore projectStore;
@@ -31,15 +28,15 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext event) {
         commandExtractor.readQuery(event, CreateProject::new)
-                        .flatMap(project -> projectStore.storeProject(project))
+                        .flatMap(projectStore::storeProject)
                         .map(project -> {
                             mailService.sendCreatedProject(project);
                             return project;
                         })
-                        .subscribe(tuple2 -> {
+                        .subscribe(tuple2 ->
                             event.response()
                                  .putHeader("Content-Type", "application/json")
-                                 .end(tuple2.toJson().toString());
-                        }, Utils.manageError(event));
+                                 .end(tuple2.toJson().toString())
+                        , Utils.manageError(event));
     }
 }

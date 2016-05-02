@@ -8,13 +8,10 @@ import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 public class DeleteProject implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(ListProject.class);
     private ProjectStore projectStore;
 
     @Inject
@@ -27,10 +24,10 @@ public class DeleteProject implements Handler<RoutingContext> {
         final String projectId = routingContext.request().getParam("projectId");
 
         projectStore.removeProject(projectId)
-                    .subscribe(obj -> {
+                    .subscribe(obj ->
                         routingContext.response()
                                       .putHeader("Content-Type", "application/json")
-                                      .end();
-                    }, Utils.manageError(routingContext));
+                                      .end()
+                    , Utils.manageError(routingContext));
     }
 }

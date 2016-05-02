@@ -13,11 +13,8 @@ import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.AdminProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PayedContribution implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
     private ProjectStore projectStore;
 
     @Inject
@@ -33,13 +30,13 @@ public class PayedContribution implements Handler<RoutingContext> {
         projectStore.loadProject(projectId)
                    .map(project -> togglePayed(project, contribId))
                    .flatMap(project -> projectStore.updateProject(project)
-                                                   .map(Void -> new AdminProject(project)))
+                                                   .map(voidValue -> new AdminProject(project)))
                    .map(project -> foundUpdatedContribution(contribId, project))
-                   .subscribe(contribution -> {
+                   .subscribe(contribution ->
                        routingContext.response()
                                      .putHeader("Content-Type", "application/json")
-                                     .end(contribution.toJson().toString());
-                   }, Utils.manageError(routingContext));
+                                     .end(contribution.toJson().toString())
+                   , Utils.manageError(routingContext));
     }
 
     private Contribution foundUpdatedContribution(String contribId, AdminProject project) {

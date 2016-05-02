@@ -13,11 +13,8 @@ import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.AdminProject;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DeleteContribution implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(DeleteContribution.class);
     private ProjectStore projectStore;
 
     @Inject
@@ -33,12 +30,12 @@ public class DeleteContribution implements Handler<RoutingContext> {
         projectStore.loadProject(projectId)
                     .map(projectJson -> removeContrib(projectJson, contribId))
                     .flatMap(project -> projectStore.updateProject(project)
-                                                    .map(Void -> new AdminProject(project)))
-                    .subscribe(project -> {
+                                                    .map(voided -> new AdminProject(project)))
+                    .subscribe(project ->
                         routingContext.response()
                                       .putHeader("Content-Type", "application/json")
-                                      .end(project.toJson().toString());
-                    }, Utils.manageError(routingContext));
+                                      .end(project.toJson().toString())
+                    , Utils.manageError(routingContext));
     }
 
     private RawProject removeContrib(RawProject rawProject, String contribId) {

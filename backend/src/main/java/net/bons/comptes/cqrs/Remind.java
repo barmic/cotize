@@ -13,11 +13,8 @@ import net.bons.comptes.service.MailService;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.Contribution;
 import net.bons.comptes.service.model.RawProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Remind implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(PayedContribution.class);
     private MailService mailService;
     private final ProjectStore projectStore;
 

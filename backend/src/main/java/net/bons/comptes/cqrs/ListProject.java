@@ -10,13 +10,10 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.JsonModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 public class ListProject implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(ListProject.class);
     private final ProjectStore projectStore;
 
     @Inject
@@ -28,9 +25,9 @@ public class ListProject implements Handler<RoutingContext> {
     public void handle(RoutingContext routingContext) {
         projectStore.loadProjects()
                     .toList()
-                    .subscribe(obj -> {
+                    .subscribe(projects -> {
                         JsonArray array = new JsonArray();
-                        obj.stream().map(JsonModel::toJson).forEach(array::add);
+                        projects.stream().map(JsonModel::toJson).forEach(array::add);
                         routingContext.response()
                                       .putHeader("Content-Type", "application/json")
                                       .end(array.toString());

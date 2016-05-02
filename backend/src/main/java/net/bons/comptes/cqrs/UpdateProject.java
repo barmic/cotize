@@ -11,8 +11,6 @@ import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.RawProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -20,7 +18,6 @@ import java.util.Objects;
  *
  */
 public class UpdateProject implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateProject.class);
     private CommandExtractor commandExtractor;
     private ProjectStore projectStore;
 
@@ -39,10 +36,10 @@ public class UpdateProject implements Handler<RoutingContext> {
                         .flatMap(cmd -> projectStore.loadProject(projectId, adminPass)
                                                     .map(projectJson -> Tuple.of(projectJson, cmd)))
                         .map(this::updateproject)
-                        .flatMap(project -> projectStore.updateProject(project))
-                        .subscribe(project -> {
-                            context.response().end();
-                        }, Utils.manageError(context));
+                        .flatMap(projectStore::updateProject)
+                        .subscribe(project ->
+                            context.response().end()
+                        , Utils.manageError(context));
     }
 
     private RawProject updateproject(Tuple2<RawProject, UpdateProjectCommand> params) {
@@ -58,7 +55,7 @@ public class UpdateProject implements Handler<RoutingContext> {
                 break;
             case "spam":
                 if (params._2.getNewValue() instanceof Boolean) {
-                    builder.spam(((Boolean) params._2.getNewValue()));
+                    builder.spam((Boolean) params._2.getNewValue());
                 }
                 break;
             default:

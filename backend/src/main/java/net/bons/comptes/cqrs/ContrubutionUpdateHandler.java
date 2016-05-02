@@ -42,12 +42,12 @@ public class ContrubutionUpdateHandler implements Handler<RoutingContext> {
                                                     .map(projectJson -> Tuple.of(projectJson, cmd)))
                         .map(tuple -> updateContrib(tuple._1, tuple._2))
                         .flatMap(project -> projectStore.updateProject(project._1)
-                                                        .map(Void -> project))
-                        .subscribe(project -> {
+                                                        .map(voided -> project))
+                        .subscribe(project ->
                             event.response()
                                  .putHeader("Content-Type", "application/json")
-                                 .end(project._2.toJson().toString());
-                        }, Utils.manageError(event));
+                                 .end(project._2.toJson().toString())
+                        , Utils.manageError(event));
     }
 
     private Tuple2<RawProject, Contribution> updateContrib(RawProject project, ContributeProject contribution) {

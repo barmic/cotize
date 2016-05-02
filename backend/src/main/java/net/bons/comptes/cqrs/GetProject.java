@@ -52,11 +52,11 @@ public class GetProject implements Handler<RoutingContext> {
         }
 
         sourceProject.map(map::apply)
-                     .subscribe(obj -> {
+                     .subscribe(obj ->
                          routingContext.response()
                                        .putHeader("Content-Type", routingContext.getAcceptableContentType())
-                                       .end(obj.toJson().toString());
-                     }, Utils.manageError(routingContext));
+                                       .end(obj.toJson().toString())
+                     , Utils.manageError(routingContext));
     }
 
     private Function<RawProject, JsonModel> extractContribution(String contributionId) {

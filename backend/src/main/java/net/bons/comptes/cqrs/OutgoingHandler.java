@@ -12,8 +12,6 @@ import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.Outgoing;
 import net.bons.comptes.service.model.RawProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
@@ -21,7 +19,6 @@ import java.util.function.Function;
  *
  */
 public class OutgoingHandler implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(OutgoingHandler.class);
     private CommandExtractor commandExtractor;
     private ProjectStore projectStore;
 
@@ -45,11 +42,11 @@ public class OutgoingHandler implements Handler<RoutingContext> {
                             projectStore.updateProject(project);
                             return project;
                         })
-                        .subscribe(project -> {
+                        .subscribe(project ->
                             context.response()
                                    .putHeader("Content-Type", context.getAcceptableContentType())
-                                   .end(project.toJson().toString());
-                        }, Utils.manageError(context));
+                                   .end(project.toJson().toString())
+                        , Utils.manageError(context));
     }
 
     private RawProject add(Tuple2<RawProject, OutgoingCommand> tuple) {
