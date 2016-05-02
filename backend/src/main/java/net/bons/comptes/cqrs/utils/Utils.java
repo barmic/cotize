@@ -9,7 +9,6 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import rx.functions.Action1;
 
 import javax.validation.ConstraintViolation;
-import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -22,12 +21,11 @@ public class Utils {
     public static Action1<Throwable> manageError(RoutingContext event, int code) {
         return throwable -> {
             JsonArray array = new JsonArray();
-            if (throwable instanceof ValidationEexception) {
-                ValidationEexception validationEexception = (ValidationEexception) throwable;
-                validationEexception.getViolations()
-                                    .stream()
-                                    .map(ConstraintViolation::getMessage).collect(Collectors.toSet())
-                                    .forEach(array::add);
+            if (throwable instanceof ValidationException) {
+                ValidationException validationException = (ValidationException) throwable;
+                validationException.getViolations()
+                                   .map(ConstraintViolation::getMessage)
+                                   .forEach(array::add);
             } else {
                 array.add(throwable.getMessage());
             }

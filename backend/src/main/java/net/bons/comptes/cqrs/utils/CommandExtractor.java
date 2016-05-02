@@ -7,6 +7,8 @@ package net.bons.comptes.cqrs.utils;
 import com.google.inject.Inject;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.web.RoutingContext;
+import javaslang.collection.List;
+import javaslang.collection.Traversable;
 import net.bons.comptes.cqrs.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +16,17 @@ import rx.Observable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CommandExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(CommandExtractor.class);
     private Validator validator;
+    private static final Consumer<ConstraintViolation<Command>> PRINT_VIOLATION
+            = violation -> LOG.debug("Violation : {} (field : {}; value {})",
+                                     violation.getMessage(),
+                                     violation.getPropertyPath(),
+                                     violation.getInvalidValue());
 
     @Inject
     public CommandExtractor(Validator validator) {
@@ -36,16 +43,14 @@ public class CommandExtractor {
         }
     }
 
-    private boolean validCmd(Command command) throws ValidationEexception {
-        Collection<ConstraintViolation<Command>> constraintViolations = validator.validate(command);
+    private boolean validCmd(Command command) throws ValidationException {
+        Traversable<ConstraintViolation<Command>> constraintViolations = List.ofAll(validator.validate(command));
         if (LOG.isDebugEnabled()) {
             LOG.debug("Nb errors {}", constraintViolations.size());
-            constraintViolations.forEach(
-                    violation -> LOG.debug("Violation : {} (field : {}; value {})", violation.getMessage(),
-                                           violation.getPropertyPath(), violation.getInvalidValue()));
+            constraintViolations.forEach(PRINT_VIOLATION);
         }
         if (!constraintViolations.isEmpty()) {
-            throw new ValidationEexception("Erreur du message reçus", constraintViolations);
+            throw new ValidationException("Erreur du message reçus", constraintViolations);
         }
         return true;
     }
