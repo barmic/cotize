@@ -21,12 +21,12 @@ import java.util.function.Function;
 
 public class CommandExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(CommandExtractor.class);
-    private Validator validator;
     private static final Consumer<ConstraintViolation<Command>> PRINT_VIOLATION
             = violation -> LOG.debug("Violation : {} (field : {}; value {})",
                                      violation.getMessage(),
                                      violation.getPropertyPath(),
                                      violation.getInvalidValue());
+    private Validator validator;
 
     @Inject
     public CommandExtractor(Validator validator) {

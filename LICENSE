@@ -1,16 +1,20 @@
                       LICENCE PUBLIQUE BARMIC
-                      Version 1, Juillet 2014
+                      Version 2, Juin 2016
 
  Copyright (C) 2014-2016 Michel Barret <michel.barret@gmail.com>
   21 rue Le Brix, 38100 Grenoble, France
 
  La copie et la distribution de copies exactes de cette licence sont
  autorisées, et toute modification est permise à condition de changer
- le nom de la licence. 
+ le nom de la licence.
 
          CONDITIONS DE COPIE, DISTRIBUTON ET MODIFICATION
                    DE LA LICENCE PUBLIQUE BARMIC
 
-  0. Faites ce que vous voulez, j’en ai RIEN À BRANLER.
+  0. Faites ce que vous voulez, j’en ai RIEN À FAIRE.
   1. Si on se rencontre un jour et que vous pensez que ce truc vaut
-     le coup, vous pouvez me payer à boire en retour.
+     le coup, vous pouvez me payer un verre en retour.
+
+Note : Cette licence est la fusion de 2 licences préexistantes :
+ - Licence Publique Rien À Branler <http://sam.zoy.org/lprab/>
+ - BEER-WARE LICENSE <http://people.freebsd.org/~phk/>

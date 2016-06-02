@@ -1,5 +1,5 @@
 {
-	"root_secret" : "",
+	"root_secret" : "azerty",
     "base_url": "http://localhost:5000",
     "mail" : {
         "user" : "@gmail.com",

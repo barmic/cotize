@@ -33,6 +33,7 @@ public class RawProject implements Project {
         this.passAdmin = json.getString("passAdmin");
         this.amount = json.getInteger("amount", 0);
         this.contributions = extractArray(json, "contributions", Contribution::new);
+        contributions.append()
         this.outgoings = extractArray(json, "outgoings", Outgoing::new);
         this.options = new ProjectOptions(json.getJsonObject("options"));
     }

@@ -1,15 +1,16 @@
 {
-    "base_url": "https://host.eu",
+    "root_secret" : "ei0Tuengae2phui",
+    "base_url": "https://cotize2.barmic.eu",
     "mail" : {
-        "user" : "@gmail.com",
-        "password" : "<password>",
+        "user" : "cotizeapp@gmail.com",
+        "password" : "eeG2eiyiaz",
         "port" : 465,
         "host" : "smtp.gmail.com"
     },
     "mongo" : {
-    	"host" : "localhost",
-    	"port" : 27017,
-    	"collection" : "CotizeEvents",
-    	"dbname" : "bonscomptes"
+        "host" : "localhost",
+        "port" : 27017,
+        "collection" : "CotizeEvents",
+        "dbname" : "bonscomptes"
     }
 }
