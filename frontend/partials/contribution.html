@@ -22,7 +22,7 @@
         <h3>Votre contribution a était mise à jour !</h3>
     </div>
 
-    <div role="form" data-ng-if="isUndefined(contribution.payed) || !contribution.payed">
+    <form data-ng-if="isUndefined(contribution.payed) || !contribution.payed">
         <fieldset>
             <div class="control-group">
                 <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>
@@ -36,5 +36,5 @@
                 <button data-ng-disabled="contribution.payed" data-ng-click="contrib.update()" type="submit" class="btn btn-primary">Participer</button>
             </div>
         </fieldset>
-    </div>
+    </form>
 </div>
