@@ -25,16 +25,15 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.util.Optional;
 
 public class VertxModule extends AbstractModule {
     private static final Logger LOG = LoggerFactory.getLogger(VertxModule.class);
 
     private final Vertx vertx;
-    private final JsonObject config;
 
-    public VertxModule(Vertx vertx, JsonObject config) {
+    public VertxModule(Vertx vertx) {
         this.vertx = vertx;
-        this.config = config;
     }
 
     @Override
@@ -44,7 +43,6 @@ public class VertxModule extends AbstractModule {
         io.vertx.core.Vertx delegate = (io.vertx.core.Vertx) vertx.getDelegate();
         bind(io.vertx.core.Vertx.class).toInstance(delegate);
         bind(Vertx.class).toInstance(vertx);
-        bind(JsonObject.class).toInstance(config);
 
         EventStore service = ProxyHelper.createProxy(EventStore.class, delegate, "database-service-address");
         bind(EventStore.class).toInstance(service);
@@ -74,11 +72,10 @@ public class VertxModule extends AbstractModule {
         router.post("/api/project/:projectId/admin/:adminPass/outgoing/del").produces(jsonContentType).handler(outgoingHandler);
         router.post("/api/project/:projectId/admin/:adminPass/outgoing").produces(jsonContentType).handler(outgoingHandler);
 
-        if (config.containsKey("root_secret")) {
-            router.get("/api/admin/" + config.getString("root_secret") + "/project").handler(listProject);
-            router.delete("/api/admin/" + config.getString("root_secret") + "/project/:projectId").handler(
-                    deleteProject);
-        }
+        env("ROOT_SECRET").ifPresent(rootSecret -> {
+            router.get("/api/admin/" + rootSecret + "/project").handler(listProject);
+            router.delete("/api/admin/" + rootSecret + "/project/:projectId").handler(deleteProject);
+        });
 
         // query
         router.get("/api/project/:projectId").produces(jsonContentType).handler(getProject);
@@ -99,25 +96,24 @@ public class VertxModule extends AbstractModule {
 
     @Provides
     MongoConfig provideMongoConfig() {
-        return new MongoConfig(config.getJsonObject("mongo").getString("collection"));
+        return new MongoConfig(env("collection").orElse("CotizeEvents"));
     }
 
     @Provides
     @Singleton
     MongoClient provideMongoClient(Vertx vertx) {
-        JsonObject mongo = config.getJsonObject("mongo");
         JsonObject host = new JsonObject()
-                .put("host", mongo.getString("host"))
-                .put("port", mongo.getInteger("port"));
+                .put("host", env("MONGO_HOST").orElse("localhost"))
+                .put("port", envInt("MONGO_PORT").orElse(27_017));
         JsonObject config = new JsonObject()
-                .put("db_name", mongo.getString("dbname"))
+                .put("db_name", env("MONGO_DBNAME").orElse("bonscomptes"))
                 .put("useObjectId", true)
                 .put("hosts", new JsonArray().add(host))
-                .put("username", System.getenv("MONGO_USER"))
-                .put("password", System.getenv("MONGO_PASSWD"));
+                .put("username", env("MONGO_USER"))
+                .put("password", env("MONGO_PASSWORD"));
 
         MongoClient mongoClient = MongoClient.createShared(vertx, config);
-        mongoClient.createCollectionObservable(mongo.getString("collection"))
+        mongoClient.createCollectionObservable(env("collection").orElse("CotizeEvents"))
                    .subscribe(aVoid -> LOG.info("Created ok!"),
                               throwable -> LOG.warn("Can't create the collection {}", throwable.getMessage()));
         return mongoClient;
@@ -126,12 +122,11 @@ public class VertxModule extends AbstractModule {
     @Provides
     @Singleton
     MailClient provideMailClient() {
-        JsonObject mailConfig = this.config.getJsonObject("mail");
-        MailConfig config = new MailConfig().setHostname(mailConfig.getString("host"))
-                                            .setSsl(true)
-                                            .setPort(mailConfig.getInteger("port"))
-                                            .setUsername(mailConfig.getString("user"))
-                                            .setPassword(mailConfig.getString("password"));
+        MailConfig config = new MailConfig().setSsl(true);
+        env("MAIL_HOST").ifPresent(config::setHostname);
+        envInt("MAIL_PORT").ifPresent(config::setPort);
+        env("MAIL_USER").ifPresent(config::setUsername);
+        env("MAIL_PASSWORD").ifPresent(config::setPassword);
 
         return MailClient.createShared(vertx, config);
     }
@@ -140,5 +135,24 @@ public class VertxModule extends AbstractModule {
     @Singleton
     Validator provideValidator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
+    }
+
+    /**
+     * Get the configuration http port.
+     * Retrun the port configured by "PORT" variable environment or "PORT" java property or 5000.
+     * @return the port
+     */
+    public int getPort() {
+        return envInt("PORT").orElse(5_000);
+    }
+
+    private Optional<String> env(String varName) {
+        return Optional.ofNullable(System.getenv(varName)).filter(value -> !value.isEmpty());
+    }
+
+    private Optional<Integer> envInt(String varName) {
+        return Optional.ofNullable(System.getenv(varName))
+                       .filter(value -> !value.isEmpty())
+                       .map(Integer::parseInt);
     }
 }
