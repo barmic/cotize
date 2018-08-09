@@ -28,7 +28,6 @@ import java.util.Map;
 public class MailService {
     private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
     private MailClient mailClient;
-    private JsonObject configuration;
     private final Configuration cfg;
     private String fromUser;
     private static final Handler<AsyncResult<MailResult>> defaultResult = result -> {
@@ -42,7 +41,6 @@ public class MailService {
     @Inject
     public MailService(MailClient mailClient, JsonObject configuration) {
         this.mailClient = mailClient;
-        this.configuration = configuration;
         this.fromUser = configuration.getJsonObject("mail").getString("user");
 
         cfg = new Configuration(Configuration.VERSION_2_3_23);
@@ -52,21 +50,21 @@ public class MailService {
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     }
 
-    public void sendCreatedProject(RawProject rawProject) {
+    public void sendCreatedProject(RawProject rawProject, String baseUrl) {
         MailMessage message = new MailMessage();
         message.setFrom(fromUser);
         message.setTo(rawProject.getMail());
 
         Map<String, Object> root = new HashMap<>();
         root.put("project", rawProject);
-        root.put("base_url", configuration.getString("base_url"));
+        root.put("base_url", baseUrl);
 
         String subjectTemplate = "Création du projet : ${project.name} !";
         String templateName = "new_project.ftl";
         sendMail(root, message, subjectTemplate, templateName, defaultResult);
     }
 
-    public void sendNewContribution(RawProject rawProject, Contribution contribution) {
+    public void sendNewContribution(RawProject rawProject, Contribution contribution, String baseUrl) {
         MailMessage message = new MailMessage();
         message.setFrom(fromUser);
         message.setTo(contribution.getMail());
@@ -74,12 +72,12 @@ public class MailService {
         Map<String, Object> root = new HashMap<>();
         root.put("project", rawProject);
         root.put("contribution", contribution);
-        root.put("base_url", configuration.getString("base_url"));
+        root.put("base_url", baseUrl);
 
         sendMail(root, message, "Merci de contribuer au projet : ${project.name} !", "new_contrib.ftl", defaultResult);
 
         MailMessage notification = new MailMessage();
-        notification.setFrom(configuration.getJsonObject("mail").getString("user"));
+        notification.setFrom(fromUser);
         notification.setTo(rawProject.getMail());
 
         LOG.info("Send notification");
@@ -87,7 +85,7 @@ public class MailService {
                  defaultResult);
     }
 
-    public void sendRelance(RawProject rawProject, Contribution contribution, Handler<AsyncResult<MailResult>> result) {
+    public void sendRelance(RawProject rawProject, Contribution contribution, String baseUrl, Handler<AsyncResult<MailResult>> result) {
         MailMessage message = new MailMessage();
         message.setFrom(fromUser);
         message.setTo(contribution.getMail());
@@ -95,7 +93,7 @@ public class MailService {
         Map<String, Object> root = new HashMap<>();
         root.put("project", rawProject);
         root.put("contribution", contribution);
-        root.put("base_url", configuration.getString("base_url"));
+        root.put("base_url", baseUrl);
 
         sendMail(root, message, "Relance du projet : ${project.name}", "remind.ftl", result);
     }

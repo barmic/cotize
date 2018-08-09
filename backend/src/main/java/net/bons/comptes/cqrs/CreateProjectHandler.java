@@ -30,7 +30,7 @@ public class CreateProjectHandler implements Handler<RoutingContext> {
         commandExtractor.readQuery(event, CreateProject::new)
                         .flatMap(projectStore::storeProject)
                         .map(project -> {
-                            mailService.sendCreatedProject(project);
+                            mailService.sendCreatedProject(project, event.request().getHeader("host"));
                             return project;
                         })
                         .subscribe(tuple2 ->

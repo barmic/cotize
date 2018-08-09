@@ -31,7 +31,7 @@ public class Remind implements Handler<RoutingContext> {
 
         projectStore.loadProject(projectId)
                     .map(project -> Tuple.of(project, getContrib(project, contribId)))
-                    .subscribe(tuple -> mailService.sendRelance(tuple._1, tuple._2,
+                    .subscribe(tuple -> mailService.sendRelance(tuple._1, tuple._2, routingContext.request().getHeader("host"),
                                                                 result -> {
                                                                     if (result.failed()) {
                                                                         Utils.manageError(routingContext, 500)
