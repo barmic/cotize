@@ -5,11 +5,11 @@ package net.bons.comptes.cqrs;
  */
 
 import com.google.inject.Inject;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+import io.vavr.control.Option;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javaslang.Tuple;
-import javaslang.Tuple2;
-import javaslang.control.Option;
 import net.bons.comptes.cqrs.command.ContributeProject;
 import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;

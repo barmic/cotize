@@ -4,9 +4,9 @@ package net.bons.comptes.service.model;
  * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
  */
 
+import io.vavr.collection.Seq;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import javaslang.collection.Seq;
 
 public class AdminProject implements Project {
     private String name;

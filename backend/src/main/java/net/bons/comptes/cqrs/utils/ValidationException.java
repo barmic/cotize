@@ -4,8 +4,8 @@ package net.bons.comptes.cqrs.utils;
  * copyright 2014-2016 Michel Barret <michel.barret@gmail.com>
  */
 
-import javaslang.collection.List;
-import javaslang.collection.Traversable;
+import io.vavr.collection.List;
+import io.vavr.collection.Traversable;
 import net.bons.comptes.cqrs.command.Command;
 
 import javax.validation.ConstraintViolation;

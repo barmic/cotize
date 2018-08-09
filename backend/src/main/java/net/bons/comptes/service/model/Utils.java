@@ -1,9 +1,9 @@
 package net.bons.comptes.service.model;
 
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Stream;
 import io.vertx.core.json.JsonObject;
-import javaslang.collection.List;
-import javaslang.collection.Seq;
-import javaslang.collection.Stream;
 
 import java.util.function.Function;
 

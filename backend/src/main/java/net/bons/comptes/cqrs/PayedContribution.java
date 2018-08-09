@@ -5,9 +5,9 @@ package net.bons.comptes.cqrs;
  */
 
 import com.google.inject.Inject;
+import io.vavr.control.Option;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javaslang.control.Option;
 import net.bons.comptes.cqrs.utils.Utils;
 import net.bons.comptes.service.ProjectStore;
 import net.bons.comptes.service.model.AdminProject;

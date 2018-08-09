@@ -5,10 +5,10 @@ package net.bons.comptes.cqrs.utils;
  */
 
 import com.google.inject.Inject;
+import io.vavr.collection.List;
+import io.vavr.collection.Traversable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javaslang.collection.List;
-import javaslang.collection.Traversable;
 import net.bons.comptes.cqrs.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

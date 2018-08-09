@@ -6,13 +6,13 @@ package net.bons.comptes.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.vavr.collection.HashMap;
+import io.vavr.collection.Map;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
-import javaslang.collection.HashMap;
-import javaslang.collection.Map;
 import net.bons.comptes.cqrs.event.Event;
 import net.bons.comptes.cqrs.event.ProjectCreated;
 import net.bons.comptes.service.model.DecisionProjectionProject;

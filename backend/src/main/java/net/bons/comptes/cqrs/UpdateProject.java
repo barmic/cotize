@@ -2,10 +2,10 @@ package net.bons.comptes.cqrs;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javaslang.Tuple;
-import javaslang.Tuple2;
 import net.bons.comptes.cqrs.command.UpdateProjectCommand;
 import net.bons.comptes.cqrs.utils.CommandExtractor;
 import net.bons.comptes.cqrs.utils.Utils;
@@ -14,9 +14,6 @@ import net.bons.comptes.service.model.RawProject;
 
 import java.util.Objects;
 
-/**
- *
- */
 public class UpdateProject implements Handler<RoutingContext> {
     private CommandExtractor commandExtractor;
     private ProjectStore projectStore;

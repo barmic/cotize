@@ -1,12 +1,12 @@
 package net.bons.comptes.service;
 
 import com.google.inject.Inject;
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Stream;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.mongo.MongoClient;
-import javaslang.collection.List;
-import javaslang.collection.Seq;
-import javaslang.collection.Stream;
 import net.bons.comptes.cqrs.command.CreateProject;
 import net.bons.comptes.integration.MongoConfig;
 import net.bons.comptes.service.model.RawProject;
@@ -16,9 +16,6 @@ import rx.Observable;
 
 import java.util.UUID;
 
-/**
- *
- */
 public class ProjectStore {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectStore.class);
     private static final int NB_ID_GEN = 10;
