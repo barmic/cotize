@@ -9,31 +9,23 @@
 
 - Require : JDK8, Apache Maven
 - To build run : mvn clean package
-- Run application : java -jar target/BonsComptes-jar-with-dependencies.jar -conf run-config.json
+- Run application : java -jar target/BonsComptes-jar-with-dependencies.jar
 - Access http://localhost:5000/
 
-### Example of run-config.json
+## Configuration
 
-```json
-{
-	"root_secret" : "abcdefghijkl",
-  "base_url": "http://localhost:5000",
-  "mail" : {
-    "user" : "user@example.com",
-    "password" : "<password>",
-    "port" : 465,
-    "host" : "smtp.example.com"
-  },
-  "mongo" : {
-  	"host" : "localhost",
-  	"port" : 27017,
-  	"collection" : "CotizeEvents",
-  	"dbname" : "bonscomptes"
-  }
-}
-```
+Configuration use environment variable:
 
-- root_secret : id (used in url) to access to root page
-- base_url : url used for link send by mail
-- mail : informations for send email
-- mongo : informations to access to mongodb
+| Var name | usage | default value | type |
+| --- | --- | --- | --- |
+| `PORT` | port of http server | 5000 | integer |
+| `ROOT_SECRET` | secret used in admin url | - | string |
+| `MAIL_HOST` | host for send mail | - | string |
+| `MAIL_PORT` | port for send mail | - | integer |
+| `MAIL_USER` | user for send mail | - | string |
+| `MAIL_PASSWORD` | password for send mail | - | string |
+| `MONGO_HOST` | mongo | - | string |
+| `MONGO_PORT` | mongo | - | string |
+| `MONGO_DBNAME` | mongo | - | string |
+| `MONGO_USER` | mongo | - | string |
+| `MONGO_PASSWORD` | mongo | - | string |
