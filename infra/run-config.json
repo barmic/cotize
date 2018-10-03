@@ -1,11 +1,12 @@
 {
-	"root_secret" : "azerty",
+    "root_secret" : "azerty",
     "base_url": "http://localhost:5000",
     "mail" : {
-        "user" : "@gmail.com",
+        "user" : "<you@mail.com>",
         "password" : "<password>",
         "port" : 465,
-        "host" : "smtp.gmail.com"
+        "host" : "<smtp.mail.com>",
+        "use_ssl" : true
     },
     "mongo" : {
     	"host" : "localhost",

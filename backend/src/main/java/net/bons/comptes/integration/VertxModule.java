@@ -128,8 +128,8 @@ public class VertxModule extends AbstractModule {
     MailClient provideMailClient() {
         JsonObject mailConfig = this.config.getJsonObject("mail");
         MailConfig config = new MailConfig().setHostname(mailConfig.getString("host"))
-                                            .setSsl(true)
-                                            .setPort(mailConfig.getInteger("port"))
+                                            .setSsl(mailConfig.getBoolean("use_ssl", true))
+                                            .setPort(mailConfig.getInteger("port", 587))
                                             .setUsername(mailConfig.getString("user"))
                                             .setPassword(mailConfig.getString("password"));
 
