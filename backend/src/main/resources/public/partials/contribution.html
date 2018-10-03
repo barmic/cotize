@@ -4,7 +4,7 @@
 -->
 <div id="project">
     <h2>{{ project.content.name }}</h2>
-    <p>{{ project.content.description }}</p>
+    <p ng-bind-html="project.content.description"></p>
 
     <h3>Contributions</h3>
     <p>Le projet a déjà réunis {{ project.content.amount }} € !</p>
