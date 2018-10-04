@@ -1,6 +1,7 @@
 var cotizeModule = angular.module('cotizeApp', [
   'ngRoute',
   'ngSanitize',
+  'angularTrix',
   'cotizeControllers'
 ]);
 
