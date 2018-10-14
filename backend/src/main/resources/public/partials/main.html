@@ -38,46 +38,38 @@
         <div role="form" class="form-horizontal">
             <fieldset>
                 <div class="container">
-                    <div class="row">
-                        <div class="col-sm-3 control-group">
-                            <label for="name" class="control-label">Nom du projet</label>
-
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="name" name="name"
-                                       placeholder="Anniversaire de ..." data-ng-model="newproject.name" required/>
-                            </div>
-                        </div>
-                        <div class="col-sm-3 control-group">
-                            <label for="author" class="control-label">Créateur</label>
-
-                            <div class="input-group">
-                                <input id="author" class="form-control" type="text" name="author"
-                                       placeholder="moi" data-ng-model="newproject.author" required/>
-                            </div>
-                        </div>
-                        <div class="col-sm-3 control-group">
-                            <label for="mail" class="control-label">Addresse e-mail</label>
-
-                            <div class="input-group">
-                                <!--<span class="input-group-addon">@</span>-->
-                                <input id="mail" class="form-control" type="mail" name="mail"
-                                       placeholder="prenom.nom@exemple.net" data-ng-model="newproject.mail" required/>
-                            </div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-md-3 control-group">
+                            <label for="name" class="control-label">Nom du projet</label>                    
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="Anniversaire de ..." data-ng-model="newproject.name" required />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-6 control-group">
+
+                    <div class="form-group">
+                        <div class="col-sm-8 col-md-6 control-group">
                             <label for="description" class="control-label">Description</label>
-
-                            <div class="input-group">
-                                    <textarea type="text" class="form-control" id="description" name="description"
-                                              placeholder="Description..." data-ng-model="newproject.description" required></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-3 form-action">
-                            <button data-ng-click="project.create()" class="btn btn-primary" style="maring: 15px" type="submit">Créer</button>
+                            <trix-editor angular-trix class="trix-content" id="description" name="description"
+                                      placeholder="Description..." data-ng-model="newproject.description" required></trix-editor>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-4 col-md-3 control-group">
+                            <label for="author" class="control-label">Créateur</label>
+                            <input id="author" class="form-control" type="text" name="author"
+                                    placeholder="Prénom" data-ng-model="newproject.author" required />
+                        </div>
+
+                        <div class="col-sm-4 col-md-3 control-group">
+                            <label for="mail" class="control-label">Addresse e-mail</label>
+                            <input id="mail" class="form-control" type="email" name="mail"
+                                   placeholder="prenom.nom@mail.com" data-ng-model="newproject.mail" required />
+                        </div>
+                    </div>
+
+                    <button data-ng-click="project.create()" class="btn btn-primary" type="submit">Créer</button>
+
                 </div>
             </fieldset>
         </div><!-- form -->

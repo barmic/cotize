@@ -4,9 +4,9 @@
 -->
 <div id="project">
     <h2>{{ project.content.name }}</h2>
-    <p>{{ project.content.description }}</p>
+    <p ng-bind-html="project.content.description"></p>
 
-    <h3>Contribution de {{ contribution.author }}</h3>
+    <h3>Contributions</h3>
     <p>Le projet a déjà réunis {{ project.content.amount }} € !</p>
 
     <div class="alert alert-danger" role="alert" data-ng-if="newcontrib.state == 'error' || loadingdata.error">
@@ -22,17 +22,19 @@
         <h3>Votre contribution a était mise à jour !</h3>
     </div>
 
-    <div role="form" data-ng-if="isUndefined(contribution.payed) || !contribution.payed">
+    <div class="form-horizontal" role="form" data-ng-if="isUndefined(contribution.payed) || !contribution.payed">
+        <h3>{{ contribution.author }}, participez</h3>
         <fieldset>
-            <div class="control-group">
-                <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>
-                <div class="input-controls">
-                    <input type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" data-ng-model="contribution.amount" data-ng-readonly="contribution.payed" required />
-                    <span class="input-group-addon">€</span>
+            <div class="container">
+                <div class="form-group">
+                    <div class="col-sm-4 col-lg-3 control-group">
+                        <label for="amount" class="control-label">{{ !contribution.payed ? "Changez votre participation ?" : "Votre contribution a déjà était payée, vous ne pouvez l'éditer."}}</label>
+                        <div class="input-group">
+                            <input id="amount" type="number" min="1" class="form-control" name="amount" placeholder="{{contribution.amount}} €" data-ng-model="contribution.amount" data-ng-readonly="contribution.payed" required />
+                            <span class="input-group-addon">€</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <br/>
-            <div class="form-action">
                 <button data-ng-disabled="contribution.payed" data-ng-click="contrib.update()" type="submit" class="btn btn-primary">Participer</button>
             </div>
         </fieldset>
