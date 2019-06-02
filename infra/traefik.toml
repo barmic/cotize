@@ -1,0 +1,12 @@
+[entryPoints]
+    [entryPoints.http]
+    address = ":4040"
+
+[docker]
+    endpoint = "unix:///var/run/docker.sock"
+    domain = "localhost"
+
+[api]
+    entryPoint = "traefik"
+    dashboard = true
+    debug = true

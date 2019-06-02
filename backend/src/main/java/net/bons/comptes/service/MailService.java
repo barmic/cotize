@@ -11,7 +11,6 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mail.MailMessage;
 import io.vertx.ext.mail.MailResult;
 import io.vertx.rxjava.ext.mail.MailClient;
@@ -22,8 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
+
+import static net.bons.comptes.integration.VertxModule.env;
 
 public class MailService {
     private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
@@ -39,9 +39,9 @@ public class MailService {
     };
 
     @Inject
-    public MailService(MailClient mailClient, JsonObject configuration) {
+    public MailService(MailClient mailClient) {
         this.mailClient = mailClient;
-        this.fromUser = configuration.getJsonObject("mail").getString("user");
+        this.fromUser = env("MAIL_USER").get();
 
         cfg = new Configuration(Configuration.VERSION_2_3_23);
         cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/mail-template");
@@ -55,9 +55,10 @@ public class MailService {
         message.setFrom(fromUser);
         message.setTo(rawProject.getMail());
 
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", rawProject);
-        root.put("base_url", baseUrl);
+        Map<String, Object> root = Map.of(
+                "project", rawProject,
+                "base_url", baseUrl
+        );
 
         String subjectTemplate = "Création du projet : ${project.name} !";
         String templateName = "new_project.ftl";
@@ -69,10 +70,11 @@ public class MailService {
         message.setFrom(fromUser);
         message.setTo(contribution.getMail());
 
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", rawProject);
-        root.put("contribution", contribution);
-        root.put("base_url", baseUrl);
+        Map<String, Object> root = Map.of(
+                "project", rawProject,
+                "contribution", contribution,
+                "base_url", baseUrl
+        );
 
         sendMail(root, message, "Merci de contribuer au projet : ${project.name} !", "new_contrib.ftl", defaultResult);
 
@@ -90,10 +92,11 @@ public class MailService {
         message.setFrom(fromUser);
         message.setTo(contribution.getMail());
 
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", rawProject);
-        root.put("contribution", contribution);
-        root.put("base_url", baseUrl);
+        Map<String, Object> root = Map.of(
+                "project", rawProject,
+                "contribution", contribution,
+                "base_url", baseUrl
+        );
 
         sendMail(root, message, "Relance du projet : ${project.name}", "remind.ftl", result);
     }
@@ -106,10 +109,10 @@ public class MailService {
             temp.process(root, out);
 
             Template object = new Template("subject", subjectTemplate, cfg);
-            StringWriter outSuject = new StringWriter();
-            object.process(root, outSuject);
+            StringWriter outSubject = new StringWriter();
+            object.process(root, outSubject);
 
-            message.setSubject(outSuject.toString());
+            message.setSubject(outSubject.toString());
             message.setText(out.toString());
 
             mailClient.sendMail(message, result);

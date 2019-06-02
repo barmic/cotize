@@ -109,8 +109,8 @@ public class VertxModule extends AbstractModule {
                 .put("db_name", env("MONGO_DBNAME").orElse("bonscomptes"))
                 .put("useObjectId", true)
                 .put("hosts", new JsonArray().add(host))
-                .put("username", env("MONGO_USER"))
-                .put("password", env("MONGO_PASSWORD"));
+                .put("username", env("MONGO_USER").orElse(""))
+                .put("password", env("MONGO_PASSWORD").orElse(""));
 
         MongoClient mongoClient = MongoClient.createShared(vertx, config);
         mongoClient.createCollectionObservable(env("collection").orElse("CotizeEvents"))
@@ -146,7 +146,7 @@ public class VertxModule extends AbstractModule {
         return envInt("PORT").orElse(5_000);
     }
 
-    private Optional<String> env(String varName) {
+    public static Optional<String> env(String varName) {
         return Optional.ofNullable(System.getenv(varName)).filter(value -> !value.isEmpty());
     }
 
