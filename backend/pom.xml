@@ -20,7 +20,7 @@
         <guice.version>4.2.2</guice.version>
         <jetty.plugin.version>8.0.3.v20111011</jetty.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vertx.version>3.7.1</vertx.version>
+        <vertx.version>3.9.4</vertx.version>
     </properties>
 
     <dependencies>
